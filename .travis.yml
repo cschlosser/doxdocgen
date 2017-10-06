@@ -1,0 +1,39 @@
+sudo: false
+
+os:
+  - linux
+  - osx
+
+language: node_js
+node_js:
+  - "6"
+
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+      sudo: false
+    - os: osx
+      osx_image: xcode9.1
+
+stages:
+  - lint
+  - build
+  - test
+
+before_install:
+  - if [ $TRAVIS_OS_NAME == "linux" ]; then
+      export CXX="g++-4.9" CC="gcc-4.9" DISPLAY=:99.0;
+      sh -e /etc/init.d/xvfb start;
+      sleep 3;
+    fi
+
+install:
+  - npm install
+
+jobs:
+  include:
+    - stage: lint
+      script: tslint -c tslint.json 'src/**/*.ts'
+    - stage: build
+      script: npm run vscode:prepublish
