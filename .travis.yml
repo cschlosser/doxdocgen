@@ -20,6 +20,7 @@ stages:
   - lint
   - build
   - test
+  - release
 
 before_install:
   - if [ $TRAVIS_OS_NAME == "linux" ]; then
@@ -37,3 +38,19 @@ jobs:
       script: tslint -c tslint.json 'src/**/*.ts'
     - stage: build
       script: npm run vscode:prepublish
+    - stage: release
+      script:
+        - npm install vsce
+        - vsce package
+      deploy:
+        - provider: releases
+          api_key: $GITHUB_OAUTH_TOKEN
+          file: "./doxdocgen-$TRAVIS_TAG.vsix"
+          skip_cleanup: true
+          on:
+            tags: true
+        - provider: script
+          script: vsce publish -p $VSMARKETPLACE_ACCESS_TOKEN
+          skip_cleanup: true
+          on:
+            tags: true
