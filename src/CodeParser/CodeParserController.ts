@@ -1,5 +1,6 @@
 import { Disposable, Position, TextDocumentContentChangeEvent, TextEditor, TextLine, window, workspace } from "vscode";
 import CodeParser from "./CodeParser";
+import CParser from "./CParser";
 import CppParser from "./CppParser";
 
 /**
@@ -88,6 +89,9 @@ export default class CodeParserController {
         let parser: CodeParser;
 
         switch (lang) {
+            case "c":
+                parser = new CParser();
+                break;
             case "cpp":
                 parser = new CppParser();
                 break;
