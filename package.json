@@ -17,7 +17,7 @@
     "keywords": [
         "cpp", "c++", "c", "doxygen"
     ],
-    "license": "LICENSE",
+    "license": "SEE LICENSE IN LICENSE",
     "main": "./out/extension",
     "repository": {
         "type": "git",
