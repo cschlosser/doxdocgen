@@ -3,6 +3,10 @@ environment:
   VSCODE_BUILD_VERBOSE: true
   nodejs_version: "6"
 
+branches:
+  only:
+    - master
+
 image: Visual Studio 2015
 
 install:
