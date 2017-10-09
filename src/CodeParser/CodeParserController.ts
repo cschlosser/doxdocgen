@@ -1,4 +1,5 @@
 import { Disposable, Position, TextDocumentContentChangeEvent, TextEditor, TextLine, window, workspace } from "vscode";
+import { Config, ConfigType } from "../Config";
 import CodeParser from "./CodeParser";
 import CParser from "./CParser";
 import CppParser from "./CppParser";
@@ -22,12 +23,12 @@ export default class CodeParserController {
     public constructor() {
         const subscriptions: Disposable[] = [];
 
-        this.readConfig();
-
         // Hand off the event to the parser if a valid parser is found
         workspace.onDidChangeTextDocument((event) => {
             const activeEditor: TextEditor = window.activeTextEditor;
             if (activeEditor && event.document === activeEditor.document) {
+                this.readConfig();
+
                 this.onEvent(activeEditor, event.contentChanges[0]);
             }
         }, this, subscriptions);
@@ -50,7 +51,8 @@ export default class CodeParserController {
      ***************************************************************************/
 
     private readConfig() {
-        this.indicators.push("/**"); // TODO: make this customizable
+        this.indicators.pop();
+        this.indicators.push(workspace.getConfiguration(ConfigType.generic).get<string>(Config.commentStart, "/**"));
     }
 
     private check(activeEditor: TextEditor, event: TextDocumentContentChangeEvent): boolean {
