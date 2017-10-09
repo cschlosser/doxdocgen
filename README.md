@@ -52,6 +52,7 @@ Completely new extension, so none.
 * Suggest smart text
 
 * Configuration options
+  * Support more configuration options
 
 * Tests
 
