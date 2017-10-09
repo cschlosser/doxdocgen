@@ -56,7 +56,7 @@ Completely new extension, so none.
 * Tests
 
 * More languages
-  * C
+  * C++11 and newer
 
 * Improve language support
   * Classes
