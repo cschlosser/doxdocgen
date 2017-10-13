@@ -82,8 +82,10 @@ export default class CParser implements ICodeParser {
     protected getReturn(method: string): string[] {
         const retVals: string[] = [];
 
+        // Remove the compiler keywords from the signature
+        const sign: string = method.replace(/(static)|(inline)|(friend)|(virtual)|(extern)|(explicit)/g, "");
         // Remove the parameters from the signature
-        const returnSignature: string = method.slice(0, method.indexOf("(")).trim();
+        const returnSignature = sign.slice(0, sign.indexOf("(")).trim();
 
         if (returnSignature.indexOf(" ") === -1) { // Constructor or similar
             return retVals;
