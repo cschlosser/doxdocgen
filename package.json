@@ -26,6 +26,11 @@
                         "/**",
                         "/*!"
                     ]
+                },
+                "doxdocgen.generic.generateReturnType": {
+                    "description": "Insert return type into generated documentation",
+                    "type": "boolean",
+                    "default": true
                 }
             }
         }

@@ -1,4 +1,5 @@
-import { Position, TextDocumentContentChangeEvent, TextEditor, TextLine } from "vscode";
+import { Position, TextDocumentContentChangeEvent, TextEditor, TextLine, workspace } from "vscode";
+import { Config, ConfigType } from "../Config";
 import Generator from "../DocGen/CGen";
 import { IDocGen } from "../DocGen/DocGen";
 import ICodeParser from "./CodeParser";
@@ -103,6 +104,14 @@ export default class CParser implements ICodeParser {
             default:
                 retVals.push(returnType);
                 break;
+        }
+
+        // Don't generate return type if the user doesn't wish to do it
+        if (!workspace.getConfiguration(ConfigType.generic).get<boolean>(Config.generateReturnType, true) &&
+            retVals.length > 0) {
+            retVals.length = 0;
+            retVals.push(" ");
+            return retVals;
         }
 
         return retVals;
