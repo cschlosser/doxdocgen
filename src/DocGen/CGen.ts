@@ -110,13 +110,21 @@ export default class CGen implements IDocGen {
     }
 
     protected generateReturn() {
+        if (this.retVals.length === 0) {
+                return;
+        }
         let line: string = "";
+
+        if (this.params.length !== 0) {
+            line = this.lineStart + "\n";
+            this.comment += this.indentLine(line);
+        }
 
         this.retVals.forEach((element: string) => {
             line = this.lineStart;
             line += this.commandIndicator;
             line += DoxygenCommands.return + " "; // TODO: Make this customizable
-            line += element + "\n";
+            line += element.trim() + "\n";
             this.comment += this.indentLine(line);
         });
     }
@@ -136,10 +144,6 @@ export default class CGen implements IDocGen {
             this.generateParams();
         }
         if (this.retVals.length !== 0) { // Only if we have return values
-            if (this.params.length !== 0) {
-                const line: string = this.lineStart + "\n";
-                this.comment += this.indentLine(line);
-            }
             this.generateReturn();
         }
         this.generateEnd();

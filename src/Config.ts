@@ -4,4 +4,5 @@ export enum ConfigType {
 
 export enum Config {
     commentStart = "commentStart",
+    generateReturnType = "generateReturnType",
 }
