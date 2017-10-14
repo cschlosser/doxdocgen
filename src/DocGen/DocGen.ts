@@ -1,19 +1,10 @@
-/**
- * Contains the supported doxygen commands
- *
- * @export
- * @enum {number}
- */
-export enum DoxygenCommands {
-    brief = "brief",
-    return = "return",
-    param = "param",
-    detailed = "(Detailed description)",
-}
+import { Range } from "vscode";
+
 
 export interface IDocGen {
     /**
-     * Generate documentation string and write it to the active editor
+     * @brief Generate documentation string and write it to the active editor
+     * @param {Range} rangeToReplace Range to replace with the generated comment.
      */
-    GenerateDoc();
+    GenerateDoc(rangeToReplace: Range);
 }
