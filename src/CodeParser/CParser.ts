@@ -35,8 +35,9 @@ export default class CParser implements ICodeParser {
         const returnValue: string[] = this.getReturn(method);
 
         const params: string[] = this.getParams(method);
+        const tparams: string[] = this.getTemplateParams(method);
 
-        const cppGenerator: IDocGen = new Generator(this.activeEditor, this.activeSelection, params, returnValue);
+        const cppGenerator: IDocGen = new Generator(this.activeEditor, this.activeSelection, params, tparams, returnValue);
         return cppGenerator;
     }
 
@@ -84,7 +85,7 @@ export default class CParser implements ICodeParser {
         const retVals: string[] = [];
 
         // Remove the compiler keywords from the signature
-        const sign: string = method.replace(/(static)|(inline)|(friend)|(virtual)|(extern)|(explicit)/g, "");
+        const sign: string = method.replace(/(static)|(inline)|(friend)|(virtual)|(extern)|(explicit)|(const)/g, "");
         // Remove the parameters from the signature
         const returnSignature = sign.slice(0, sign.indexOf("(")).trim();
 
@@ -104,14 +105,6 @@ export default class CParser implements ICodeParser {
             default:
                 retVals.push(returnType);
                 break;
-        }
-
-        // Don't generate return type if the user doesn't wish to do it
-        if (!workspace.getConfiguration(ConfigType.generic).get<boolean>(Config.generateReturnType, true) &&
-            retVals.length > 0) {
-            retVals.length = 0;
-            retVals.push(" ");
-            return retVals;
         }
 
         return retVals;
@@ -138,5 +131,11 @@ export default class CParser implements ICodeParser {
         });
 
         return paramArr;
+    }
+
+    protected getTemplateParams(method: string): string[] {
+        // Todo implement parsing of template parameters.
+        const tparams: string[] = [];
+        return tparams;
     }
 }

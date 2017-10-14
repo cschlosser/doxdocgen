@@ -3,6 +3,15 @@ export enum ConfigType {
 }
 
 export enum Config {
-    commentStart = "commentStart",
-    generateReturnType = "generateReturnType",
+    triggerSequence = "triggerSequence",
+    firstLine = "firstLine",
+    commentPrefix = "commentPrefix",
+    lastLine = "lastLine",
+    newLineAfterBrief = "newLineAfterBrief",
+    newLineAfterParams = "newLineAfterParams",
+    newLineAfterTParams = "newLineAfterTParams",
+    briefTemplate = "briefTemplate",
+    paramTemplate = "paramTemplate",
+    tparamTemplate = "tparamTemplate",
+    returnTemplate = "returnTemplate",
 }
