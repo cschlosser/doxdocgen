@@ -70,8 +70,7 @@ export default class CParser implements ICodeParser {
         logicalLine += nextLineTxt;
 
         // Get method end line
-        while (nextLineTxt.indexOf(")") === -1 &&
-                (nextLineTxt.indexOf(";") === -1 || nextLineTxt.indexOf("}") === -1)) { // Check for method end
+        while (nextLineTxt.indexOf(";") === -1 && nextLineTxt.indexOf("{") === -1) { // Check for method end
             nextLine = new Position(nextLine.line + 1, nextLine.character);
             nextLineTxt = this.activeEditor.document.lineAt(nextLine.line).text.trim();
 
@@ -118,19 +117,49 @@ export default class CParser implements ICodeParser {
     protected getParams(method: string): string[] {
         const params: string[] = [];
 
+        const endOfCtorIdx: number = method.search(/\)\s*:/g);
+
+        let func: string = "";
+
+        if (endOfCtorIdx !== -1) {
+            func = method.substring(0, endOfCtorIdx + 1);
+        } else {
+            func = method;
+        }
+
         // Get parameters from enclosing brackets
-        const parameters: string = method.slice(method.indexOf("(")) // Get opening bracket
-                                         .slice(1, method.indexOf(")")) // Remove opening bracket
-                                         .split(")")[0]; // Get closing bracket
+        const parameters: string = func.substring(func.indexOf("(") + 1, // Get text after opening bracket
+                                                  func.lastIndexOf(")")); // Remove closing bracket
 
         if (parameters.length === 0) { // No parameters
             return params;
         }
 
+        let functionPointer: boolean = false;
+
         let paramArr: string[] = parameters.split(",");
         paramArr = paramArr.map((item: string) => {
             // Remove any special C++ characters
             const clean: string = item.trim().replace(/[&*\[\]]/g, "");
+
+            // function pointer special case
+            if (item.indexOf("(") !== -1) {
+                if (item.indexOf(")") !== -1) {
+                    // Get the name of the function pointer
+                    const funPtr: string = clean.substring(item.indexOf("("), item.indexOf(")"))
+                                                .replace(/[()]/g, ""); // Remove the brackets
+
+                    functionPointer = true;
+                    return funPtr.trim();
+                }
+                return null;
+            }
+
+            // Ignore all params until the closing bracket of the function pointer params
+            if (item.indexOf(")") !== -1 && functionPointer) {
+                functionPointer = false;
+                return null;
+            }
 
             return clean.split(" ").pop();
         });
