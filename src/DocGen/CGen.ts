@@ -1,6 +1,6 @@
-import { Position, Range, Selection, TextEditor, TextLine, WorkspaceEdit, workspace } from "vscode";
-import { IDocGen } from "./DocGen";
+import { Position, Range, Selection, TextEditor, TextLine, workspace, WorkspaceEdit } from "vscode";
 import { Config, ConfigType } from "../Config";
+import { IDocGen } from "./DocGen";
 
 export default class CGen implements IDocGen {
     protected firstLine: string;
@@ -31,12 +31,12 @@ export default class CGen implements IDocGen {
      * @param  {string[]} returnVals The return values extracted by the parser
      */
     public constructor(
-        actEdit: TextEditor, 
-        cursorPosition: 
-        Position, 
-        param: string[], 
-        tparam: string[], 
-        returnVals: string[]
+        actEdit: TextEditor,
+        cursorPosition:
+        Position,
+        param: string[],
+        tparam: string[],
+        returnVals: string[],
     ) {
         this.activeEditor = actEdit;
         this.position = cursorPosition;
@@ -65,9 +65,9 @@ export default class CGen implements IDocGen {
                                     Implementation
      ***************************************************************************/
 
-    protected readConfig() {  
+    protected readConfig() {
         const getCfg = workspace.getConfiguration;
-        
+
         this.firstLine = getCfg(ConfigType.generic).get<string>(Config.firstLine, "");
         this.commentPrefix = getCfg(ConfigType.generic).get<string>(Config.commentPrefix, "");
         this.lastLine = getCfg(ConfigType.generic).get<string>(Config.lastLine, "");
@@ -115,7 +115,7 @@ export default class CGen implements IDocGen {
     }
 
     protected generateComment(): string {
-        let lines: string[] = [];
+        const lines: string[] = [];
 
         if (this.firstLine.trim().length !== 0) {
             lines.push(this.firstLine);
@@ -144,7 +144,7 @@ export default class CGen implements IDocGen {
 
         if (this.returnTemplate.trim().length !== 0 && this.retVals.length > 0) {
             if (this.includeTypeAtReturn === false) {
-                this.retVals = this.retVals.map(t => t === "true" || t === "false" ? t : "");
+                this.retVals = this.retVals.map((t) => t === "true" || t === "false" ? t : "");
             }
 
             this.generateFromTemplate(lines, this.returnTemplate, this.retVals);
