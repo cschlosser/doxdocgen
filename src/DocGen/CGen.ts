@@ -57,8 +57,8 @@ export default class CGen implements IDocGen {
             editBuilder.replace(rangeToReplace, comment); // Insert the comment
         });
 
-        // Set cursor after brief command
-        this.setCursorToBrief(rangeToReplace.start.line, rangeToReplace.start.character);
+        // Set cursor to first DoxyGen command.
+        this.moveCursurToFirstDoxyCommand(comment, rangeToReplace.start.line, rangeToReplace.start.character);
     }
 
     /***************************************************************************
@@ -158,15 +158,25 @@ export default class CGen implements IDocGen {
         return comment;
     }
 
-    protected setCursorToBrief(line: number, character: number) {
-        // If there was a first line defined the brief is on the next line.
+    protected moveCursurToFirstDoxyCommand(comment: string, baseLine: number, baseCharacter) {
+        // Find first offset of a new line in the comment. Since that's when the line where the first param starts.
+        let line: number = baseLine;
+        let character: number = comment.indexOf("\n");
+
+        // If a first line is included find the 2nd line with a newline.
         if (this.firstLine.trim().length !== 0) {
             line++;
+            const oldCharacter: number = character;
+            character = comment.indexOf("\n", oldCharacter + 1) - oldCharacter;
         }
 
-        character += this.commentPrefix.length + this.briefTemplate.length;
+        // If newline is not found means no first param was found so Set to base position.
+        if (character < 0) {
+            line = baseLine;
+            character = baseCharacter;
+        }
 
-        const move: Selection = new Selection(line, character, line, character);
-        this.activeEditor.selection = move;
+        const moveTo: Position = new Position(line, character);
+        this.activeEditor.selection = new Selection(moveTo, moveTo);
     }
 }
