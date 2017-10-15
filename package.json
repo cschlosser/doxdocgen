@@ -18,19 +18,65 @@
             "type": "object",
             "title": "Doxygen Documentation Generator Settings",
             "properties": {
-                "doxdocgen.generic.commentStart": {
-                    "description": "Doxygen comment start indicator. Default ist /** but Qt style with /*! is also valid.",
+                "doxdocgen.generic.triggerSequence": {
+                    "description": "Doxygen comment trigger. This character sequence triggers generation of DoxyGen comments.",
                     "type": "string",
-                    "default": "/**",
-                    "enum": [
-                        "/**",
-                        "/*!"
-                    ]
+                    "default": "/**"
                 },
-                "doxdocgen.generic.generateReturnType": {
-                    "description": "Insert return type into generated documentation",
+                "doxdocgen.generic.firstLine": {
+                    "description": "The first line of the comment that gets generated. If empty it won't get generated at all.",
+                    "type": "string",
+                    "default": "/**"
+                },
+                "doxdocgen.generic.commentPrefix": {
+                    "description": "The prefix that is used for each comment line.",
+                    "type": "string",
+                    "default": " * "
+                },
+                "doxdocgen.generic.lastLine": {
+                    "description": "The last line of the comment that gets generated. If empty it won't get generated at all.",
+                    "type": "string",
+                    "default": " */"
+                },
+                "doxdocgen.generic.newLineAfterBrief": {
+                    "description": "Whether to insert a newline after a brief.",
                     "type": "boolean",
                     "default": true
+                },
+                "doxdocgen.generic.newLineAfterParams": {
+                    "description": "Whether to insert a newline after the params.",
+                    "type": "boolean",
+                    "default": false
+                },
+                "doxdocgen.generic.newLineAfterTParams": {
+                    "description": "Whether to insert a newline after the template params.",
+                    "type": "boolean",
+                    "default": false
+                },
+                "doxdocgen.generic.includeTypeAtReturn": {
+                    "description": "Whether include type information at return.",
+                    "type": "boolean",
+                    "default": true
+                },
+                "doxdocgen.generic.briefTemplate": {
+                    "description": "The template of the brief DoxyGen line that is generated. If empty it won't get generated at all.",
+                    "type": "string",
+                    "default": "@brief "
+                },
+                "doxdocgen.generic.paramTemplate": {
+                    "description": "The template of the param DoxyGen line(s) that are generated. If empty it won't get generated at all.",
+                    "type": "string",
+                    "default": "@param {param} "
+                },
+                "doxdocgen.generic.tparamTemplate": {
+                    "description": "The template of the template parameter DoxyGen line(s) that are generated. If empty it won't get generated at all.",
+                    "type": "string",
+                    "default": "@tparam {param} "
+                },
+                "doxdocgen.generic.returnTemplate": {
+                    "description": "The template of the return DoxyGen line that is generated. If empty it won't get generated at all.",
+                    "type": "string",
+                    "default": "@return {type} "
                 }
             }
         }

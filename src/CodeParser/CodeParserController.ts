@@ -1,4 +1,13 @@
-import { Disposable, Position, TextDocumentContentChangeEvent, TextEditor, TextLine, window, workspace } from "vscode";
+import {
+    Disposable,
+    Position,
+    Range,
+    TextDocumentContentChangeEvent,
+    TextEditor,
+    TextLine,
+    window,
+    workspace,
+} from "vscode";
 import { Config, ConfigType } from "../Config";
 import CodeParser from "./CodeParser";
 import CParser from "./CParser";
@@ -13,7 +22,7 @@ import CppParser from "./CppParser";
  */
 export default class CodeParserController {
     private disposable: Disposable;
-    private indicators: string[] = [];
+    private triggerSequence: string;
 
     /**
      * Creates an instance of CodeParserController
@@ -51,8 +60,9 @@ export default class CodeParserController {
      ***************************************************************************/
 
     private readConfig() {
-        this.indicators.pop();
-        this.indicators.push(workspace.getConfiguration(ConfigType.generic).get<string>(Config.commentStart, "/**"));
+        this.triggerSequence = workspace
+            .getConfiguration(ConfigType.generic)
+            .get<string>(Config.triggerSequence, "/**");
     }
 
     private check(activeEditor: TextEditor, event: TextDocumentContentChangeEvent): boolean {
@@ -70,16 +80,8 @@ export default class CodeParserController {
         }
 
         const cont: string = activeLine.text.trim();
-        let found: boolean = false;
 
-        this.indicators.forEach((element: string) => {
-            if (element === cont) { // Compare the content from the line with the valid indicators
-                found = true;
-                return;
-            }
-        });
-
-        return found;
+        return this.triggerSequence === cont;
     }
 
     private onEvent(activeEditor: TextEditor, event: TextDocumentContentChangeEvent) {
@@ -102,6 +104,20 @@ export default class CodeParserController {
                 console.log("No comments can be generated for language: " + lang);
                 return null;
         }
-        parser.Parse(activeEditor, event).GenerateDoc();
+
+        const currentPos: Position = window.activeTextEditor.selection.active;
+        const startReplace: Position = new Position(
+            currentPos.line,
+            currentPos.character - this.triggerSequence.length,
+        );
+
+        let endReplace: Position = new Position(currentPos.line, currentPos.character);
+        const nextLineText: string = window.activeTextEditor.document.lineAt(endReplace.line + 1).text;
+        // VSCode may enter a * on itself, we don't want that in our comment.
+        if (nextLineText.trim() === "*") {
+            endReplace = new Position(currentPos.line + 1, nextLineText.length);
+        }
+
+        parser.Parse(activeEditor, event).GenerateDoc(new Range(startReplace, endReplace));
     }
 }
