@@ -67,17 +67,17 @@ export default class CGen implements IDocGen {
     protected readConfig() {
         const getCfg = workspace.getConfiguration;
 
-        this.firstLine = getCfg(ConfigType.generic).get<string>(Config.firstLine, "");
-        this.commentPrefix = getCfg(ConfigType.generic).get<string>(Config.commentPrefix, "");
-        this.lastLine = getCfg(ConfigType.generic).get<string>(Config.lastLine, "");
+        this.firstLine = getCfg(ConfigType.generic).get<string>(Config.firstLine, "/**");
+        this.commentPrefix = getCfg(ConfigType.generic).get<string>(Config.commentPrefix, " * ");
+        this.lastLine = getCfg(ConfigType.generic).get<string>(Config.lastLine, "**/");
         this.newLineAfterBrief = getCfg(ConfigType.generic).get<boolean>(Config.newLineAfterBrief, true);
         this.newLineAfterParams = getCfg(ConfigType.generic).get<boolean>(Config.newLineAfterParams, false);
         this.newLineAfterTParams = getCfg(ConfigType.generic).get<boolean>(Config.newLineAfterTParams, false);
         this.includeTypeAtReturn = getCfg(ConfigType.generic).get<boolean>(Config.includeTypeAtReturn, false);
-        this.briefTemplate = getCfg(ConfigType.generic).get<string>(Config.briefTemplate, "");
-        this.paramTemplate = getCfg(ConfigType.generic).get<string>(Config.paramTemplate, "");
-        this.tparamTemplate = getCfg(ConfigType.generic).get<string>(Config.tparamTemplate, "");
-        this.returnTemplate = getCfg(ConfigType.generic).get<string>(Config.returnTemplate, "");
+        this.briefTemplate = getCfg(ConfigType.generic).get<string>(Config.briefTemplate, "@brief ");
+        this.paramTemplate = getCfg(ConfigType.generic).get<string>(Config.paramTemplate, "@param {param} ");
+        this.tparamTemplate = getCfg(ConfigType.generic).get<string>(Config.tparamTemplate, "@tparam {param} ");
+        this.returnTemplate = getCfg(ConfigType.generic).get<string>(Config.returnTemplate, "@return {param} ");
     }
 
     protected getIndentation(): string {
@@ -169,7 +169,7 @@ export default class CGen implements IDocGen {
             character = comment.indexOf("\n", oldCharacter + 1) - oldCharacter;
         }
 
-        // If newline is not found means no first param was found so Set to base position.
+        // If newline is not found means no first param was found so Set to base line before the newline.
         if (character < 0) {
             line = baseLine;
             character = baseCharacter;
