@@ -25,28 +25,33 @@ export default class CParser implements ICodeParser {
 
         const activeLine: TextLine = this.activeEditor.document.lineAt(this.activeEditor.selection.active.line);
 
-        const method: string = this.getMethodText();
+        const line: string = this.getLogicalLine();
 
         // Not a method
-        if (method.length === 0) {
+        if (line.length === 0) {
             return null;
         }
 
-        const returnValue: string[] = this.getReturn(method);
+        const returnValue: string[] = this.getReturn(line);
 
-        const params: string[] = this.getParams(method);
-        const tparams: string[] = this.getTemplateParams(method);
+        const params: string[] = this.getParams(line);
+        const tparams: string[] = this.getTemplateParams(line);
 
-        const cppGenerator: IDocGen = new Generator(this.activeEditor, this.activeSelection, params, tparams, returnValue);
+        const cppGenerator: IDocGen = new Generator(
+            this.activeEditor, 
+            this.activeSelection, 
+            params, 
+            tparams, 
+            returnValue
+        );
         return cppGenerator;
     }
 
     /***************************************************************************
                                     Implementation
      ***************************************************************************/
-
-    protected getMethodText(): string {
-        let method: string = "";
+    protected getLogicalLine(): string {
+        let logicalLine: string = "";
 
         let nextLine: Position = new Position(this.activeSelection.line + 1, this.activeSelection.character);
 
@@ -62,7 +67,7 @@ export default class CParser implements ICodeParser {
             nextLineTxt = this.activeEditor.document.lineAt(nextLine.line).text.trim();
         }
 
-        method += nextLineTxt;
+        logicalLine += nextLineTxt;
 
         // Get method end line
         while (nextLineTxt.indexOf(")") === -1 &&
@@ -70,15 +75,15 @@ export default class CParser implements ICodeParser {
             nextLine = new Position(nextLine.line + 1, nextLine.character);
             nextLineTxt = this.activeEditor.document.lineAt(nextLine.line).text.trim();
 
-            method += " " + nextLineTxt;
+            logicalLine += " " + nextLineTxt;
         }
 
         // Not a method but some code in the file
-        if (method.indexOf(")") === -1) {
+        if (logicalLine.indexOf(")") === -1) {
             return "";
         }
 
-        return method;
+        return logicalLine;
     }
 
     protected getReturn(method: string): string[] {
