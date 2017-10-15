@@ -1,52 +1,64 @@
-import { Position, Range, Selection, TextEditor, TextLine, WorkspaceEdit } from "vscode";
-import { DoxygenCommands, IDocGen } from "./DocGen";
+import { Position, Range, Selection, TextEditor, TextLine, workspace, WorkspaceEdit } from "vscode";
+import { Config, ConfigType } from "../Config";
+import { IDocGen } from "./DocGen";
 
 export default class CGen implements IDocGen {
-    protected lineStart: string;
-    protected endComment: string;
-    protected commandIndicator: string;
-    protected spaceAfterCommand: string;
+    protected firstLine: string;
+    protected commentPrefix: string;
+    protected lastLine: string;
+    protected newLineAfterBrief: boolean;
+    protected newLineAfterParams: boolean;
+    protected newLineAfterTParams: boolean;
+    protected includeTypeAtReturn: boolean;
+    protected briefTemplate: string;
+    protected paramTemplate: string;
+    protected tparamTemplate: string;
+    protected returnTemplate: string;
+
+    protected templateParamReplace: string;
+    protected templateTypeReplace: string;
+
     protected activeEditor: TextEditor;
-    protected position: Position;
-    protected comment: string;
+
     protected retVals: string[];
     protected params: string[];
+    protected tparams: string[];
 
     /**
      * @param  {TextEditor} actEdit Active editor window
      * @param  {Position} cursorPosition Where the cursor of the user currently is
      * @param  {string[]} param The parameter names of the method extracted by the parser
+     * @param  {string[]} tparam The template parameter names of the method extracted by the parser.
      * @param  {string[]} returnVals The return values extracted by the parser
      */
-    public constructor(actEdit: TextEditor, cursorPosition: Position, param: string[], returnVals: string[]) {
+    public constructor(
+        actEdit: TextEditor,
+        cursorPosition: Position,
+        param: string[],
+        tparam: string[],
+        returnVals: string[],
+    ) {
         this.activeEditor = actEdit;
-        this.position = cursorPosition;
-        this.comment = "\n"; // Add the new line after the comment indicator
+        this.templateParamReplace = "{param}";
+        this.templateTypeReplace = "{type}";
         this.params = param;
+        this.tparams = tparam;
         this.retVals = returnVals;
     }
 
     /**
      * @inheritdoc
      */
-    public GenerateDoc() {
+    public GenerateDoc(rangeToReplace: Range) {
         this.readConfig();
-        this.generateComment();
+        const comment: string = this.generateComment();
 
-        const oldPos: Position = this.position;
-
-        const active: Position = this.activeEditor.selection.active;
-        const anchor: Position = new Position(active.line + 1, active.character); // Start at the next line
-        const replaceSelection = new Selection(anchor, active);
         this.activeEditor.edit((editBuilder) => {
-            editBuilder.replace(replaceSelection, this.comment); // Insert the comment
+            editBuilder.replace(rangeToReplace, comment); // Insert the comment
         });
 
-        // Set cursor after brief command
-        this.setCursor(oldPos.line + 3, oldPos.character);
-        const newSelectActive = new Position(oldPos.line + 3, oldPos.character + DoxygenCommands.detailed.length);
-        const newSelectPos = new Position(oldPos.line + 3, oldPos.character);
-        this.activeEditor.selection = new Selection(newSelectPos, newSelectActive);
+        // Set cursor to first DoxyGen command.
+        this.moveCursurToFirstDoxyCommand(comment, rangeToReplace.start.line, rangeToReplace.start.character);
     }
 
     /***************************************************************************
@@ -54,13 +66,22 @@ export default class CGen implements IDocGen {
      ***************************************************************************/
 
     protected readConfig() {
-        this.lineStart = " * "; // TODO: make this customizable
-        this.endComment = "*/"; // TODO: make this customizable
-        this.commandIndicator = "@"; // TODO: make this customizable
-        this.spaceAfterCommand = " "; // TODO: make this customizable
+        const getCfg = workspace.getConfiguration;
+
+        this.firstLine = getCfg(ConfigType.generic).get<string>(Config.firstLine, "/**");
+        this.commentPrefix = getCfg(ConfigType.generic).get<string>(Config.commentPrefix, " * ");
+        this.lastLine = getCfg(ConfigType.generic).get<string>(Config.lastLine, " */");
+        this.newLineAfterBrief = getCfg(ConfigType.generic).get<boolean>(Config.newLineAfterBrief, true);
+        this.newLineAfterParams = getCfg(ConfigType.generic).get<boolean>(Config.newLineAfterParams, false);
+        this.newLineAfterTParams = getCfg(ConfigType.generic).get<boolean>(Config.newLineAfterTParams, false);
+        this.includeTypeAtReturn = getCfg(ConfigType.generic).get<boolean>(Config.includeTypeAtReturn, false);
+        this.briefTemplate = getCfg(ConfigType.generic).get<string>(Config.briefTemplate, "@brief ");
+        this.paramTemplate = getCfg(ConfigType.generic).get<string>(Config.paramTemplate, "@param {param} ");
+        this.tparamTemplate = getCfg(ConfigType.generic).get<string>(Config.tparamTemplate, "@tparam {param} ");
+        this.returnTemplate = getCfg(ConfigType.generic).get<string>(Config.returnTemplate, "@return {type} ");
     }
 
-    protected indentLine(commentLine: string): string {
+    protected getIndentation(): string {
         const line: TextLine = this.activeEditor.document.lineAt(this.activeEditor.selection.start.line);
         const lineTxt: string = line.text;
         let stringToIndent: string = "";
@@ -72,86 +93,90 @@ export default class CGen implements IDocGen {
                 stringToIndent = stringToIndent + " ";
             }
         }
-        const textToInsert = stringToIndent + commentLine;
-        return textToInsert;
+        return stringToIndent;
     }
 
-    protected generateBrief() {
-        let line: string = "";
-        line += this.lineStart;
-        line += this.commandIndicator;
-        line += DoxygenCommands.brief;
-        line += this.spaceAfterCommand;
-        this.comment += this.indentLine(line);
+    protected getTemplatedString(replace: string, template: string, param: string): string {
+        return template.replace(replace, param);
     }
 
-    protected generateDetailed() {
-        let line: string = "";
-        line += this.lineStart;
-        line += "\n";
-        this.comment += this.indentLine(line);
-        line = this.lineStart;
-        line += DoxygenCommands.detailed + "\n";
-        this.comment += this.indentLine(line);
-        line = this.lineStart;
-        this.comment += this.indentLine(line);
+    protected generateBrief(lines: string[]) {
+        lines.push(this.commentPrefix + this.briefTemplate);
     }
 
-    protected generateParams() {
+    protected generateFromTemplate(lines: string[], replace: string, template: string, templateWith: string[]) {
         let line: string = "";
 
-        this.params.forEach((element: string) => {
-            line = this.lineStart;
-            line += this.commandIndicator;
-            line += DoxygenCommands.param + " "; // TODO: Make this customizable
-            line += element + "\n";
-            this.comment += this.indentLine(line);
+        templateWith.forEach((element: string) => {
+            line = this.commentPrefix;
+            line += this.getTemplatedString(replace, template, element);
+            lines.push(line);
         });
     }
 
-    protected generateReturn() {
-        if (this.retVals.length === 0) {
-                return;
-        }
-        let line: string = "";
+    protected generateComment(): string {
+        const lines: string[] = [];
 
-        if (this.params.length !== 0) {
-            line = this.lineStart + "\n";
-            this.comment += this.indentLine(line);
+        if (this.firstLine.trim().length !== 0) {
+            lines.push(this.firstLine);
         }
 
-        this.retVals.forEach((element: string) => {
-            line = this.lineStart;
-            line += this.commandIndicator;
-            line += DoxygenCommands.return + " "; // TODO: Make this customizable
-            line += element.trim() + "\n";
-            this.comment += this.indentLine(line);
-        });
+        if (this.briefTemplate.trim().length !== 0) {
+            this.generateBrief(lines);
+            if (this.newLineAfterBrief === true) {
+                lines.push(this.commentPrefix);
+            }
+        }
+
+        if (this.tparamTemplate.trim().length !== 0 && this.tparams.length > 0) {
+            this.generateFromTemplate(lines, this.templateParamReplace, this.tparamTemplate, this.tparams);
+            if (this.newLineAfterTParams === true) {
+                lines.push(this.commentPrefix);
+            }
+        }
+
+        if (this.paramTemplate.trim().length !== 0 && this.params.length > 0) {
+            this.generateFromTemplate(lines, this.templateParamReplace, this.paramTemplate, this.params);
+            if (this.newLineAfterParams === true) {
+                lines.push(this.commentPrefix);
+            }
+        }
+
+        if (this.returnTemplate.trim().length !== 0 && this.retVals.length > 0) {
+            if (this.includeTypeAtReturn === false) {
+                this.retVals = this.retVals.map((t) => t === "true" || t === "false" ? t : "");
+            }
+
+            this.generateFromTemplate(lines, this.templateTypeReplace, this.returnTemplate, this.retVals);
+        }
+
+        if (this.lastLine.trim().length !== 0) {
+            lines.push(this.lastLine);
+        }
+
+        const comment: string = lines.join("\n" + this.getIndentation());
+        return comment;
     }
 
-    protected generateEnd() {
-        let line: string = " "; // TODO: Make this customizable
-        line += this.endComment;
-        this.comment += this.indentLine(line);
-    }
+    protected moveCursurToFirstDoxyCommand(comment: string, baseLine: number, baseCharacter) {
+        // Find first offset of a new line in the comment. Since that's when the line where the first param starts.
+        let line: number = baseLine;
+        let character: number = comment.indexOf("\n");
 
-    protected generateComment() {
-        this.generateBrief();
-        this.comment += "\n";
-        this.generateDetailed();
-        this.comment += "\n";
-        if (this.params.length !== 0) { // Only if we have parameters
-            this.generateParams();
+        // If a first line is included find the 2nd line with a newline.
+        if (this.firstLine.trim().length !== 0) {
+            line++;
+            const oldCharacter: number = character;
+            character = comment.indexOf("\n", oldCharacter + 1) - oldCharacter;
         }
-        if (this.retVals.length !== 0) { // Only if we have return values
-            this.generateReturn();
-        }
-        this.generateEnd();
-    }
 
-    protected setCursor(line: number, character: number) {
-        const indentLen: number = this.indentLine("").length;
-        const move: Selection = new Selection(line, character, line, character);
-        this.activeEditor.selection = move;
+        // If newline is not found means no first param was found so Set to base line before the newline.
+        if (character < 0) {
+            line = baseLine;
+            character = baseCharacter;
+        }
+
+        const moveTo: Position = new Position(line, character);
+        this.activeEditor.selection = new Selection(moveTo, moveTo);
     }
 }
