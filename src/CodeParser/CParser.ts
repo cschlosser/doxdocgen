@@ -38,11 +38,11 @@ export default class CParser implements ICodeParser {
         const tparams: string[] = this.getTemplateParams(line);
 
         const cppGenerator: IDocGen = new Generator(
-            this.activeEditor, 
-            this.activeSelection, 
-            params, 
-            tparams, 
-            returnValue
+            this.activeEditor,
+            this.activeSelection,
+            params,
+            tparams,
+            returnValue,
         );
         return cppGenerator;
     }
