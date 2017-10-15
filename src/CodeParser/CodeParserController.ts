@@ -1,12 +1,12 @@
-import { 
-    Disposable, 
-    Position, 
-    Range, 
-    TextDocumentContentChangeEvent, 
-    TextEditor, 
-    TextLine, 
-    window, 
-    workspace 
+import {
+    Disposable,
+    Position,
+    Range,
+    TextDocumentContentChangeEvent,
+    TextEditor,
+    TextLine,
+    window,
+    workspace,
 } from "vscode";
 import { Config, ConfigType } from "../Config";
 import CodeParser from "./CodeParser";
@@ -107,8 +107,8 @@ export default class CodeParserController {
 
         const currentPos: Position = window.activeTextEditor.selection.active;
         const startReplace: Position = new Position(
-            currentPos.line, 
-            currentPos.character - this.triggerSequence.length
+            currentPos.line,
+            currentPos.character - this.triggerSequence.length,
         );
 
         let endReplace: Position = new Position(currentPos.line, currentPos.character);
