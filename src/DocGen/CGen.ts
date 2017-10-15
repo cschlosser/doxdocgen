@@ -9,6 +9,7 @@ export default class CGen implements IDocGen {
     protected newLineAfterBrief: boolean;
     protected newLineAfterParams: boolean;
     protected newLineAfterTParams: boolean;
+    protected includeTypeAtReturn: boolean;
     protected briefTemplate: string;
     protected paramTemplate: string;
     protected tparamTemplate: string;
@@ -29,7 +30,14 @@ export default class CGen implements IDocGen {
      * @param  {string[]} tparam The template parameter names of the method extracted by the parser.
      * @param  {string[]} returnVals The return values extracted by the parser
      */
-    public constructor(actEdit: TextEditor, cursorPosition: Position, param: string[], tparam: string[], returnVals: string[]) {
+    public constructor(
+        actEdit: TextEditor, 
+        cursorPosition: 
+        Position, 
+        param: string[], 
+        tparam: string[], 
+        returnVals: string[]
+    ) {
         this.activeEditor = actEdit;
         this.position = cursorPosition;
         this.templateReplaceString = "{param}";
@@ -57,17 +65,20 @@ export default class CGen implements IDocGen {
                                     Implementation
      ***************************************************************************/
 
-    protected readConfig() {        
-        this.firstLine = workspace.getConfiguration(ConfigType.generic).get<string>(Config.firstLine, "");
-        this.commentPrefix = workspace.getConfiguration(ConfigType.generic).get<string>(Config.commentPrefix, "");
-        this.lastLine = workspace.getConfiguration(ConfigType.generic).get<string>(Config.lastLine, "");
-        this.newLineAfterBrief = workspace.getConfiguration(ConfigType.generic).get<boolean>(Config.newLineAfterBrief, true);
-        this.newLineAfterParams = workspace.getConfiguration(ConfigType.generic).get<boolean>(Config.newLineAfterParams, false);
-        this.newLineAfterTParams = workspace.getConfiguration(ConfigType.generic).get<boolean>(Config.newLineAfterTParams, false);
-        this.briefTemplate = workspace.getConfiguration(ConfigType.generic).get<string>(Config.briefTemplate, "");
-        this.paramTemplate = workspace.getConfiguration(ConfigType.generic).get<string>(Config.paramTemplate, "");
-        this.tparamTemplate = workspace.getConfiguration(ConfigType.generic).get<string>(Config.tparamTemplate, "");
-        this.returnTemplate = workspace.getConfiguration(ConfigType.generic).get<string>(Config.returnTemplate, "");
+    protected readConfig() {  
+        const getCfg = workspace.getConfiguration;
+        
+        this.firstLine = getCfg(ConfigType.generic).get<string>(Config.firstLine, "");
+        this.commentPrefix = getCfg(ConfigType.generic).get<string>(Config.commentPrefix, "");
+        this.lastLine = getCfg(ConfigType.generic).get<string>(Config.lastLine, "");
+        this.newLineAfterBrief = getCfg(ConfigType.generic).get<boolean>(Config.newLineAfterBrief, true);
+        this.newLineAfterParams = getCfg(ConfigType.generic).get<boolean>(Config.newLineAfterParams, false);
+        this.newLineAfterTParams = getCfg(ConfigType.generic).get<boolean>(Config.newLineAfterTParams, false);
+        this.includeTypeAtReturn = getCfg(ConfigType.generic).get<boolean>(Config.includeTypeAtReturn, false);
+        this.briefTemplate = getCfg(ConfigType.generic).get<string>(Config.briefTemplate, "");
+        this.paramTemplate = getCfg(ConfigType.generic).get<string>(Config.paramTemplate, "");
+        this.tparamTemplate = getCfg(ConfigType.generic).get<string>(Config.tparamTemplate, "");
+        this.returnTemplate = getCfg(ConfigType.generic).get<string>(Config.returnTemplate, "");
     }
 
     protected getIndentation(): string {
@@ -105,11 +116,11 @@ export default class CGen implements IDocGen {
 
     protected generateComment(): string {
         let lines: string[] = [];
-        
+
         if (this.firstLine.trim().length !== 0) {
             lines.push(this.firstLine);
         }
-        
+
         if (this.briefTemplate.trim().length !== 0) {
             this.generateBrief(lines);
             if (this.newLineAfterBrief === true) {
@@ -132,11 +143,15 @@ export default class CGen implements IDocGen {
         }
 
         if (this.returnTemplate.trim().length !== 0 && this.retVals.length > 0) {
+            if (this.includeTypeAtReturn === false) {
+                this.retVals = this.retVals.map(t => t === "true" || t === "false" ? t : "");
+            }
+
             this.generateFromTemplate(lines, this.returnTemplate, this.retVals);
         }
 
         if (this.lastLine.trim().length !== 0) {
-            lines.push(this.lastLine);            
+            lines.push(this.lastLine);
         }
 
         const comment: string = lines.join("\n" + this.getIndentation());
@@ -148,9 +163,9 @@ export default class CGen implements IDocGen {
         if (this.firstLine.trim().length !== 0) {
             line++;
         }
-        
+
         character += this.commentPrefix.length + this.briefTemplate.length;
-        
+
         const move: Selection = new Selection(line, character, line, character);
         this.activeEditor.selection = move;
     }

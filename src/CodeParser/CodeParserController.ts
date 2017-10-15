@@ -1,4 +1,13 @@
-import { Disposable, Position, Range, TextDocumentContentChangeEvent, TextEditor, TextLine, window, workspace } from "vscode";
+import { 
+    Disposable, 
+    Position, 
+    Range, 
+    TextDocumentContentChangeEvent, 
+    TextEditor, 
+    TextLine, 
+    window, 
+    workspace 
+} from "vscode";
 import { Config, ConfigType } from "../Config";
 import CodeParser from "./CodeParser";
 import CParser from "./CParser";
@@ -51,7 +60,9 @@ export default class CodeParserController {
      ***************************************************************************/
 
     private readConfig() {
-        this.triggerSequence = workspace.getConfiguration(ConfigType.generic).get<string>(Config.triggerSequence, "/**");
+        this.triggerSequence = workspace
+            .getConfiguration(ConfigType.generic)
+            .get<string>(Config.triggerSequence, "/**");
     }
 
     private check(activeEditor: TextEditor, event: TextDocumentContentChangeEvent): boolean {
@@ -63,13 +74,12 @@ export default class CodeParserController {
         const activeChar: string = activeLine.text.charAt(activeSelection.character);
         const startsWith: boolean = event.text.startsWith("\n") || event.text.startsWith("\r\n");
 
-        // Check if enter  was pressed. Note the !
+        // Check if enter was pressed. Note the !
         if (!((activeChar === "") && startsWith)) {
             return false;
         }
 
         const cont: string = activeLine.text.trim();
-        let found: boolean = false;
 
         return this.triggerSequence === cont;
     }
@@ -96,10 +106,13 @@ export default class CodeParserController {
         }
 
         const currentPos: Position = window.activeTextEditor.selection.active;
-        const startReplace: Position = new Position(currentPos.line, currentPos.character - this.triggerSequence.length);
+        const startReplace: Position = new Position(
+            currentPos.line, 
+            currentPos.character - this.triggerSequence.length
+        );
 
         let endReplace: Position = new Position(currentPos.line, currentPos.character);
-        const nextLineText: String = window.activeTextEditor.document.lineAt(endReplace.line + 1).text;
+        const nextLineText: string = window.activeTextEditor.document.lineAt(endReplace.line + 1).text;
         // VSCode may enter a * on itself, we don't want that in our comment.
         if (nextLineText.trim() === "*") {
             endReplace = new Position(currentPos.line + 1, nextLineText.length);

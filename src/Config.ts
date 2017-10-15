@@ -10,6 +10,7 @@ export enum Config {
     newLineAfterBrief = "newLineAfterBrief",
     newLineAfterParams = "newLineAfterParams",
     newLineAfterTParams = "newLineAfterTParams",
+    includeTypeAtReturn = "includeTypeAtReturn",
     briefTemplate = "briefTemplate",
     paramTemplate = "paramTemplate",
     tparamTemplate = "tparamTemplate",

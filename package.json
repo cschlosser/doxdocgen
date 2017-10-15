@@ -53,6 +53,11 @@
                     "type": "boolean",
                     "default": false
                 },
+                "doxdocgen.generic.includeTypeAtReturn": {
+                    "description": "Whether include type information at return.",
+                    "type": "boolean",
+                    "default": false
+                },
                 "doxdocgen.generic.briefTemplate": {
                     "description": "The template of the brief DoxyGen line that is generated. If empty it won't get generated at all.",
                     "type": "string",
