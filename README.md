@@ -43,9 +43,23 @@ Or void return values
 
 See [Below](#whats-to-come)
 
+## Contributors
+
+[Christoph Schlosser](https://github.com/christophschlosser)
+
+[Rowan Goemans](https://github.com/rowanG077)
+
 ## Known Issues
 
-Completely new extension, so none.
+### Function pointers
+
+See [#18](https://github.com/christophschlosser/doxdocgen/issues/18)
+
+Documentation for certain constructs (like the following) may not be generated correctly.
+
+```C
+int (*idputs(int (*puts)(const char *)))(const char *)
+```
 
 ## What's to come
 
