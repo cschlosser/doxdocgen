@@ -4,7 +4,7 @@ import { IDocGen } from "./DocGen";
 
 export default class CGen implements IDocGen {
     protected firstLine: string;
-    protected prefix: string;
+    protected commentPrefix: string;
     protected lastLine: string;
     protected newLineAfterBrief: boolean;
     protected newLineAfterParams: boolean;
@@ -69,7 +69,7 @@ export default class CGen implements IDocGen {
         const getCfg = workspace.getConfiguration;
 
         this.firstLine = getCfg(ConfigType.generic).get<string>(Config.firstLine, "/**");
-        this.prefix = getCfg(ConfigType.generic).get<string>(Config.prefix, " * ");
+        this.commentPrefix = getCfg(ConfigType.generic).get<string>(Config.commentPrefix, " * ");
         this.lastLine = getCfg(ConfigType.generic).get<string>(Config.lastLine, " */");
         this.newLineAfterBrief = getCfg(ConfigType.generic).get<boolean>(Config.newLineAfterBrief, true);
         this.newLineAfterParams = getCfg(ConfigType.generic).get<boolean>(Config.newLineAfterParams, false);
@@ -101,14 +101,14 @@ export default class CGen implements IDocGen {
     }
 
     protected generateBrief(lines: string[]) {
-        lines.push(this.prefix + this.briefTemplate);
+        lines.push(this.commentPrefix + this.briefTemplate);
     }
 
     protected generateFromTemplate(lines: string[], replace: string, template: string, templateWith: string[]) {
         let line: string = "";
 
         templateWith.forEach((element: string) => {
-            line = this.prefix;
+            line = this.commentPrefix;
             line += this.getTemplatedString(replace, template, element);
             lines.push(line);
         });
@@ -124,21 +124,21 @@ export default class CGen implements IDocGen {
         if (this.briefTemplate.trim().length !== 0) {
             this.generateBrief(lines);
             if (this.newLineAfterBrief === true) {
-                lines.push(this.prefix);
+                lines.push(this.commentPrefix);
             }
         }
 
         if (this.tparamTemplate.trim().length !== 0 && this.tparams.length > 0) {
             this.generateFromTemplate(lines, this.templateParamReplace, this.tparamTemplate, this.tparams);
             if (this.newLineAfterTParams === true) {
-                lines.push(this.prefix);
+                lines.push(this.commentPrefix);
             }
         }
 
         if (this.paramTemplate.trim().length !== 0 && this.params.length > 0) {
             this.generateFromTemplate(lines, this.templateParamReplace, this.paramTemplate, this.params);
             if (this.newLineAfterParams === true) {
-                lines.push(this.prefix);
+                lines.push(this.commentPrefix);
             }
         }
 

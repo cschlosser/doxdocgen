@@ -28,8 +28,8 @@
                     "type": "string",
                     "default": "/**"
                 },
-                "doxdocgen.generic.prefix": {
-                    "description": "The pre fix that is used for each comment line.",
+                "doxdocgen.generic.commentPrefix": {
+                    "description": "The prefix that is used for each comment line.",
                     "type": "string",
                     "default": " * "
                 },
