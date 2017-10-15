@@ -4,7 +4,7 @@ import { IDocGen } from "./DocGen";
 
 export default class CGen implements IDocGen {
     protected firstLine: string;
-    protected commentPrefix: string;
+    protected prefix: string;
     protected lastLine: string;
     protected newLineAfterBrief: boolean;
     protected newLineAfterParams: boolean;
@@ -15,7 +15,8 @@ export default class CGen implements IDocGen {
     protected tparamTemplate: string;
     protected returnTemplate: string;
 
-    protected templateReplaceString: string;
+    protected templateParamReplace: string;
+    protected templateTypeReplace: string;
 
     protected activeEditor: TextEditor;
 
@@ -38,7 +39,8 @@ export default class CGen implements IDocGen {
         returnVals: string[],
     ) {
         this.activeEditor = actEdit;
-        this.templateReplaceString = "{param}";
+        this.templateParamReplace = "{param}";
+        this.templateTypeReplace = "{type}";
         this.params = param;
         this.tparams = tparam;
         this.retVals = returnVals;
@@ -67,8 +69,8 @@ export default class CGen implements IDocGen {
         const getCfg = workspace.getConfiguration;
 
         this.firstLine = getCfg(ConfigType.generic).get<string>(Config.firstLine, "/**");
-        this.commentPrefix = getCfg(ConfigType.generic).get<string>(Config.commentPrefix, " * ");
-        this.lastLine = getCfg(ConfigType.generic).get<string>(Config.lastLine, "**/");
+        this.prefix = getCfg(ConfigType.generic).get<string>(Config.prefix, " * ");
+        this.lastLine = getCfg(ConfigType.generic).get<string>(Config.lastLine, " */");
         this.newLineAfterBrief = getCfg(ConfigType.generic).get<boolean>(Config.newLineAfterBrief, true);
         this.newLineAfterParams = getCfg(ConfigType.generic).get<boolean>(Config.newLineAfterParams, false);
         this.newLineAfterTParams = getCfg(ConfigType.generic).get<boolean>(Config.newLineAfterTParams, false);
@@ -76,7 +78,7 @@ export default class CGen implements IDocGen {
         this.briefTemplate = getCfg(ConfigType.generic).get<string>(Config.briefTemplate, "@brief ");
         this.paramTemplate = getCfg(ConfigType.generic).get<string>(Config.paramTemplate, "@param {param} ");
         this.tparamTemplate = getCfg(ConfigType.generic).get<string>(Config.tparamTemplate, "@tparam {param} ");
-        this.returnTemplate = getCfg(ConfigType.generic).get<string>(Config.returnTemplate, "@return {param} ");
+        this.returnTemplate = getCfg(ConfigType.generic).get<string>(Config.returnTemplate, "@return {type} ");
     }
 
     protected getIndentation(): string {
@@ -94,20 +96,20 @@ export default class CGen implements IDocGen {
         return stringToIndent;
     }
 
-    protected getTemplatedString(template: string, param: string): string {
-        return template.replace(this.templateReplaceString, param);
+    protected getTemplatedString(replace: string, template: string, param: string): string {
+        return template.replace(replace, param);
     }
 
     protected generateBrief(lines: string[]) {
-        lines.push(this.commentPrefix + this.briefTemplate);
+        lines.push(this.prefix + this.briefTemplate);
     }
 
-    protected generateFromTemplate(lines: string[], template: string, templateWith: string[]) {
+    protected generateFromTemplate(lines: string[], replace: string, template: string, templateWith: string[]) {
         let line: string = "";
 
         templateWith.forEach((element: string) => {
-            line = this.commentPrefix;
-            line += this.getTemplatedString(template, element);
+            line = this.prefix;
+            line += this.getTemplatedString(replace, template, element);
             lines.push(line);
         });
     }
@@ -122,21 +124,21 @@ export default class CGen implements IDocGen {
         if (this.briefTemplate.trim().length !== 0) {
             this.generateBrief(lines);
             if (this.newLineAfterBrief === true) {
-                lines.push(this.commentPrefix);
+                lines.push(this.prefix);
             }
         }
 
         if (this.tparamTemplate.trim().length !== 0 && this.tparams.length > 0) {
-            this.generateFromTemplate(lines, this.tparamTemplate, this.tparams);
+            this.generateFromTemplate(lines, this.templateParamReplace, this.tparamTemplate, this.tparams);
             if (this.newLineAfterTParams === true) {
-                lines.push(this.commentPrefix);
+                lines.push(this.prefix);
             }
         }
 
         if (this.paramTemplate.trim().length !== 0 && this.params.length > 0) {
-            this.generateFromTemplate(lines, this.paramTemplate, this.params);
+            this.generateFromTemplate(lines, this.templateParamReplace, this.paramTemplate, this.params);
             if (this.newLineAfterParams === true) {
-                lines.push(this.commentPrefix);
+                lines.push(this.prefix);
             }
         }
 
@@ -145,7 +147,7 @@ export default class CGen implements IDocGen {
                 this.retVals = this.retVals.map((t) => t === "true" || t === "false" ? t : "");
             }
 
-            this.generateFromTemplate(lines, this.returnTemplate, this.retVals);
+            this.generateFromTemplate(lines, this.templateTypeReplace, this.returnTemplate, this.retVals);
         }
 
         if (this.lastLine.trim().length !== 0) {
