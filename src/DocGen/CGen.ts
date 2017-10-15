@@ -18,7 +18,7 @@ export default class CGen implements IDocGen {
     protected templateReplaceString: string;
 
     protected activeEditor: TextEditor;
-    protected position: Position;
+
     protected retVals: string[];
     protected params: string[];
     protected tparams: string[];
@@ -39,7 +39,6 @@ export default class CGen implements IDocGen {
         returnVals: string[],
     ) {
         this.activeEditor = actEdit;
-        this.position = cursorPosition;
         this.templateReplaceString = "{param}";
         this.params = param;
         this.tparams = tparam;
