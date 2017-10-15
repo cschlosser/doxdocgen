@@ -32,8 +32,7 @@ export default class CGen implements IDocGen {
      */
     public constructor(
         actEdit: TextEditor,
-        cursorPosition:
-        Position,
+        cursorPosition: Position,
         param: string[],
         tparam: string[],
         returnVals: string[],
