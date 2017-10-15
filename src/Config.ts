@@ -5,7 +5,7 @@ export enum ConfigType {
 export enum Config {
     triggerSequence = "triggerSequence",
     firstLine = "firstLine",
-    commentPrefix = "commentPrefix",
+    prefix = "prefix",
     lastLine = "lastLine",
     newLineAfterBrief = "newLineAfterBrief",
     newLineAfterParams = "newLineAfterParams",
