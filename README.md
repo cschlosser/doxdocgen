@@ -27,17 +27,23 @@ Like Constructors
 
 ![Constructor](images/ctor.gif)
 
-Defintions in header files
-
-![definition](images/definition.gif)
-
 Multi line definitions/declarations
 
 ![method](images/method.gif)
 
-Or void return values
+Strip reserved keywords
 
-![void](images/void.gif)
+![keywords](images/keywords.gif)
+
+Or even function pointers *as parameters* (see [Known Issues](#function-pointers))
+
+![func_ptr](images/function_ptr.gif)
+
+Featuring an extensive generation customization system
+
+![options](images/options.gif)
+![xml options](images/opts-xml.gif)
+
 
 ## Extension Settings
 
