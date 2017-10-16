@@ -1,5 +1,11 @@
 # Change Log
 
+## [0.0.5]
+
+- Extend customization of generated documentation (#15, #16) (thanks to @rowanG077)
+
+- Fix #10
+
 ## [0.0.4]
 
 - Fix #9
