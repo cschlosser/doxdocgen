@@ -108,9 +108,12 @@ export default class CGen implements IDocGen {
         let line: string = "";
 
         templateWith.forEach((element: string) => {
-            line = this.commentPrefix;
-            line += this.getTemplatedString(replace, template, element);
-            lines.push(line);
+            // Ignore null values
+            if (element !== null) {
+                line = this.commentPrefix;
+                line += this.getTemplatedString(replace, template, element);
+                lines.push(line);
+            }
         });
     }
 
