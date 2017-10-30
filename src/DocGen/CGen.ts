@@ -27,21 +27,21 @@ export default class CGen implements IDocGen {
     /**
      * @param  {TextEditor} actEdit Active editor window
      * @param  {Position} cursorPosition Where the cursor of the user currently is
-     * @param  {string[]} param The parameter names of the method extracted by the parser
+     * @param  {string[]} params The parameter names of the method extracted by the parser
      * @param  {string[]} tparam The template parameter names of the method extracted by the parser.
      * @param  {string[]} returnVals The return values extracted by the parser
      */
     public constructor(
         actEdit: TextEditor,
         cursorPosition: Position,
-        param: string[],
+        params: string[],
         tparam: string[],
         returnVals: string[],
     ) {
         this.activeEditor = actEdit;
         this.templateParamReplace = "{param}";
         this.templateTypeReplace = "{type}";
-        this.params = param;
+        this.params = params;
         this.tparams = tparam;
         this.retVals = returnVals;
     }
