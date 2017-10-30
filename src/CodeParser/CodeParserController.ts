@@ -10,8 +10,8 @@ import {
 } from "vscode";
 import { Config, ConfigType } from "../Config";
 import CodeParser from "./CodeParser";
-import CParser from "./CParser";
-import CppParser from "./CppParser";
+import CParser from "./CParser/CParser";
+import CppParser from "./CParser/CppParser";
 
 /**
  *

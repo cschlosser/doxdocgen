@@ -1,6 +1,6 @@
 import { Position, TextDocumentContentChangeEvent, TextEditor, TextLine } from "vscode";
-import Generator from "../DocGen/CGen";
-import { IDocGen } from "../DocGen/DocGen";
+import Generator from "../../DocGen/CGen";
+import { IDocGen } from "../../DocGen/DocGen";
 import CParser from "./CParser";
 
 /**
