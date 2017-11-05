@@ -113,11 +113,11 @@ export default class CParser implements ICodeParser {
         this.activeEditor = activeEdit;
         this.activeSelection = this.activeEditor.selection.active;
 
-        let line: string;
+        let line: string = "";
         try {
             line = this.getLogicalLine();
         } catch (err) {
-            return null;
+            // console.dir(err);
         }
 
         // template parsing is simpler by using heuristics rather then tokenizing first.
@@ -126,7 +126,7 @@ export default class CParser implements ICodeParser {
 
         line = line.slice(template.length, line.length + 1).trim();
 
-        let retAndArgs: string[][];
+        let retAndArgs: string[][] = [[], []];
         try {
             retAndArgs = this.GetReturnAndArgs(line);
         } catch (err) {
@@ -143,6 +143,7 @@ export default class CParser implements ICodeParser {
             templateArgs,
             retVals,
         );
+
         return cppGenerator;
     }
 
