@@ -226,9 +226,22 @@ export default class CParser implements ICodeParser {
         // Create hierarchical tree based on the parenthesis.
         const tree: ParseTree = ParseTree.CreateTree(tokens).Compact();
 
+        // First slice of everything after assignment since that will not be used.
+        const assignmentIndex = tree.nodes.findIndex((n) => n instanceof Token && n.Type === TokenType.Assignment);
+        if (assignmentIndex !== -1) {
+            tree.nodes = tree.nodes.slice(0, assignmentIndex);
+        }
+
+        // Check if there is an initializer list and slice of everything after it.
+        const initializerList = tree.nodes
+            .findIndex((n) => n instanceof Token && n.Type === TokenType.Symbol && n.Value === ":");
+        if (initializerList !== -1) {
+            tree.nodes = tree.nodes.slice(0, initializerList);
+        }
+
         // return arg.
         const returnArg = this.GetArgument(tree);
-        // check if it is a constructor or descructor since it has no name.
+        // check if it is a constructor or descructor since these have no name..
         // and reverse the assignment of type and name.
         if (returnArg.Name === undefined) {
             if (returnArg.Type.nodes.length !== 1) {
@@ -265,7 +278,7 @@ export default class CParser implements ICodeParser {
             retVals.push(returnArg.Type.Yield());
         }
 
-        // Get arguments list.
+        // Get arguments list as a parsetree and create arguments from them.
         args = this.GetArgumentList(tree)
             .map((a) => this.GetArgument(a))
             .map((a) => a.Name === undefined ? "" : a.Name);
@@ -371,7 +384,7 @@ export default class CParser implements ICodeParser {
             cursor = cursor.nodes.find((n) => n instanceof ParseTree) as ParseTree;
         }
 
-        // Slice parseTree. This can be if it is a function declaration.
+        // Remove parseTree. This can be if it is a function declaration.
         const argumentsIndex = cursor.nodes.findIndex((n) => n instanceof ParseTree);
         if (argumentsIndex !== -1) {
             cursor.nodes.splice(argumentsIndex, 1);
@@ -431,12 +444,6 @@ export default class CParser implements ICodeParser {
     private GetArgument(tree: ParseTree): Argument {
         // Copy tree structure leave original untouched.
         const copy = tree.Copy();
-
-        // First slice of everything after assignment since that will not be used.
-        const assignmentIndex = copy.nodes.findIndex((n) => n instanceof Token && n.Type === TokenType.Assignment);
-        if (assignmentIndex !== -1) {
-            copy.nodes = copy.nodes.slice(0, assignmentIndex);
-        }
 
         // Special case with only ellipsis. C style variadic arguments
         if (copy.nodes.length === 1) {
