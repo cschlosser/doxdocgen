@@ -240,13 +240,27 @@ export default class CParser implements ICodeParser {
             returnArg.Type.nodes = [];
         }
 
+        // Check if return type is a pointer
+        const ptrReturnIndex = returnArg.Type.nodes
+            .findIndex((n) => n instanceof Token && n.Type === TokenType.Pointer);
+
+        // Special case for void functions.
+        const voidReturnIndex = returnArg.Type.nodes
+            .findIndex((n) => n instanceof Token && n.Type === TokenType.Symbol && n.Value === "void");
+
         // Special case for bool return type.
         const boolReturnIndex: number = returnArg.Type.nodes
             .findIndex((n) => n instanceof Token && n.Type === TokenType.Symbol && n.Value === "bool");
+
         if (boolReturnIndex !== -1) {
             retVals.push("true");
             retVals.push("false");
-        } else {
+            if (ptrReturnIndex !== -1) {
+                retVals.push("null");
+            }
+        } else if (voidReturnIndex !== -1 && ptrReturnIndex !== -1) {
+            retVals.push(returnArg.Type.Yield());
+        } else if (voidReturnIndex === -1 && returnArg.Type.nodes.length > 0) {
             retVals.push(returnArg.Type.Yield());
         }
 
