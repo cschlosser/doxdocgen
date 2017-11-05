@@ -147,7 +147,7 @@ export default class CGen implements IDocGen {
 
         if (this.returnTemplate.trim().length !== 0 && this.retVals.length > 0) {
             if (this.includeTypeAtReturn === false) {
-                this.retVals = this.retVals.map((t) => t === "true" || t === "false" ? t : "");
+                this.retVals = this.retVals.map((t) => t === "true" || t === "false" || t === "null" ? t : "");
             }
 
             this.generateFromTemplate(lines, this.templateTypeReplace, this.returnTemplate, this.retVals);
