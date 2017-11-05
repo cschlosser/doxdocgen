@@ -81,6 +81,11 @@ export default class CParser implements ICodeParser {
             Pointer: (x: string): string => (x.match("^\\*") || [])[0],
             Reference: (x: string): string => (x.match("^&") || [])[0],
             Symbol: (x: string): string => {
+                // Handle access specifiers since they aren't really symbols.
+                if (x.startsWith("public:") || x.startsWith("protected:") || x.startsWith("private:")) {
+                    return undefined;
+                }
+
                 // Handle operator and decltype special cases.
                 if (x.startsWith("operator") === true) {
                     const startBrace: number = x.indexOf("(");
@@ -223,6 +228,7 @@ export default class CParser implements ICodeParser {
         const tokens: Token[] = this.Tokenize(line)
             .filter((t) => t.Type !== TokenType.CommentBlock)
             .filter((t) => t.Type !== TokenType.CommentLine);
+
         // Create hierarchical tree based on the parenthesis.
         const tree: ParseTree = ParseTree.CreateTree(tokens).Compact();
 
