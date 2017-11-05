@@ -9,6 +9,8 @@ export enum TokenType {
     Assignment,
     Comma,
     Arrow,
+    CommentBlock,
+    CommentLine,
     Ellipsis,
     Attribute,
 }
