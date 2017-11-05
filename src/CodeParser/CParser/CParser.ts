@@ -3,6 +3,7 @@ import { Config, ConfigType } from "../../Config";
 import Generator from "../../DocGen/CGen";
 import { IDocGen } from "../../DocGen/DocGen";
 import ICodeParser from "../CodeParser";
+import { Argument } from "./Argument";
 import { ParseTree } from "./ParseTree";
 import { Token, TokenType } from "./Token";
 
@@ -18,22 +19,30 @@ export default class CParser implements ICodeParser {
     protected activeEditor: TextEditor;
     protected activeSelection: Position;
 
+    private typeKeywords: string[];
+    private stripKeywords: string[];
     private keywords: string[];
     private lexerVocabulary;
 
     constructor() {
-        this.keywords = [
+        this.typeKeywords = [
+            "const",
+            "struct",
+        ];
+
+        this.stripKeywords = [
             "static",
             "inline",
             "friend",
             "virtual",
             "extern",
             "explicit",
-            "const",
-            "struct",
             "class",
             "override",
         ];
+
+        // Non type keywords will be stripped from the final return type.
+        this.keywords = this.typeKeywords.concat(this.stripKeywords);
 
         this.lexerVocabulary = {
             ArraySubscript: (x: string): string => (x.match("^\\[[^\\[]*?\\]") || [])[0],
@@ -42,6 +51,24 @@ export default class CParser implements ICodeParser {
             Attribute: (x: string): string => (x.match("^\\[\\[[^\\[]*?\\]\\]") || [])[0],
             CloseParenthesis: (x: string): string => (x.match("^\\)") || [])[0],
             Comma: (x: string): string => (x.match("^,") || [])[0],
+            CommentBlock: (x: string): string => {
+                if (x.startsWith("/*") === false) {
+                    return undefined;
+                }
+
+                let closeOffset: number = x.indexOf("*/");
+                closeOffset = closeOffset === -1 ? x.length : closeOffset + 2;
+                return x.slice(0, closeOffset);
+            },
+            CommentLine: (x: string): string => {
+                if (x.startsWith("//") === false) {
+                    return undefined;
+                }
+
+                let closeOffset: number = x.indexOf("\n");
+                closeOffset = closeOffset === -1 ? x.length : closeOffset + 1;
+                return x.slice(0, closeOffset);
+            },
             CurlyBlock: (x: string): string => {
                 if (x.startsWith("{") === false) {
                     return undefined;
@@ -63,7 +90,7 @@ export default class CParser implements ICodeParser {
                     return startEndOffset[1] === 0 ? undefined : x.slice(0, startEndOffset[1]);
                 }
 
-                const reMatch: string = (x.match("^[a-z|A-Z|:|_|\\d]+") || [])[0];
+                const reMatch: string = (x.match("^[a-z|A-Z|:|_|~|\\d]+") || [])[0];
                 if (reMatch === undefined) {
                     return undefined;
                 }
@@ -86,41 +113,28 @@ export default class CParser implements ICodeParser {
         this.activeEditor = activeEdit;
         this.activeSelection = this.activeEditor.selection.active;
 
-        const activeLine: TextLine = this.activeEditor.document.lineAt(this.activeEditor.selection.active.line);
-
-        let line: string = this.getLogicalLine();
-
-        // Not a method
-        if (line.length === 0) {
+        let line: string;
+        try {
+            line = this.getLogicalLine();
+        } catch (err) {
             return null;
         }
 
         // template parsing is simpler by using heuristics rather then tokenizing first.
         const template: string = this.GetTemplate(line);
         const templateArgs: string[] = this.GetArgsFromTemplate(template);
-        let args: string[] = [];
-        let retVals: string[] = [];
 
         line = line.slice(template.length, line.length + 1).trim();
 
+        let retAndArgs: string[][];
         try {
-            // Tokenize rest of expression;
-            const tokens: Token[] = this.Tokenize(line);
-            // Create hierarchical tree based on the parenthesis.
-            const tree: ParseTree = ParseTree.CreateTree(tokens).Compact();
-
-            const parsedArgs: ParseTree[] = tree.GetArgTrees();
-            const parsedReturns: ParseTree = tree.GetReturnTree();
-
-            args = parsedArgs
-                .map((a) => this.GetArgNameFromArgTree(a));
-
-            retVals = this.GetArgTypeFromReturnTree(parsedReturns);
-
+            retAndArgs = this.GetReturnAndArgs(line);
         } catch (err) {
-            args = [];
-            retVals = [];
+            // console.dir(err);
         }
+
+        const retVals = retAndArgs[0];
+        const args = retAndArgs[1];
 
         const cppGenerator: IDocGen = new Generator(
             this.activeEditor,
@@ -135,7 +149,7 @@ export default class CParser implements ICodeParser {
     /***************************************************************************
                                     Implementation
      ***************************************************************************/
-    protected getLogicalLine(): string {
+    private getLogicalLine(): string {
         let logicalLine: string = "";
 
         let nextLine: Position = new Position(this.activeSelection.line + 1, this.activeSelection.character);
@@ -147,29 +161,40 @@ export default class CParser implements ICodeParser {
             nextLineTxt = "";
         }
 
-        while (nextLineTxt.length === 0) { // Get first method line
-            nextLine = new Position(nextLine.line + 1, nextLine.character);
-            nextLineTxt = this.activeEditor.document.lineAt(nextLine.line).text.trim();
-        }
-
-        logicalLine += nextLineTxt;
+        let currentNest: number = 0;
+        logicalLine = nextLineTxt;
 
         // Get method end line
-        while (nextLineTxt.indexOf(";") === -1 && nextLineTxt.indexOf("{") === -1) { // Check for method end
+        let linesToGet: number = 20;
+        while (linesToGet-- > 0) { // Check for end of expression.
             nextLine = new Position(nextLine.line + 1, nextLine.character);
             nextLineTxt = this.activeEditor.document.lineAt(nextLine.line).text.trim();
 
-            logicalLine += " " + nextLineTxt;
+            // Check if method has finished if curly brace is opened while
+            // nesting is occuring.
+            for (let i: number = 0; i < nextLineTxt.length; i++) {
+                if (nextLineTxt[i] === "(") {
+                    currentNest++;
+                } else if (nextLineTxt[i] === ")") {
+                    currentNest--;
+                } else if (nextLineTxt[i] === "{" && currentNest === 0) {
+                    logicalLine += "\n" + nextLineTxt.slice(0, i);
+                    return logicalLine.replace(/^\s+|\s+$/g, "");
+                } else if (nextLineTxt[i] === ";" && currentNest === 0) {
+                    logicalLine += "\n" + nextLineTxt.slice(0, i);
+                    return logicalLine.replace(/^\s+|\s+$/g, "");
+                }
+            }
+
+            logicalLine += "\n" + nextLineTxt;
         }
 
-        logicalLine = logicalLine.replace(/[{|;]$/, "").trim();
-
-        return logicalLine;
+        throw new Error("More then 20 lines were gotten from editor and no end of expression was found.");
     }
 
     private Tokenize(expression: string): Token[] {
         const tokens: Token[] = [];
-        expression = expression.trim();
+        expression = expression.replace(/^\s+|\s+$/g, "");
 
         while (expression.length !== 0) {
             const matches: Token[] = Object.keys(this.lexerVocabulary)
@@ -182,117 +207,247 @@ export default class CParser implements ICodeParser {
                 throw new Error("Multiple matches for next token: " + expression);
             }
 
-            const match = matches[0];
-            tokens.push(match);
-            expression = expression.slice(match.Value.length, expression.length).trim();
+            tokens.push(matches[0]);
+            expression = expression.slice(matches[0].Value.length, expression.length).replace(/^\s+|\s+$/g, "");
         }
 
         return tokens;
     }
 
-    private GetArgNameFromArgTree(tree: ParseTree): string {
-        const hasEllipsis: boolean = tree.nodes
-            .filter((n) => n instanceof Token && n.Type === TokenType.Ellipsis)
-            .length > 0;
+    private GetReturnAndArgs(line: string): string[][] {
+        const retVals: string[] = [];
+        let args: string[] = [];
 
-        const indexTrailingReturn: number = tree.nodes
-            .findIndex((t) => t instanceof Token ? t.Type === TokenType.Arrow : false);
+        // Tokenize rest of expression and remove comment tokens;
+        const tokens: Token[] = this.Tokenize(line)
+            .filter((t) => t.Type !== TokenType.CommentBlock)
+            .filter((t) => t.Type !== TokenType.CommentLine);
+        // Create hierarchical tree based on the parenthesis.
+        const tree: ParseTree = ParseTree.CreateTree(tokens).Compact();
 
-        const isFuncPtr: boolean = tree.nodes
-            .slice(0, indexTrailingReturn === -1 ? tree.nodes.length : indexTrailingReturn)
-            .filter((n) => n instanceof ParseTree)
-            .length === 2;
+        // return arg.
+        const returnArg = this.GetArgument(tree);
+        // check if it is a constructor or descructor since it has no name.
+        // and reverse the assignment of type and name.
+        if (returnArg.Name === undefined) {
+            if (returnArg.Type.nodes.length !== 1) {
+                throw new Error("Too many symbols found for constructor/descructor.");
+            } else if (returnArg.Type.nodes[0] instanceof ParseTree) {
+                throw new Error("One node found with just a parsetree. Malformed input.");
+            }
 
-        // If it is a function pointer the name is in the first tree.
-        if (isFuncPtr === true) {
-            const nestedTokens: Token[] = tree.nodes
-                .filter((n) => n instanceof ParseTree)
-                .map((n) => n as ParseTree)[0]
-                .nodes
-                .filter((n) => n instanceof Token)
-                .map((n) => n as Token)
-                .filter((t) => t.Type === TokenType.Symbol)
-                .filter((t) => this.keywords.find((k) => k === t.Value) === undefined);
-
-            return nestedTokens[0].Value;
+            returnArg.Name = (returnArg.Type.nodes[0] as Token).Value;
+            returnArg.Type.nodes = [];
         }
 
-        const tokens: Token[] = tree.nodes
-            .filter((n) => n instanceof Token)
-            .map((n) => n as Token)
-            .filter((t) => t.Type === TokenType.Symbol)
-            .filter((t) => this.keywords.find((k) => k === t.Value) === undefined);
-
-        if (tokens.length === 0 && hasEllipsis === true) {
-            return "...";
+        // Special case for bool return type.
+        const boolReturnIndex: number = returnArg.Type.nodes
+            .findIndex((n) => n instanceof Token && n.Type === TokenType.Symbol && n.Value === "bool");
+        if (boolReturnIndex !== -1) {
+            retVals.push("true");
+            retVals.push("false");
+        } else {
+            retVals.push(returnArg.Type.Yield());
         }
 
-        if (tokens.length < 2) {
-            return "";
-        }
+        // Get arguments list.
+        args = this.GetArgumentList(tree)
+            .map((a) => this.GetArgument(a))
+            .map((a) => a.Name === undefined ? "" : a.Name);
 
-        return tokens[1].Value;
+        return [retVals, args];
     }
 
-    private GetArgTypeFromReturnTree(tree: ParseTree): string[] {
-        // First strip out the param name or function name since it's not part of the type.
-        const indexTrailingReturn: number = tree.nodes
-            .findIndex((t) => t instanceof Token ? t.Type === TokenType.Arrow : false);
+    private GetArgumentList(tree: ParseTree): ParseTree[] {
+        const args: ParseTree[] = [];
 
-        const isFuncPtr: boolean = tree.nodes
-            .slice(0, indexTrailingReturn === -1 ? tree.nodes.length : indexTrailingReturn)
-            .filter((n) => n instanceof ParseTree)
-            .length === 2;
+        let cursor: ParseTree = tree;
+        while (this.IsFuncPtr(cursor.nodes) === true) {
+            cursor = cursor.nodes.find((n) => n instanceof ParseTree) as ParseTree;
+        }
 
-        let treeToModify: ParseTree = tree;
-        let symbolsFound = 0;
-        // If it is a function pointer the name is in the first tree.
-        if (isFuncPtr === true) {
-            treeToModify = tree.nodes
-                .filter((n) => n instanceof ParseTree)
-                .map((n) => n as ParseTree)[0];
+        const argTree: ParseTree = cursor.nodes.find((n) => n instanceof ParseTree) as ParseTree;
+        if (argTree === undefined) {
+            throw new Error("Function arguments not found.");
+        }
 
-            // Function pointer so delete the first symbol in the tree
-            // Fake that one symbol was found.
-            symbolsFound = 1;
-        } else {
-            // Check for special case if return type is boolean or void.
-            for (const token of treeToModify.nodes) {
-                if (token instanceof ParseTree) {
-                    break;
-                }
-                if (token.Type !== TokenType.Symbol) {
-                    continue;
-                }
-
-                if (token.Value === "bool") {
-                    return ["true", "false"];
-                } else if (token.Value === "void") {
-                    return [];
-                }
+        // Split the argument tree on commas
+        let arg: ParseTree = new ParseTree();
+        for (const node of argTree.nodes) {
+            if (node instanceof Token && node.Type === TokenType.Comma) {
+                args.push(arg);
+                arg = new ParseTree();
+            } else {
+                arg.nodes.push(node);
             }
         }
 
-        for (let i = 0; i < treeToModify.nodes.length; i++) {
-            const node = treeToModify.nodes[i];
+        if (arg.nodes.length > 0) {
+            args.push(arg);
+        }
+
+        return args;
+    }
+
+    private IsFuncPtr(nodes: Array<Token | ParseTree>) {
+        return nodes.filter((n) => n instanceof ParseTree).length === 2;
+    }
+
+    private StripNonTypeNodes(tree: ParseTree) {
+        tree.nodes = tree.nodes
+            // All strippable keywords.
+            .filter((n) => {
+                return !(n instanceof Token
+                    && n.Type === TokenType.Symbol
+                    && this.stripKeywords.find((k) => k === n.Value) !== undefined);
+            })
+            // Attributes aren't part of the type.
+            .filter((n) => !(n instanceof Token && n.Type === TokenType.Attribute));
+    }
+
+    private GetArgumentFromTrailingReturn(tree: ParseTree, startTrailingReturn: number): Argument {
+        const argument: Argument = new Argument();
+
+        // Find index of auto prior to the first parseTree.
+        // If auto is not found something is going wrong since trailing return
+        // requires auto.
+        let autoIndex: number = -1;
+        for (let i: number = 0; i < tree.nodes.length; i++) {
+            const node = tree.nodes[i];
+            if (node instanceof ParseTree) {
+                break;
+            }
+            if (node.Type === TokenType.Symbol && node.Value === "auto") {
+                autoIndex = i;
+                break;
+            }
+        }
+
+        if (autoIndex === -1) {
+            throw new Error("Function declaration has trailing return but type is not auto.");
+        }
+
+        // Get symbol between auto and parseTree which is the argument name. It also may not be a keyword.
+        for (let i: number = autoIndex + 1; i < tree.nodes.length; i++) {
+            const node = tree.nodes[i];
+            if (node instanceof ParseTree) {
+                break;
+            }
+            if (node.Type === TokenType.Symbol && this.keywords.find((k) => k === node.Value) === undefined) {
+                argument.Name = node.Value;
+                break;
+            }
+        }
+
+        argument.Type.nodes = tree.nodes.slice(startTrailingReturn + 1, tree.nodes.length);
+        this.StripNonTypeNodes(argument.Type);
+
+        return argument;
+    }
+
+    private GetArgumentFromFuncPtr(tree: ParseTree): Argument {
+        const argument: Argument = new Argument();
+
+        argument.Type = tree;
+
+        let cursor: ParseTree = tree;
+
+        while (this.IsFuncPtr(cursor.nodes) === true) {
+            cursor = cursor.nodes.find((n) => n instanceof ParseTree) as ParseTree;
+        }
+
+        // Slice parseTree. This can be if it is a function declaration.
+        const argumentsIndex = cursor.nodes.findIndex((n) => n instanceof ParseTree);
+        if (argumentsIndex !== -1) {
+            cursor.nodes.splice(argumentsIndex, 1);
+        }
+
+        // Find first symbol that is the argument name.
+        // Remove it from the tree and set the name to the argument name
+        for (let i: number = 0; i < cursor.nodes.length; i++) {
+            const node = cursor.nodes[i];
+            if (node instanceof ParseTree) {
+                continue;
+            }
+
+            if (node.Type === TokenType.Symbol && this.keywords.find((k) => k === node.Value) === undefined) {
+                argument.Name = node.Value;
+                cursor.nodes.splice(i, 1);
+            }
+        }
+
+        this.StripNonTypeNodes(argument.Type);
+        return argument;
+    }
+
+    private GetDefaultArgument(tree: ParseTree): Argument {
+        const argument: Argument = new Argument();
+
+        for (const node of tree.nodes) {
             if (node instanceof ParseTree) {
                 break;
             }
 
-            if (node instanceof Token
-                && node.Type === TokenType.Symbol
+            const symbolCount = argument.Type.nodes
+                .filter((n) => n instanceof Token)
+                .map((n) => n as Token)
+                .filter((n) => n.Type === TokenType.Symbol)
+                .filter((n) => this.keywords.find((k) => k === n.Value) === undefined)
+                .length;
+
+            if (node.Type === TokenType.Symbol
                 && this.keywords.find((k) => k === node.Value) === undefined
             ) {
-                symbolsFound++;
+                if (symbolCount === 1 && argument.Name === undefined) {
+                    argument.Name = node.Value;
+                    continue;
+                } else if (symbolCount > 1) {
+                    throw new Error("Too many non keyword symbols.");
+                }
             }
 
-            if (symbolsFound === 2) {
-                treeToModify.nodes.splice(i, 1);
-                break;
+            argument.Type.nodes.push(node);
+        }
+
+        this.StripNonTypeNodes(argument.Type);
+        return argument;
+    }
+
+    private GetArgument(tree: ParseTree): Argument {
+        // Copy tree structure leave original untouched.
+        const copy = tree.Copy();
+
+        // First slice of everything after assignment since that will not be used.
+        const assignmentIndex = copy.nodes.findIndex((n) => n instanceof Token && n.Type === TokenType.Assignment);
+        if (assignmentIndex !== -1) {
+            copy.nodes = copy.nodes.slice(0, assignmentIndex);
+        }
+
+        // Special case with only ellipsis. C style variadic arguments
+        if (copy.nodes.length === 1) {
+            const node = copy.nodes[0];
+            if (node instanceof Token && node.Type === TokenType.Ellipsis) {
+                const argument: Argument = new Argument();
+                argument.Name = node.Value;
+                return argument;
             }
         }
 
-        return [tree.ToString()];
+        // Check if it is has a trailing return.
+        const startTrailingReturn: number = copy.nodes
+            .findIndex((t) => t instanceof Token ? t.Type === TokenType.Arrow : false);
+
+        // Special case trailing return.
+        if (startTrailingReturn !== -1) {
+            return this.GetArgumentFromTrailingReturn(copy, startTrailingReturn);
+        }
+
+        // Handle function pointers
+        if (this.IsFuncPtr(copy.nodes) === true) {
+            return this.GetArgumentFromFuncPtr(copy);
+        }
+
+        return this.GetDefaultArgument(copy);
     }
 
     private GetSubExprStartEnd(expression: string, startSearch: number, openExpr: string, closeExpr: string): number[] {
@@ -347,7 +502,7 @@ export default class CParser implements ICodeParser {
         }
 
         // Remove <> and add a comma to the end to remove edge case.
-        template = template.slice(template.indexOf("<") + 1, template.lastIndexOf(">")).trim() + ",";
+        template = template.slice(template.indexOf("<") + 1, template.lastIndexOf(">")).replace(/^\s+|\s+$/g, "") + ",";
 
         const nestedCounts: { [key: string]: number; } = {
             "(": 0,
@@ -362,7 +517,7 @@ export default class CParser implements ICodeParser {
                 && nestedCounts["{"] === 0;
 
             if (notInSubExpr === true && template[i] === ",") {
-                args.push(template.slice(lastSeparator + 1, i).trim());
+                args.push(template.slice(lastSeparator + 1, i).replace(/^\s+|\s+$/g, ""));
             } else if (notInSubExpr === true && (template[i] === " " || template[i] === ".")) {
                 lastSeparator = i;
             }
