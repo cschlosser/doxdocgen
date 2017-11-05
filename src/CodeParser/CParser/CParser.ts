@@ -85,7 +85,6 @@ export default class CParser implements ICodeParser {
                 if (x.startsWith("public:") || x.startsWith("protected:") || x.startsWith("private:")) {
                     return undefined;
                 }
-
                 // Handle operator and decltype special cases.
                 if (x.startsWith("operator") === true) {
                     const startBrace: number = x.indexOf("(");
