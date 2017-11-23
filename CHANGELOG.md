@@ -1,5 +1,11 @@
 # Change Log
 
+## [0.0.7]
+
+- Fix #31
+
+- Fixed bug where using a different trigger sequence then "*" causes a newline to be addd between the comment and the documented entity.
+
 ## [0.0.6]
 
 - Improve and fix comment generation for several C++ features (#23) (thanks to @rowanG077 again)
