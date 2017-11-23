@@ -44,7 +44,6 @@ Featuring an extensive generation customization system
 ![options](images/options.gif)
 ![xml options](images/opts-xml.gif)
 
-
 ## Extension Settings
 
 See [Below](#whats-to-come)
@@ -57,15 +56,7 @@ See [Below](#whats-to-come)
 
 ## Known Issues
 
-### Function pointers
-
-See [#18](https://github.com/christophschlosser/doxdocgen/issues/18)
-
-Documentation for certain constructs (like the following) may not be generated correctly.
-
-```C
-int (*idputs(int (*puts)(const char *)))(const char *)
-```
+[See open bugs](https://github.com/christophschlosser/doxdocgen/labels/bug)
 
 ## What's to come
 
@@ -78,8 +69,3 @@ int (*idputs(int (*puts)(const char *)))(const char *)
 
 * More languages
   * C++11 and newer
-
-* Improve language support
-  * Classes
-  * Namespaces
-  * Enums
