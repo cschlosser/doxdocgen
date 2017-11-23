@@ -111,12 +111,8 @@ export default class CodeParserController {
             currentPos.character - this.triggerSequence.length,
         );
 
-        let endReplace: Position = new Position(currentPos.line, currentPos.character);
-        const nextLineText: string = window.activeTextEditor.document.lineAt(endReplace.line + 1).text;
-        // VSCode may enter a * on itself, we don't want that in our comment.
-        if (nextLineText.trim() === "*") {
-            endReplace = new Position(currentPos.line + 1, nextLineText.length);
-        }
+        const nextLineText: string = window.activeTextEditor.document.lineAt(startReplace.line + 1).text;
+        const endReplace = new Position(currentPos.line + 1, nextLineText.length);
 
         parser.Parse(activeEditor, event).GenerateDoc(new Range(startReplace, endReplace));
     }
