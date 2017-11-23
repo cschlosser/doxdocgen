@@ -233,18 +233,6 @@ export default class CParser implements ICodeParser {
 
         // return argument.
         const returnArg = this.GetArgument(tree);
-        // check if it is a constructor or descructor since these have no name..
-        // and reverse the assignment of type and name.
-        if (returnArg.Name === undefined) {
-            if (returnArg.Type.nodes.length !== 1) {
-                throw new Error("Too many symbols found for constructor/descructor.");
-            } else if (returnArg.Type.nodes[0] instanceof ParseTree) {
-                throw new Error("One node found with just a parsetree. Malformed input.");
-            }
-
-            returnArg.Name = (returnArg.Type.nodes[0] as Token).Value;
-            returnArg.Type.nodes = [];
-        }
 
         // Check if return type is a pointer
         const ptrReturnIndex = returnArg.Type.nodes
@@ -424,30 +412,17 @@ export default class CParser implements ICodeParser {
     private GetDefaultArgument(tree: ParseTree): Argument {
         const argument: Argument = new Argument();
 
-        for (const node of tree.nodes) {
-            if (node instanceof ParseTree) {
+        for (let i = tree.nodes.length - 1; i >= 0; i--) {
+            const node = tree.nodes[i];
+            if (node instanceof Token && node.Type === TokenType.Symbol) {
+                argument.Name = node.Value;
+                tree.nodes.splice(i, 1);
                 break;
             }
+        }
 
-            const symbolCount = argument.Type.nodes
-                .filter((n) => n instanceof Token)
-                .map((n) => n as Token)
-                .filter((n) => n.Type === TokenType.Symbol)
-                .filter((n) => this.keywords.find((k) => k === n.Value) === undefined)
-                .length;
-
-            if (node.Type === TokenType.Symbol
-                && this.keywords.find((k) => k === node.Value) === undefined
-            ) {
-                if (symbolCount === 1 && argument.Name === undefined) {
-                    argument.Name = node.Value;
-                    continue;
-                } else if (symbolCount > 1) {
-                    throw new Error("Too many non keyword symbols.");
-                }
-            }
-
-            argument.Type.nodes.push(node);
+        if (tree.nodes.length > 0) {
+            argument.Type.nodes = tree.nodes.filter((x) => x instanceof Token);
         }
 
         this.StripNonTypeNodes(argument.Type);
