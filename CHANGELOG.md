@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.6]
+
+- Improve and fix comment generation for several C++ features (#23) (thanks to @rowanG077 again)
+
 ## [0.0.5]
 
 - Extend customization of generated documentation (#15, #16) (thanks to @rowanG077)
