@@ -114,6 +114,6 @@ export default class CodeParserController {
         const nextLineText: string = window.activeTextEditor.document.lineAt(startReplace.line + 1).text;
         const endReplace = new Position(currentPos.line + 1, nextLineText.length);
 
-        parser.Parse(activeEditor, event).GenerateDoc(new Range(startReplace, endReplace));
+        parser.Parse(activeEditor).GenerateDoc(new Range(startReplace, endReplace));
     }
 }
