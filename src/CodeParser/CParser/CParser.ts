@@ -113,7 +113,7 @@ export default class CParser implements ICodeParser {
     /**
      * @inheritdoc
      */
-    public Parse(activeEdit: TextEditor, event: TextDocumentContentChangeEvent): IDocGen {
+    public Parse(activeEdit: TextEditor): IDocGen {
         this.activeEditor = activeEdit;
         this.activeSelection = this.activeEditor.selection.active;
 
