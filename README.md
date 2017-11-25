@@ -35,7 +35,7 @@ Strip reserved keywords
 
 ![keywords](images/keywords.gif)
 
-Or even function pointers *as parameters* (see [Known Issues](#function-pointers))
+Or even function pointers
 
 ![func_ptr](images/function_ptr.gif)
 
