@@ -20,36 +20,6 @@ import MockPosition from "./MockPosition";
 import MockSelection from "./MockSelection";
 
 // Defines a Mocha test suite to group tests of similar kind together
-suite("Comment parsing", () => {
-
-    function setup(method: string): IDocGen {
-        let parser: CodeParser;
-        parser = new CParser();
-
-        let position: MockPosition;
-        position = new MockPosition(0, 0);
-
-        let selection: MockSelection;
-        selection = new MockSelection(position);
-
-        let line: MockLine;
-        line = new MockLine(method);
-
-        let doc: MockDocument;
-        doc = new MockDocument(line);
-
-        let editor: vscode.TextEditor;
-        editor = new MockEditor(selection, doc);
-
-        const gen: IDocGen = parser.Parse(editor);
-
-        return gen;
-    }
-
-    // Tests
-});
-
-// Defines a Mocha test suite to group tests of similar kind together
 suite("Comment generation", () => {
 
     let editor: MockEditor;
