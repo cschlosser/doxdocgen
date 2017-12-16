@@ -2,22 +2,22 @@
 
 ## Fix
 
-[ ] Link to issue. If there is no issue please describe it using at least the issue template
+- [ ] Link to issue. If there is no issue please describe it using at least the issue template
 
-[ ] Description of the fix
+- [ ] Description of the fix
 
-[ ] Added unit test
+- [ ] Added unit test
 
 ## Feature
 
-[ ] Description of what's added
+- [ ] Description of what's added
 
-[ ] Gif of your feature if appropriate
+- [ ] Gif of your feature if appropriate
 
-[ ] Added gif to README
+- [ ] Added gif to README
 
-[ ] Added unit test
+- [ ] Added unit test
 
 ## Other
 
-[ ] Description
+- [ ] Description
