@@ -1,8 +1,8 @@
 sudo: false
 
 branches:
-  except:
-  - /^release-.*$/
+  only:
+    - maste
 
 os:
   - linux
