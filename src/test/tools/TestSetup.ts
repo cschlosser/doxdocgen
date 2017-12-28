@@ -1,8 +1,8 @@
 import * as vscode from "vscode";
-import CodeParser from "../CodeParser/CodeParser";
-import CParser from "../CodeParser/CParser/CParser";
-import { IDocGen } from "../DocGen/DocGen";
-import * as myExtension from "../extension";
+import CodeParser from "../../CodeParser/CodeParser";
+import CParser from "../../CodeParser/CParser/CParser";
+import { IDocGen } from "../../DocGen/DocGen";
+import * as myExtension from "../../extension";
 import MockDocument from "./MockDocument";
 import MockEditor from "./MockEditor";
 import MockLine from "./MockLine";
@@ -13,10 +13,10 @@ export default class TestSetup {
     private editor: MockEditor;
 
     constructor(method: string) {
-        this.SetMethod(method);
+        this.SetLine(method);
     }
 
-    public SetMethod(method: string): TestSetup {
+    public SetLine(method: string): TestSetup {
         let position: MockPosition;
         position = new MockPosition(0, 0);
 
