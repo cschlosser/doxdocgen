@@ -12,18 +12,19 @@ export default class MockDocument implements vscode.TextDocument {
     public eol: vscode.EndOfLine;
     public lineCount: number;
     private line: vscode.TextLine;
-    private firstCall: boolean;
+    private callCount: number;
     public constructor(line: vscode.TextLine) {
         this.line = line;
-        this.firstCall = true;
+        this.callCount = 0;
     }
     public save(): Thenable<boolean> {
         throw new Error("Method not implemented.");
     }
     public lineAt(line: number | vscode.Position): vscode.TextLine;
     public lineAt(position: any): any {
-        if (this.firstCall) {
-            this.firstCall = false;
+        if (++this.callCount === 1) {
+            return new MockLine("");
+        } else if (this.callCount === 2) {
             return this.line;
         } else {
             return new MockLine(";");
