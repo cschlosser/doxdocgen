@@ -22,10 +22,12 @@ export default class CParser implements ICodeParser {
     private typeKeywords: string[];
     private stripKeywords: string[];
     private keywords: string[];
+    private noexcepts: string[];
     private lexerVocabulary;
 
     constructor() {
         this.typeKeywords = [
+            "constexpr",
             "const",
             "struct",
         ];
@@ -39,6 +41,12 @@ export default class CParser implements ICodeParser {
             "explicit",
             "class",
             "override",
+            "typename",
+        ];
+
+        this.noexcepts = [
+            "noexcept",
+            "throw",
         ];
 
         // Non type keywords will be stripped from the final return type.
@@ -77,6 +85,22 @@ export default class CParser implements ICodeParser {
                 return startEndOffset[1] === 0 ? undefined : x.slice(0, startEndOffset[1]);
             },
             Ellipsis: (x: string): string => (x.match("^\\.\\.\\.") || [])[0],
+            Noexcept: (x: string): string => {
+                const foundIndex: number = this.noexcepts
+                    .findIndex((n: string) => x.startsWith(n) === true);
+
+                if (foundIndex === -1) {
+                    return undefined;
+                }
+
+                if (x.slice(this.noexcepts[foundIndex].length).trim().startsWith("(") === false) {
+                    return x.slice(0, this.noexcepts[foundIndex].length);
+                }
+
+                const startEndOffset: number[] = this.GetSubExprStartEnd(x, 0, "(", ")");
+                return startEndOffset[1] === 0 ? undefined : x.slice(0, startEndOffset[1]);
+
+            },
             OpenParenthesis: (x: string): string => (x.match("^\\(") || [])[0],
             Pointer: (x: string): string => (x.match("^\\*") || [])[0],
             Reference: (x: string): string => (x.match("^&") || [])[0],
@@ -85,27 +109,57 @@ export default class CParser implements ICodeParser {
                 if (x.startsWith("public:") || x.startsWith("protected:") || x.startsWith("private:")) {
                     return undefined;
                 }
-                // Handle operator and decltype special cases.
-                if (x.startsWith("operator") === true) {
-                    const startBrace: number = x.indexOf("(");
-                    return startBrace === -1 ? undefined : x.slice(0, startBrace);
-                } else if (x.startsWith("decltype") === true) {
+
+                // Handle noexcept and throw since they aren't normal symbols.
+                const noExceptFound: number = this.noexcepts
+                    .findIndex((n: string) => x.startsWith(n) === true);
+
+                if (noExceptFound !== -1) {
+                    return undefined;
+                }
+
+                // Handle decltype special cases.
+                if (x.startsWith("decltype") === true) {
                     const startEndOffset: number[] = this.GetSubExprStartEnd(x, 0, "(", ")");
                     return startEndOffset[1] === 0 ? undefined : x.slice(0, startEndOffset[1]);
                 }
 
-                const reMatch: string = (x.match("^[a-z|A-Z|:|_|~|\\d]+") || [])[0];
+                // Special case group up the fundamental types with the modifiers.
+                // tslint:disable-next-line:max-line-length
+                let reMatch: string = (x.match("^(unsigned|signed|short|long|int|char|double)(\\s+(unsigned|signed|short|long|int|char|double))+") || [])[0];
+                if (reMatch !== undefined) {
+                    return reMatch.trim();
+                }
+
+                // Regex to handle a part of all symbols and includes all symbol special cases.
+                // This is run in a loop because template parts of a symbol can't be parsed using regex.
+                // tslint:disable-next-line:max-line-length
+                const symbolRegex: string = "^([a-z|A-Z|:|_|~|\\d]*operator\\s*(\"\"_[a-z|A-Z]+|>>=|<<=|->\\*|\\+=|-=|\\*=|\\/=|%=|ˆ=|&=|\\|=|<<|>>|==|!=|<=|->|>=|&&|\\|\\||\\+\\+|--|\\+|-|\\*|\\/|%|\\^|&|\||~|!|=|<|>|,|\\[\\s*\\]|\\(\\s*\\)|(new|delete)\\s*(\\[\\s*\\]){0,1}){0,1}|[a-z|A-Z|:|_|~|\\d]+)";
+
+                reMatch = (x.match(symbolRegex) || [])[0];
                 if (reMatch === undefined) {
                     return undefined;
                 }
 
-                // Check if symbol includes a template for instance Matrix<T, M, N> and include it if so.
-                if (x.slice(reMatch.length, x.length).trim().startsWith("<") === false) {
-                    return reMatch;
+                let symbol: string = reMatch;
+                while (true) {
+                    if (x.slice(symbol.length).trim().startsWith("<") === true) {
+                        const offsets: number[] = this.GetSubExprStartEnd(x, symbol.length, "<", ">");
+                        if (offsets[1] === 0) {
+                            return undefined;
+                        }
+                        symbol = x.slice(0, offsets[1]);
+                    }
+
+                    reMatch = (x.slice(symbol.length).match(symbolRegex) || [])[0];
+                    if (reMatch === undefined) {
+                        break;
+                    }
+
+                    symbol += reMatch.trim();
                 }
 
-                const offsets: number[] = this.GetSubExprStartEnd(x, reMatch.length, "<", ">");
-                return offsets[1] === 0 ? undefined : x.slice(0, offsets[1]);
+                return symbol.trim();
             },
         };
     }
@@ -125,10 +179,14 @@ export default class CParser implements ICodeParser {
         }
 
         // template parsing is simpler by using heuristics rather then tokenizing first.
-        const template: string = this.GetTemplate(line);
-        const templateArgs: string[] = this.GetArgsFromTemplate(template);
+        const templateArgs: string[] = [];
+        while (line.startsWith("template")) {
+            const template: string = this.GetTemplate(line);
 
-        line = line.slice(template.length, line.length + 1).trim();
+            templateArgs.push.apply(templateArgs, this.GetArgsFromTemplate(template));
+
+            line = line.slice(template.length, line.length + 1).trim();
+        }
 
         let retAndArgs: string[][] = [[], []];
         try {
@@ -185,7 +243,10 @@ export default class CParser implements ICodeParser {
                 } else if (nextLineTxt[i] === "{" && currentNest === 0) {
                     logicalLine += "\n" + nextLineTxt.slice(0, i);
                     return logicalLine.replace(/^\s+|\s+$/g, "");
-                } else if (nextLineTxt[i] === ";" && currentNest === 0) {
+                } else if ((nextLineTxt[i] === ";"
+                    || (nextLineTxt[i] === ":" && nextLineTxt[i - 1] !== ":" && nextLineTxt[i + 1] !== ":"))
+                    && currentNest === 0) {
+
                     logicalLine += "\n" + nextLineTxt.slice(0, i);
                     return logicalLine.replace(/^\s+|\s+$/g, "");
                 }
@@ -233,6 +294,18 @@ export default class CParser implements ICodeParser {
 
         // return argument.
         const returnArg = this.GetArgument(tree);
+        // check if it is a constructor or descructor since these have no name..
+        // and reverse the assignment of type and name.
+        if (returnArg.Name === undefined) {
+            if (returnArg.Type.nodes.length !== 1) {
+                throw new Error("Too many symbols found for constructor/descructor.");
+            } else if (returnArg.Type.nodes[0] instanceof ParseTree) {
+                throw new Error("One node found with just a parsetree. Malformed input.");
+            }
+
+            returnArg.Name = (returnArg.Type.nodes[0] as Token).Value;
+            returnArg.Type.nodes = [];
+        }
 
         // Check if return type is a pointer
         const ptrReturnIndex = returnArg.Type.nodes
@@ -275,11 +348,11 @@ export default class CParser implements ICodeParser {
             tree.nodes = tree.nodes.slice(0, assignmentIndex);
         }
 
-        // Check if there is an initializer list and slice of everything after it.
-        const initializerList = tree.nodes
-            .findIndex((n) => n instanceof Token && n.Type === TokenType.Symbol && n.Value === ":");
-        if (initializerList !== -1) {
-            tree.nodes = tree.nodes.slice(0, initializerList);
+        // Noexcept isn't needed so slice everything after it.
+        const noexcept = tree.nodes
+            .findIndex((n) => n instanceof Token && n.Type === TokenType.Noexcept);
+        if (noexcept !== -1) {
+            tree.nodes = tree.nodes.slice(0, noexcept);
         }
 
         return tree;
@@ -412,17 +485,29 @@ export default class CParser implements ICodeParser {
     private GetDefaultArgument(tree: ParseTree): Argument {
         const argument: Argument = new Argument();
 
-        for (let i = tree.nodes.length - 1; i >= 0; i--) {
-            const node = tree.nodes[i];
-            if (node instanceof Token && node.Type === TokenType.Symbol) {
-                argument.Name = node.Value;
-                tree.nodes.splice(i, 1);
+        for (const node of tree.nodes) {
+            if (node instanceof ParseTree) {
                 break;
             }
-        }
+            const symbolCount = argument.Type.nodes
+                .filter((n) => n instanceof Token)
+                .map((n) => n as Token)
+                .filter((n) => n.Type === TokenType.Symbol)
+                .filter((n) => this.keywords.find((k) => k === n.Value) === undefined)
+                .length;
 
-        if (tree.nodes.length > 0) {
-            argument.Type.nodes = tree.nodes.filter((x) => x instanceof Token);
+            if (node.Type === TokenType.Symbol
+                && this.keywords.find((k) => k === node.Value) === undefined
+            ) {
+                if (symbolCount === 1 && argument.Name === undefined) {
+                    argument.Name = node.Value;
+                    continue;
+                } else if (symbolCount > 1) {
+                    throw new Error("Too many non keyword symbols.");
+                }
+            }
+
+            argument.Type.nodes.push(node);
         }
 
         this.StripNonTypeNodes(argument.Type);
