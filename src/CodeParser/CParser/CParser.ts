@@ -22,7 +22,7 @@ export default class CParser implements ICodeParser {
     private typeKeywords: string[];
     private stripKeywords: string[];
     private keywords: string[];
-    private noexcepts: string[];
+    private specifiers: string[];
     private lexerVocabulary;
 
     constructor() {
@@ -33,6 +33,7 @@ export default class CParser implements ICodeParser {
         ];
 
         this.stripKeywords = [
+            "final",
             "static",
             "inline",
             "friend",
@@ -44,9 +45,10 @@ export default class CParser implements ICodeParser {
             "typename",
         ];
 
-        this.noexcepts = [
+        this.specifiers = [
             "noexcept",
             "throw",
+            "alignas",
         ];
 
         // Non type keywords will be stripped from the final return type.
@@ -85,36 +87,36 @@ export default class CParser implements ICodeParser {
                 return startEndOffset[1] === 0 ? undefined : x.slice(0, startEndOffset[1]);
             },
             Ellipsis: (x: string): string => (x.match("^\\.\\.\\.") || [])[0],
-            Noexcept: (x: string): string => {
-                const foundIndex: number = this.noexcepts
+            OpenParenthesis: (x: string): string => (x.match("^\\(") || [])[0],
+            Pointer: (x: string): string => (x.match("^\\*") || [])[0],
+            Reference: (x: string): string => (x.match("^&") || [])[0],
+            Specifier: (x: string): string => {
+                const foundIndex: number = this.specifiers
                     .findIndex((n: string) => x.startsWith(n) === true);
 
                 if (foundIndex === -1) {
                     return undefined;
                 }
 
-                if (x.slice(this.noexcepts[foundIndex].length).trim().startsWith("(") === false) {
-                    return x.slice(0, this.noexcepts[foundIndex].length);
+                if (x.slice(this.specifiers[foundIndex].length).trim().startsWith("(") === false) {
+                    return x.slice(0, this.specifiers[foundIndex].length);
                 }
 
                 const startEndOffset: number[] = this.GetSubExprStartEnd(x, 0, "(", ")");
                 return startEndOffset[1] === 0 ? undefined : x.slice(0, startEndOffset[1]);
 
             },
-            OpenParenthesis: (x: string): string => (x.match("^\\(") || [])[0],
-            Pointer: (x: string): string => (x.match("^\\*") || [])[0],
-            Reference: (x: string): string => (x.match("^&") || [])[0],
             Symbol: (x: string): string => {
                 // Handle access specifiers since they aren't really symbols.
                 if (x.startsWith("public:") || x.startsWith("protected:") || x.startsWith("private:")) {
                     return undefined;
                 }
 
-                // Handle noexcept and throw since they aren't normal symbols.
-                const noExceptFound: number = this.noexcepts
+                // Handle specifiers
+                const specifierFound: number = this.specifiers
                     .findIndex((n: string) => x.startsWith(n) === true);
 
-                if (noExceptFound !== -1) {
+                if (specifierFound !== -1) {
                     return undefined;
                 }
 
@@ -156,10 +158,10 @@ export default class CParser implements ICodeParser {
                         break;
                     }
 
-                    symbol += reMatch.trim();
+                    symbol += reMatch;
                 }
 
-                return symbol.trim();
+                return symbol.replace(/\s+$/, "");
             },
         };
     }
@@ -348,11 +350,15 @@ export default class CParser implements ICodeParser {
             tree.nodes = tree.nodes.slice(0, assignmentIndex);
         }
 
-        // Noexcept isn't needed so slice everything after it.
-        const noexcept = tree.nodes
-            .findIndex((n) => n instanceof Token && n.Type === TokenType.Noexcept);
-        if (noexcept !== -1) {
-            tree.nodes = tree.nodes.slice(0, noexcept);
+        // Specifiers aren't needed so remove them.
+        while (true) {
+            const specifierIndex = tree.nodes
+            .findIndex((n) => n instanceof Token && n.Type === TokenType.Specifier);
+            if (specifierIndex !== -1) {
+                tree.nodes.splice(specifierIndex, 1);
+            } else {
+                break;
+            }
         }
 
         return tree;

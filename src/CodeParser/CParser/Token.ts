@@ -13,7 +13,7 @@ export enum TokenType {
     CommentLine,
     Ellipsis,
     Attribute,
-    Noexcept,
+    Specifier,
 }
 
 export class Token {
