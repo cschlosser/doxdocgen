@@ -26,7 +26,7 @@ suite("C++ - Operators Tests", () => {
         assert.equal("/**\n * @brief \n * \n * @param lhs \n * @param rhs \n * @return T \n */", result);
     });
 
-    test("* operator", () => {
+    test("* operator with params", () => {
         const result = testSetup.SetLine("T operator*(const T& lhs, const T2& rhs);").GetResult();
         assert.equal("/**\n * @brief \n * \n * @param lhs \n * @param rhs \n * @return T \n */", result);
     });
@@ -46,7 +46,7 @@ suite("C++ - Operators Tests", () => {
         assert.equal("/**\n * @brief \n * \n * @param lhs \n * @param rhs \n * @return T \n */", result);
     });
 
-    test("& operator", () => {
+    test("& operator with params", () => {
         const result = testSetup.SetLine("T operator&(const T& lhs, const T2& rhs);").GetResult();
         assert.equal("/**\n * @brief \n * \n * @param lhs \n * @param rhs \n * @return T \n */", result);
     });
@@ -199,49 +199,72 @@ suite("C++ - Operators Tests", () => {
         assert.equal("/**\n * @brief \n * \n * @return T \n */", result);
     });
 
+    test("() operator", () => {
+        let result = testSetup.SetLine("R operator()(const T& a, const T2& b);").GetResult();
+        assert.equal("/**\n * @brief \n * \n * @param a \n * @param b \n * @return R \n */", result);
+
+        result = testSetup.SetLine("R operator( )(const T& a, const T2& b);").GetResult();
+        assert.equal("/**\n * @brief \n * \n * @param a \n * @param b \n * @return R \n */", result);
+    });
+
     test(", operator", () => {
-        const result = testSetup.SetLine("T operator+(const T& lhs, const T2& rhs);").GetResult();
-        assert.equal("/**\n * @brief \n * \n * @param lhs \n * @param rhs \n * @return T \n */", result);
+        const result = testSetup.SetLine("T2& operator , (const T2& t);").GetResult();
+        assert.equal("/**\n * @brief \n * \n * @param t \n * @return T2& \n */", result);
+    });
+
+    test("* operator without params", () => {
+        const result = testSetup.SetLine("R& operator*();").GetResult();
+        assert.equal("/**\n * @brief \n * \n * @return R& \n */", result);
+    });
+
+    test("& operator without params", () => {
+        const result = testSetup.SetLine("R* operator&();").GetResult();
+        assert.equal("/**\n * @brief \n * \n * @return R* \n */", result);
     });
 
     test("->* operator", () => {
-        const result = testSetup.SetLine("T operator+(const T& lhs, const T2& rhs);").GetResult();
-        assert.equal("/**\n * @brief \n * \n * @param lhs \n * @param rhs \n * @return T \n */", result);
+        const result = testSetup.SetLine("R& operator->*();").GetResult();
+        assert.equal("/**\n * @brief \n * \n * @return R& \n */", result);
     });
 
     test("-> operator", () => {
-        const result = testSetup.SetLine("T operator+(const T& lhs, const T2& rhs);").GetResult();
-        assert.equal("/**\n * @brief \n * \n * @param lhs \n * @param rhs \n * @return T \n */", result);
+        const result = testSetup.SetLine("R* operator->();").GetResult();
+        assert.equal("/**\n * @brief \n * \n * @return R* \n */", result);
     });
 
     test("[] operator", () => {
-        const result = testSetup.SetLine("T operator+(const T& lhs, const T2& rhs);").GetResult();
-        assert.equal("/**\n * @brief \n * \n * @param lhs \n * @param rhs \n * @return T \n */", result);
-    });
+        let result = testSetup.SetLine("R operator[](S b);").GetResult();
+        assert.equal("/**\n * @brief \n * \n * @param b \n * @return R \n */", result);
 
-    test("() operator", () => {
-        const result = testSetup.SetLine("T operator+(const T& lhs, const T2& rhs);").GetResult();
-        assert.equal("/**\n * @brief \n * \n * @param lhs \n * @param rhs \n * @return T \n */", result);
+        result = testSetup.SetLine("R operator[ ](S b);").GetResult();
+        assert.equal("/**\n * @brief \n * \n * @param b \n * @return R \n */", result);
     });
 
     test("new operator", () => {
-        const result = testSetup.SetLine("T operator+(const T& lhs, const T2& rhs);").GetResult();
-        assert.equal("/**\n * @brief \n * \n * @param lhs \n * @param rhs \n * @return T \n */", result);
+        const result = testSetup.SetLine("void* operator new ( std::size_t count );").GetResult();
+        assert.equal("/**\n * @brief \n * \n * @param count \n * @return void* \n */", result);
     });
 
     test("new[] operator", () => {
-        const result = testSetup.SetLine("T operator+(const T& lhs, const T2& rhs);").GetResult();
-        assert.equal("/**\n * @brief \n * \n * @param lhs \n * @param rhs \n * @return T \n */", result);
+        let result = testSetup.SetLine("void* operator new[]( std::size_t count, std::align_val_t al);").GetResult();
+        assert.equal("/**\n * @brief \n * \n * @param count  \n * @param al \n * @return void* \n */", result);
+
+        result = testSetup.SetLine("void* operator new[ ]( std::size_t count, std::align_val_t al);").GetResult();
+        assert.equal("/**\n * @brief \n * \n * @param count \n * @param al \n * @return void* \n */", result);
     });
 
     test("delete operator", () => {
-        const result = testSetup.SetLine("T operator+(const T& lhs, const T2& rhs);").GetResult();
-        assert.equal("/**\n * @brief \n * \n * @param lhs \n * @param rhs \n * @return T \n */", result);
+        const result = testSetup.SetLine("void operator delete(void* ptr, std::size_t sz, std::align_val_t al);")
+            .GetResult();
+        assert.equal("/**\n * @brief \n * \n * @param ptr \n * @param sz \n * @param al \n */", result);
     });
 
     test("delete[] operator", () => {
-        const result = testSetup.SetLine("T operator+(const T& lhs, const T2& rhs);").GetResult();
-        assert.equal("/**\n * @brief \n * \n * @param lhs \n * @param rhs \n * @return T \n */", result);
+        let result = testSetup.SetLine("void operator delete[] (void* ptr);").GetResult();
+        assert.equal("/**\n * @brief \n * \n * @param ptr \n */", result);
+
+        result = testSetup.SetLine("void operator delete [ ] (void* ptr);").GetResult();
+        assert.equal("/**\n * @brief \n * \n * @param ptr \n */", result);
     });
 
     test("user literal operator", () => {
