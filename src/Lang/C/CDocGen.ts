@@ -56,7 +56,7 @@ export default class CDocGen implements IDocGen {
      ***************************************************************************/
     protected getIndentation(): string {
         const line: TextLine = this.activeEditor.document.lineAt(this.activeEditor.selection.start.line);
-        return line.text.slice(0, line.firstNonWhitespaceCharacterIndex);
+        return line.text.slice(0, line.firstNonWhitespaceCharacterIndex - 1);
     }
 
     protected getTemplatedString(replace: string, template: string, param: string): string {
@@ -72,7 +72,7 @@ export default class CDocGen implements IDocGen {
 
         templateWith.forEach((element: string) => {
             // Ignore null values
-            if (element !== null && element !== undefined && element !== "") {
+            if (element !== null) {
                 line = this.cfg.commentPrefix;
                 line += this.getTemplatedString(replace, template, element);
                 lines.push(line);
@@ -95,14 +95,9 @@ export default class CDocGen implements IDocGen {
         const boolReturnIndex: number = this.func.type.nodes
             .findIndex((n) => n instanceof CToken && n.type === CTokenType.Symbol && n.value === "bool");
 
-        if (boolReturnIndex !== -1) {
-            if (this.cfg.boolReturnsTrueFalse === true) {
-                params.push("true");
-                params.push("false");
-            }
-            if (ptrReturnIndex !== -1 && this.cfg.boolPointerReturnsNull === true) {
-                params.push("null");
-            }
+        if (boolReturnIndex !== -1 && this.cfg.boolReturnsTrueFalse === true) {
+            params.push("true");
+            params.push("false");
         } else if (voidReturnIndex !== -1 && ptrReturnIndex !== -1) {
             params.push(this.cfg.includeTypeAtReturn === true ? this.func.type.Yield() : "");
         } else if (voidReturnIndex === -1 && this.func.type.nodes.length > 0) {
@@ -130,7 +125,7 @@ export default class CDocGen implements IDocGen {
             this.generateFromTemplate(
                 lines,
                 this.cfg.paramTemplateReplace,
-                this.cfg.paramTemplate,
+                this.cfg.tparamTemplate,
                 this.templateParams,
             );
             if (this.cfg.newLineAfterTParams === true) {

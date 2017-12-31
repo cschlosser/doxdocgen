@@ -297,7 +297,7 @@ export default class CParser implements ICodeParser {
         const func = this.GetArgument(tree);
         // check if it is a constructor or descructor since these have no name..
         // and reverse the assignment of type and name.
-        if (func.name === undefined) {
+        if (func.name === null) {
             if (func.type.nodes.length !== 1) {
                 throw new Error("Too many symbols found for constructor/descructor.");
             } else if (func.type.nodes[0] instanceof CParseTree) {

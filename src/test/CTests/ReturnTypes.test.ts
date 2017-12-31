@@ -49,7 +49,7 @@ suite("Return type Tests", () => {
 
     test("Bool pointer return type", () => {
         const result = testSetup.SetLine("bool* foo();").GetResult();
-        assert.equal("/**\n * @brief \n * \n * @return true \n * @return false \n * @return null \n */", result);
+        assert.equal("/**\n * @brief \n * \n * @return true \n * @return false \n */", result);
     });
 
     test("Struct pointer return type", () => {
