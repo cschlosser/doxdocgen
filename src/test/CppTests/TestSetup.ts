@@ -4,7 +4,7 @@ import CodeParser from "../../Common/ICodeParser";
 import { IDocGen } from "../../Common/IDocGen";
 import { Config } from "../../Config";
 import * as myExtension from "../../extension";
-import CParser from "../../Lang/C/CParser";
+import CppParser from "../../Lang/Cpp/CppParser";
 import MockDocument from "../tools/MockDocument";
 import MockEditor from "../tools/MockEditor";
 import MockLine from "../tools/MockLine";
@@ -42,7 +42,7 @@ export default class TestSetup {
 
     public GetResult(): string {
         let parser: CodeParser;
-        parser = new CParser(new Config());
+        parser = new CppParser(new Config());
 
         const gen: IDocGen = parser.Parse(this.editor);
         gen.GenerateDoc(new vscode.Range(new vscode.Position(0, 0), new vscode.Position(0, 0)));

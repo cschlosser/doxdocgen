@@ -10,7 +10,7 @@ import {
 } from "vscode";
 import CodeParser from "./Common/ICodeParser";
 import { Config } from "./Config";
-import CParser from "./Lang/C/CParser";
+import CppParser from "./Lang/Cpp/CppParser";
 /**
  *
  * Checks if the event matches the specified guidelines and if a parser exists for this language
@@ -86,7 +86,7 @@ export default class CodeParserController {
         switch (lang) {
             case "c":
             case "cpp":
-                parser = new CParser(this.cfg);
+                parser = new CppParser(this.cfg);
                 break;
             default:
                 // tslint:disable-next-line:no-console

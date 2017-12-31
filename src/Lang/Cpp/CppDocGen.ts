@@ -1,34 +1,34 @@
 import { Position, Range, Selection, TextEditor, TextLine, WorkspaceEdit } from "vscode";
 import { IDocGen } from "../../Common/IDocGen";
 import { Config } from "../../Config";
-import { CArgument } from "./CArgument";
-import { CParseTree } from "./CParseTree";
-import { CToken, CTokenType } from "./CToken";
+import { CppArgument } from "./CppArgument";
+import { CppParseTree } from "./CppParseTree";
+import { CppToken, CppTokenType } from "./CppToken";
 
-export default class CDocGen implements IDocGen {
+export default class CppDocGen implements IDocGen {
     protected activeEditor: TextEditor;
 
     protected readonly cfg: Config;
 
-    protected func: CArgument;
+    protected func: CppArgument;
     protected templateParams: string[];
-    protected params: CArgument[];
+    protected params: CppArgument[];
 
     /**
      * @param  {TextEditor} actEdit Active editor window
      * @param  {Position} cursorPosition Where the cursor of the user currently is
      * @param  {string[]} templateParams The template parameters of the declaration.
-     * @param  {CArgument} func The type and name of the function to generate doxygen.
+     * @param  {CppArgument} func The type and name of the function to generate doxygen.
      *                          Doesn't contain anything if it is not a function.
-     * @param  {CArgument[]} params The parameters of the function. Doesn't contain anything if it is not a function.
+     * @param  {CppArgument[]} params The parameters of the function. Doesn't contain anything if it is not a function.
      */
     public constructor(
         actEdit: TextEditor,
         cursorPosition: Position,
         cfg: Config,
         templateParams: string[],
-        func: CArgument,
-        params: CArgument[],
+        func: CppArgument,
+        params: CppArgument[],
     ) {
         this.activeEditor = actEdit;
         this.cfg = cfg;
@@ -85,15 +85,15 @@ export default class CDocGen implements IDocGen {
 
         // Check if return type is a pointer
         const ptrReturnIndex = this.func.type.nodes
-            .findIndex((n) => n instanceof CToken && n.type === CTokenType.Pointer);
+            .findIndex((n) => n instanceof CppToken && n.type === CppTokenType.Pointer);
 
         // Special case for void functions.
         const voidReturnIndex = this.func.type.nodes
-            .findIndex((n) => n instanceof CToken && n.type === CTokenType.Symbol && n.value === "void");
+            .findIndex((n) => n instanceof CppToken && n.type === CppTokenType.Symbol && n.value === "void");
 
         // Special case for bool return type.
         const boolReturnIndex: number = this.func.type.nodes
-            .findIndex((n) => n instanceof CToken && n.type === CTokenType.Symbol && n.value === "bool");
+            .findIndex((n) => n instanceof CppToken && n.type === CppTokenType.Symbol && n.value === "bool");
 
         if (boolReturnIndex !== -1 && this.cfg.boolReturnsTrueFalse === true) {
             params.push("true");

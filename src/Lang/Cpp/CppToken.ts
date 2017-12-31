@@ -1,4 +1,4 @@
-export enum CTokenType {
+export enum CppTokenType {
     Symbol,
     Pointer,
     Reference,
@@ -15,11 +15,11 @@ export enum CTokenType {
     Attribute,
 }
 
-export class CToken {
-    public type: CTokenType;
+export class CppToken {
+    public type: CppTokenType;
     public value: string;
 
-    constructor(type: CTokenType, value: string) {
+    constructor(type: CppTokenType, value: string) {
         this.type = type;
         this.value = value;
     }
