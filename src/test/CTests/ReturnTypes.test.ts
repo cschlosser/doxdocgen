@@ -12,7 +12,7 @@ import * as vscode from "vscode";
 import TestSetup from "./TestSetup";
 
 // Defines a Mocha test suite to group tests of similar kind together
-suite("Return type Tests", () => {
+suite("C++ - Return type Tests", () => {
 
     const testSetup: TestSetup = new TestSetup("void foo();");
 
