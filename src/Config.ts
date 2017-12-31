@@ -6,6 +6,7 @@ export class Config {
 
         const cfg = workspace.getConfiguration("doxdocgen.generic");
 
+        values.triggerSequence = cfg.get<string>("triggerSequence", values.triggerSequence);
         values.firstLine = cfg.get<string>("firstLine", values.firstLine);
         values.commentPrefix = cfg.get<string>("commentPrefix", values.commentPrefix);
         values.lastLine = cfg.get<string>("lastLine", values.lastLine);
@@ -14,7 +15,6 @@ export class Config {
         values.newLineAfterTParams = cfg.get<boolean>("newLineAfterTParams", values.newLineAfterTParams);
         values.includeTypeAtReturn = cfg.get<boolean>("includeTypeAtReturn", values.includeTypeAtReturn);
         values.boolReturnsTrueFalse = cfg.get<boolean>("boolReturnsTrueFalse", values.boolReturnsTrueFalse);
-        values.boolPointerReturnsNull = cfg.get<boolean>("boolPointerReturnsNull", values.boolPointerReturnsNull);
         values.briefTemplate = cfg.get<string>("briefTemplate", values.briefTemplate);
         values.paramTemplate = cfg.get<string>("paramTemplate", values.paramTemplate);
         values.tparamTemplate = cfg.get<string>("tparamTemplate", values.tparamTemplate);
@@ -35,7 +35,6 @@ export class Config {
     public newLineAfterTParams: boolean = false;
     public includeTypeAtReturn: boolean = true;
     public boolReturnsTrueFalse: boolean = true;
-    public boolPointerReturnsNull: boolean = true;
     public briefTemplate: string = "@brief ";
     public paramTemplate: string = "@param {param} ";
     public tparamTemplate: string = "@tparam {param} ";
