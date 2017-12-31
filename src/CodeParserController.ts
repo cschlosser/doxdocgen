@@ -8,11 +8,9 @@ import {
     window,
     workspace,
 } from "vscode";
-import { Config, ConfigType } from "../Config";
-import CodeParser from "./CodeParser";
-import CParser from "./CParser/CParser";
-import CppParser from "./CParser/CppParser";
-
+import CodeParser from "./Common/ICodeParser";
+import { Config } from "./Config";
+import CParser from "./Lang/C/CParser";
 /**
  *
  * Checks if the event matches the specified guidelines and if a parser exists for this language
@@ -22,7 +20,7 @@ import CppParser from "./CParser/CppParser";
  */
 export default class CodeParserController {
     private disposable: Disposable;
-    private triggerSequence: string;
+    private cfg: Config;
 
     /**
      * Creates an instance of CodeParserController
@@ -36,8 +34,7 @@ export default class CodeParserController {
         workspace.onDidChangeTextDocument((event) => {
             const activeEditor: TextEditor = window.activeTextEditor;
             if (activeEditor && event.document === activeEditor.document) {
-                this.readConfig();
-
+                this.cfg = Config.ImportFromSettings();
                 this.onEvent(activeEditor, event.contentChanges[0]);
             }
         }, this, subscriptions);
@@ -59,12 +56,6 @@ export default class CodeParserController {
                                     Implementation
      ***************************************************************************/
 
-    private readConfig() {
-        this.triggerSequence = workspace
-            .getConfiguration(ConfigType.generic)
-            .get<string>(Config.triggerSequence, "/**");
-    }
-
     private check(activeEditor: TextEditor, event: TextDocumentContentChangeEvent): boolean {
         if (activeEditor == null || event.text == null) {
             return false;
@@ -81,7 +72,7 @@ export default class CodeParserController {
 
         const cont: string = activeLine.text.trim();
 
-        return this.triggerSequence === cont;
+        return this.cfg.triggerSequence === cont;
     }
 
     private onEvent(activeEditor: TextEditor, event: TextDocumentContentChangeEvent) {
@@ -94,10 +85,8 @@ export default class CodeParserController {
 
         switch (lang) {
             case "c":
-                parser = new CParser();
-                break;
             case "cpp":
-                parser = new CppParser();
+                parser = new CParser(this.cfg);
                 break;
             default:
                 // tslint:disable-next-line:no-console
@@ -108,7 +97,7 @@ export default class CodeParserController {
         const currentPos: Position = window.activeTextEditor.selection.active;
         const startReplace: Position = new Position(
             currentPos.line,
-            currentPos.character - this.triggerSequence.length,
+            currentPos.character - this.cfg.triggerSequence.length,
         );
 
         const nextLineText: string = window.activeTextEditor.document.lineAt(startReplace.line + 1).text;

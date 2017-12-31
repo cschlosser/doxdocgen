@@ -1,11 +1,11 @@
 import { Position, TextDocumentContentChangeEvent, TextEditor, TextLine, workspace } from "vscode";
-import { Config, ConfigType } from "../../Config";
-import Generator from "../../DocGen/CGen";
-import { IDocGen } from "../../DocGen/DocGen";
-import ICodeParser from "../CodeParser";
-import { Argument } from "./Argument";
-import { ParseTree } from "./ParseTree";
-import { Token, TokenType } from "./Token";
+import ICodeParser from "../../Common/ICodeParser";
+import { IDocGen } from "../../Common/IDocGen";
+import { Config } from "../../Config";
+import { CArgument } from "./CArgument";
+import CDocGen from "./CDocGen";
+import { CParseTree } from "./CParseTree";
+import { CToken, CTokenType } from "./CToken";
 
 /**
  *
@@ -18,14 +18,17 @@ import { Token, TokenType } from "./Token";
 export default class CParser implements ICodeParser {
     protected activeEditor: TextEditor;
     protected activeSelection: Position;
+    protected readonly cfg: Config;
 
     private typeKeywords: string[];
     private stripKeywords: string[];
     private keywords: string[];
-    private specifiers: string[];
+    private attributes: string[];
     private lexerVocabulary;
 
-    constructor() {
+    constructor(cfg: Config) {
+        this.cfg = cfg;
+
         this.typeKeywords = [
             "constexpr",
             "const",
@@ -45,7 +48,7 @@ export default class CParser implements ICodeParser {
             "typename",
         ];
 
-        this.specifiers = [
+        this.attributes = [
             "noexcept",
             "throw",
             "alignas",
@@ -58,7 +61,26 @@ export default class CParser implements ICodeParser {
             ArraySubscript: (x: string): string => (x.match("^\\[[^\\[]*?\\]") || [])[0],
             Arrow: (x: string): string => (x.match("^->") || [])[0],
             Assignment: (x: string): string => (x.match("^=") || [])[0],
-            Attribute: (x: string): string => (x.match("^\\[\\[[^\\[]*?\\]\\]") || [])[0],
+            Attribute: (x: string): string => {
+                const attribute: string = (x.match("^\\[\\[[^\\[]*?\\]\\]") || [])[0];
+                if (attribute !== undefined) {
+                    return attribute;
+                }
+
+                const foundIndex: number = this.attributes
+                    .findIndex((n: string) => x.startsWith(n) === true);
+
+                if (foundIndex === -1) {
+                    return undefined;
+                }
+
+                if (x.slice(this.attributes[foundIndex].length).trim().startsWith("(") === false) {
+                    return x.slice(0, this.attributes[foundIndex].length);
+                }
+
+                const startEndOffset: number[] = this.GetSubExprStartEnd(x, 0, "(", ")");
+                return startEndOffset[1] === 0 ? undefined : x.slice(0, startEndOffset[1]);
+            },
             CloseParenthesis: (x: string): string => (x.match("^\\)") || [])[0],
             Comma: (x: string): string => (x.match("^,") || [])[0],
             CommentBlock: (x: string): string => {
@@ -90,22 +112,6 @@ export default class CParser implements ICodeParser {
             OpenParenthesis: (x: string): string => (x.match("^\\(") || [])[0],
             Pointer: (x: string): string => (x.match("^\\*") || [])[0],
             Reference: (x: string): string => (x.match("^&") || [])[0],
-            Specifier: (x: string): string => {
-                const foundIndex: number = this.specifiers
-                    .findIndex((n: string) => x.startsWith(n) === true);
-
-                if (foundIndex === -1) {
-                    return undefined;
-                }
-
-                if (x.slice(this.specifiers[foundIndex].length).trim().startsWith("(") === false) {
-                    return x.slice(0, this.specifiers[foundIndex].length);
-                }
-
-                const startEndOffset: number[] = this.GetSubExprStartEnd(x, 0, "(", ")");
-                return startEndOffset[1] === 0 ? undefined : x.slice(0, startEndOffset[1]);
-
-            },
             Symbol: (x: string): string => {
                 // Handle access specifiers since they aren't really symbols.
                 if (x.startsWith("public:") || x.startsWith("protected:") || x.startsWith("private:")) {
@@ -113,7 +119,7 @@ export default class CParser implements ICodeParser {
                 }
 
                 // Handle specifiers
-                const specifierFound: number = this.specifiers
+                const specifierFound: number = this.attributes
                     .findIndex((n: string) => x.startsWith(n) === true);
 
                 if (specifierFound !== -1) {
@@ -136,7 +142,7 @@ export default class CParser implements ICodeParser {
                 // Regex to handle a part of all symbols and includes all symbol special cases.
                 // This is run in a loop because template parts of a symbol can't be parsed using regex.
                 // tslint:disable-next-line:max-line-length
-                const symbolRegex: string = "^([a-z|A-Z|:|_|~|\\d]*operator\\s*(\"\"_[a-z|A-Z]+|>>=|<<=|->\\*|\\+=|-=|\\*=|\\/=|%=|ˆ=|&=|\\|=|<<|>>|==|!=|<=|->|>=|&&|\\|\\||\\+\\+|--|\\+|-|\\*|\\/|%|\\^|&|\||~|!|=|<|>|,|\\[\\s*\\]|\\(\\s*\\)|(new|delete)\\s*(\\[\\s*\\]){0,1}){0,1}|[a-z|A-Z|:|_|~|\\d]+)";
+                const symbolRegex: string = "^([a-z|A-Z|:|_|~|\\d]*operator\\s*(\"\"_[a-z|A-Z]+|>>=|<<=|->\\*|\\+=|-=|\\*=|\\/=|%=|\\^=|&=|\\|=|<<|>>|==|!=|<=|->|>=|&&|\\|\\||\\+\\+|--|\\+|-|\\*|\\/|%|\\^|&|\||~|!|=|<|>|,|\\[\\s*\\]|\\(\\s*\\)|(new|delete)\\s*(\\[\\s*\\]){0,1}){0,1}|[a-z|A-Z|:|_|~|\\d]+)";
 
                 reMatch = (x.match(symbolRegex) || [])[0];
                 if (reMatch === undefined) {
@@ -180,7 +186,7 @@ export default class CParser implements ICodeParser {
             // console.dir(err);
         }
 
-        // template parsing is simpler by using heuristics rather then tokenizing first.
+        // template parsing is simpler by using heuristics rather then CTokenizing first.
         const templateArgs: string[] = [];
         while (line.startsWith("template")) {
             const template: string = this.GetTemplate(line);
@@ -190,25 +196,21 @@ export default class CParser implements ICodeParser {
             line = line.slice(template.length, line.length + 1).trim();
         }
 
-        let retAndArgs: string[][] = [[], []];
+        let args: [CArgument, CArgument[]] = [new CArgument(), []];
         try {
-            retAndArgs = this.GetReturnAndArgs(line);
+            args = this.GetReturnAndArgs(line);
         } catch (err) {
             // console.dir(err);
         }
 
-        const retVals = retAndArgs[0];
-        const args = retAndArgs[1];
-
-        const cppGenerator: IDocGen = new Generator(
+        return new CDocGen(
             this.activeEditor,
             this.activeSelection,
-            args,
+            this.cfg,
             templateArgs,
-            retVals,
+            args[0],
+            args[1],
         );
-
-        return cppGenerator;
     }
 
     /***************************************************************************
@@ -260,131 +262,96 @@ export default class CParser implements ICodeParser {
         throw new Error("More then 20 lines were gotten from editor and no end of expression was found.");
     }
 
-    private Tokenize(expression: string): Token[] {
-        const tokens: Token[] = [];
+    private Tokenize(expression: string): CToken[] {
+        const CTokens: CToken[] = [];
         expression = expression.replace(/^\s+|\s+$/g, "");
 
         while (expression.length !== 0) {
-            const matches: Token[] = Object.keys(this.lexerVocabulary)
-                .map((k): Token => new Token(TokenType[k], this.lexerVocabulary[k](expression)))
-                .filter((t) => t.Value !== undefined);
+            const matches: CToken[] = Object.keys(this.lexerVocabulary)
+                .map((k): CToken => new CToken(CTokenType[k], this.lexerVocabulary[k](expression)))
+                .filter((t) => t.value !== undefined);
 
             if (matches.length === 0) {
-                throw new Error("Next token couldn\'t be determined: " + expression);
+                throw new Error("Next CToken couldn\'t be determined: " + expression);
             } else if (matches.length > 1) {
-                throw new Error("Multiple matches for next token: " + expression);
+                throw new Error("Multiple matches for next CToken: " + expression);
             }
 
-            tokens.push(matches[0]);
-            expression = expression.slice(matches[0].Value.length, expression.length).replace(/^\s+|\s+$/g, "");
+            CTokens.push(matches[0]);
+            expression = expression.slice(matches[0].value.length, expression.length).replace(/^\s+|\s+$/g, "");
         }
 
-        return tokens;
+        return CTokens;
     }
 
-    private GetReturnAndArgs(line: string): string[][] {
-        const retVals: string[] = [];
-        let args: string[] = [];
-
-        // Tokenize rest of expression and remove comment tokens;
-        const tokens: Token[] = this.Tokenize(line)
-            .filter((t) => t.Type !== TokenType.CommentBlock)
-            .filter((t) => t.Type !== TokenType.CommentLine);
+    private GetReturnAndArgs(line: string): [CArgument, CArgument[]] {
+        // CTokenize rest of expression and remove comment CTokens;
+        const CTokens: CToken[] = this.Tokenize(line)
+            .filter((t) => t.type !== CTokenType.CommentBlock)
+            .filter((t) => t.type !== CTokenType.CommentLine);
 
         // Create hierarchical tree based on the parenthesis.
-        const tree: ParseTree = ParseTree.CreateTree(tokens).Compact();
+        const tree: CParseTree = CParseTree.CreateTree(CTokens).Compact();
 
         // return argument.
-        const returnArg = this.GetArgument(tree);
+        const func = this.GetArgument(tree);
         // check if it is a constructor or descructor since these have no name..
         // and reverse the assignment of type and name.
-        if (returnArg.Name === undefined) {
-            if (returnArg.Type.nodes.length !== 1) {
+        if (func.name === undefined) {
+            if (func.type.nodes.length !== 1) {
                 throw new Error("Too many symbols found for constructor/descructor.");
-            } else if (returnArg.Type.nodes[0] instanceof ParseTree) {
-                throw new Error("One node found with just a parsetree. Malformed input.");
+            } else if (func.type.nodes[0] instanceof CParseTree) {
+                throw new Error("One node found with just a CParseTree. Malformed input.");
             }
 
-            returnArg.Name = (returnArg.Type.nodes[0] as Token).Value;
-            returnArg.Type.nodes = [];
+            func.name = (func.type.nodes[0] as CToken).value;
+            func.type.nodes = [];
         }
 
-        // Check if return type is a pointer
-        const ptrReturnIndex = returnArg.Type.nodes
-            .findIndex((n) => n instanceof Token && n.Type === TokenType.Pointer);
+        // Get arguments list as a CParseTree and create arguments from them.
+        const params = this.GetArgumentList(tree)
+            .map((a) => this.GetArgument(a));
 
-        // Special case for void functions.
-        const voidReturnIndex = returnArg.Type.nodes
-            .findIndex((n) => n instanceof Token && n.Type === TokenType.Symbol && n.Value === "void");
-
-        // Special case for bool return type.
-        const boolReturnIndex: number = returnArg.Type.nodes
-            .findIndex((n) => n instanceof Token && n.Type === TokenType.Symbol && n.Value === "bool");
-
-        if (boolReturnIndex !== -1) {
-            retVals.push("true");
-            retVals.push("false");
-            if (ptrReturnIndex !== -1) {
-                retVals.push("null");
-            }
-        } else if (voidReturnIndex !== -1 && ptrReturnIndex !== -1) {
-            retVals.push(returnArg.Type.Yield());
-        } else if (voidReturnIndex === -1 && returnArg.Type.nodes.length > 0) {
-            retVals.push(returnArg.Type.Yield());
-        }
-
-        // Get arguments list as a parsetree and create arguments from them.
-        args = this.GetArgumentList(tree)
-            .map((a) => this.GetArgument(a))
-            .map((a) => a.Name === undefined ? "" : a.Name);
-
-        return [retVals, args];
+        return [func, params];
     }
 
-    private RemoveUnusedTokens(tree: ParseTree): ParseTree {
+    private RemoveUnusedTokens(tree: CParseTree): CParseTree {
         tree = tree.Copy();
 
         // First slice of everything after assignment since that will not be used.
-        const assignmentIndex = tree.nodes.findIndex((n) => n instanceof Token && n.Type === TokenType.Assignment);
+        const assignmentIndex = tree.nodes.findIndex((n) => n instanceof CToken && n.type === CTokenType.Assignment);
         if (assignmentIndex !== -1) {
             tree.nodes = tree.nodes.slice(0, assignmentIndex);
         }
 
         // Specifiers aren't needed so remove them.
-        while (true) {
-            const specifierIndex = tree.nodes
-            .findIndex((n) => n instanceof Token && n.Type === TokenType.Specifier);
-            if (specifierIndex !== -1) {
-                tree.nodes.splice(specifierIndex, 1);
-            } else {
-                break;
-            }
-        }
+        tree.nodes = tree.nodes
+            .filter((n) => n instanceof CParseTree || (n instanceof CToken && n.type !== CTokenType.Attribute));
 
         return tree;
     }
 
-    private GetArgumentList(tree: ParseTree): ParseTree[] {
-        const args: ParseTree[] = [];
+    private GetArgumentList(tree: CParseTree): CParseTree[] {
+        const args: CParseTree[] = [];
 
         tree = this.RemoveUnusedTokens(tree);
 
-        let cursor: ParseTree = tree;
+        let cursor: CParseTree = tree;
         while (this.IsFuncPtr(cursor.nodes) === true) {
-            cursor = cursor.nodes.find((n) => n instanceof ParseTree) as ParseTree;
+            cursor = cursor.nodes.find((n) => n instanceof CParseTree) as CParseTree;
         }
 
-        const argTree: ParseTree = cursor.nodes.find((n) => n instanceof ParseTree) as ParseTree;
+        const argTree: CParseTree = cursor.nodes.find((n) => n instanceof CParseTree) as CParseTree;
         if (argTree === undefined) {
             throw new Error("Function arguments not found.");
         }
 
         // Split the argument tree on commas
-        let arg: ParseTree = new ParseTree();
+        let arg: CParseTree = new CParseTree();
         for (const node of argTree.nodes) {
-            if (node instanceof Token && node.Type === TokenType.Comma) {
+            if (node instanceof CToken && node.type === CTokenType.Comma) {
                 args.push(arg);
-                arg = new ParseTree();
+                arg = new CParseTree();
             } else {
                 arg.nodes.push(node);
             }
@@ -397,35 +364,33 @@ export default class CParser implements ICodeParser {
         return args;
     }
 
-    private IsFuncPtr(nodes: Array<Token | ParseTree>) {
-        return nodes.filter((n) => n instanceof ParseTree).length === 2;
+    private IsFuncPtr(nodes: Array<CToken | CParseTree>) {
+        return nodes.filter((n) => n instanceof CParseTree).length === 2;
     }
 
-    private StripNonTypeNodes(tree: ParseTree) {
+    private StripNonTypeNodes(tree: CParseTree) {
         tree.nodes = tree.nodes
             // All strippable keywords.
             .filter((n) => {
-                return !(n instanceof Token
-                    && n.Type === TokenType.Symbol
-                    && this.stripKeywords.find((k) => k === n.Value) !== undefined);
-            })
-            // Attributes aren't part of the type.
-            .filter((n) => !(n instanceof Token && n.Type === TokenType.Attribute));
+                return !(n instanceof CToken
+                    && n.type === CTokenType.Symbol
+                    && this.stripKeywords.find((k) => k === n.value) !== undefined);
+            });
     }
 
-    private GetArgumentFromTrailingReturn(tree: ParseTree, startTrailingReturn: number): Argument {
-        const argument: Argument = new Argument();
+    private GetArgumentFromTrailingReturn(tree: CParseTree, startTrailingReturn: number): CArgument {
+        const argument: CArgument = new CArgument();
 
-        // Find index of auto prior to the first parseTree.
+        // Find index of auto prior to the first CParseTree.
         // If auto is not found something is going wrong since trailing return
         // requires auto.
         let autoIndex: number = -1;
         for (let i: number = 0; i < tree.nodes.length; i++) {
             const node = tree.nodes[i];
-            if (node instanceof ParseTree) {
+            if (node instanceof CParseTree) {
                 break;
             }
-            if (node.Type === TokenType.Symbol && node.Value === "auto") {
+            if (node.type === CTokenType.Symbol && node.value === "auto") {
                 autoIndex = i;
                 break;
             }
@@ -435,37 +400,37 @@ export default class CParser implements ICodeParser {
             throw new Error("Function declaration has trailing return but type is not auto.");
         }
 
-        // Get symbol between auto and parseTree which is the argument name. It also may not be a keyword.
+        // Get symbol between auto and CParseTree which is the argument name. It also may not be a keyword.
         for (let i: number = autoIndex + 1; i < tree.nodes.length; i++) {
             const node = tree.nodes[i];
-            if (node instanceof ParseTree) {
+            if (node instanceof CParseTree) {
                 break;
             }
-            if (node.Type === TokenType.Symbol && this.keywords.find((k) => k === node.Value) === undefined) {
-                argument.Name = node.Value;
+            if (node.type === CTokenType.Symbol && this.keywords.find((k) => k === node.value) === undefined) {
+                argument.name = node.value;
                 break;
             }
         }
 
-        argument.Type.nodes = tree.nodes.slice(startTrailingReturn + 1, tree.nodes.length);
-        this.StripNonTypeNodes(argument.Type);
+        argument.type.nodes = tree.nodes.slice(startTrailingReturn + 1, tree.nodes.length);
+        this.StripNonTypeNodes(argument.type);
 
         return argument;
     }
 
-    private GetArgumentFromFuncPtr(tree: ParseTree): Argument {
-        const argument: Argument = new Argument();
+    private GetArgumentFromFuncPtr(tree: CParseTree): CArgument {
+        const argument: CArgument = new CArgument();
 
-        argument.Type = tree;
+        argument.type = tree;
 
-        let cursor: ParseTree = tree;
+        let cursor: CParseTree = tree;
 
         while (this.IsFuncPtr(cursor.nodes) === true) {
-            cursor = cursor.nodes.find((n) => n instanceof ParseTree) as ParseTree;
+            cursor = cursor.nodes.find((n) => n instanceof CParseTree) as CParseTree;
         }
 
-        // Remove parseTree. This can be if it is a function declaration.
-        const argumentsIndex = cursor.nodes.findIndex((n) => n instanceof ParseTree);
+        // Remove CParseTree. This can be if it is a function declaration.
+        const argumentsIndex = cursor.nodes.findIndex((n) => n instanceof CParseTree);
         if (argumentsIndex !== -1) {
             cursor.nodes.splice(argumentsIndex, 1);
         }
@@ -474,69 +439,69 @@ export default class CParser implements ICodeParser {
         // Remove it from the tree and set the name to the argument name
         for (let i: number = 0; i < cursor.nodes.length; i++) {
             const node = cursor.nodes[i];
-            if (node instanceof ParseTree) {
+            if (node instanceof CParseTree) {
                 continue;
             }
 
-            if (node.Type === TokenType.Symbol && this.keywords.find((k) => k === node.Value) === undefined) {
-                argument.Name = node.Value;
+            if (node.type === CTokenType.Symbol && this.keywords.find((k) => k === node.value) === undefined) {
+                argument.name = node.value;
                 cursor.nodes.splice(i, 1);
             }
         }
 
-        this.StripNonTypeNodes(argument.Type);
+        this.StripNonTypeNodes(argument.type);
         return argument;
     }
 
-    private GetDefaultArgument(tree: ParseTree): Argument {
-        const argument: Argument = new Argument();
+    private GetDefaultArgument(tree: CParseTree): CArgument {
+        const argument: CArgument = new CArgument();
 
         for (const node of tree.nodes) {
-            if (node instanceof ParseTree) {
+            if (node instanceof CParseTree) {
                 break;
             }
-            const symbolCount = argument.Type.nodes
-                .filter((n) => n instanceof Token)
-                .map((n) => n as Token)
-                .filter((n) => n.Type === TokenType.Symbol)
-                .filter((n) => this.keywords.find((k) => k === n.Value) === undefined)
+            const symbolCount = argument.type.nodes
+                .filter((n) => n instanceof CToken)
+                .map((n) => n as CToken)
+                .filter((n) => n.type === CTokenType.Symbol)
+                .filter((n) => this.keywords.find((k) => k === n.value) === undefined)
                 .length;
 
-            if (node.Type === TokenType.Symbol
-                && this.keywords.find((k) => k === node.Value) === undefined
+            if (node.type === CTokenType.Symbol
+                && this.keywords.find((k) => k === node.value) === undefined
             ) {
-                if (symbolCount === 1 && argument.Name === undefined) {
-                    argument.Name = node.Value;
+                if (symbolCount === 1 && argument.name === null) {
+                    argument.name = node.value;
                     continue;
                 } else if (symbolCount > 1) {
                     throw new Error("Too many non keyword symbols.");
                 }
             }
 
-            argument.Type.nodes.push(node);
+            argument.type.nodes.push(node);
         }
 
-        this.StripNonTypeNodes(argument.Type);
+        this.StripNonTypeNodes(argument.type);
         return argument;
     }
 
-    private GetArgument(tree: ParseTree): Argument {
+    private GetArgument(tree: CParseTree): CArgument {
         // Copy tree structure leave original untouched.
         const copy = this.RemoveUnusedTokens(tree);
 
         // Special case with only ellipsis. C style variadic arguments
         if (copy.nodes.length === 1) {
             const node = copy.nodes[0];
-            if (node instanceof Token && node.Type === TokenType.Ellipsis) {
-                const argument: Argument = new Argument();
-                argument.Name = node.Value;
+            if (node instanceof CToken && node.type === CTokenType.Ellipsis) {
+                const argument: CArgument = new CArgument();
+                argument.name = node.value;
                 return argument;
             }
         }
 
         // Check if it is has a trailing return.
         const startTrailingReturn: number = copy.nodes
-            .findIndex((t) => t instanceof Token ? t.Type === TokenType.Arrow : false);
+            .findIndex((t) => t instanceof CToken ? t.type === CTokenType.Arrow : false);
 
         // Special case trailing return.
         if (startTrailingReturn !== -1) {

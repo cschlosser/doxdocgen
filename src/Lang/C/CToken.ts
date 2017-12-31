@@ -1,4 +1,4 @@
-export enum TokenType {
+export enum CTokenType {
     Symbol,
     Pointer,
     Reference,
@@ -13,15 +13,14 @@ export enum TokenType {
     CommentLine,
     Ellipsis,
     Attribute,
-    Specifier,
 }
 
-export class Token {
-    public Type: TokenType;
-    public Value: string;
+export class CToken {
+    public type: CTokenType;
+    public value: string;
 
-    constructor(type: TokenType, value: string) {
-        this.Type = type;
-        this.Value = value;
+    constructor(type: CTokenType, value: string) {
+        this.type = type;
+        this.value = value;
     }
 }

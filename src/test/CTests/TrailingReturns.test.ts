@@ -9,7 +9,7 @@ import * as assert from "assert";
 // You can import and use all API from the 'vscode' module
 // as well as import your extension to test it
 import * as vscode from "vscode";
-import TestSetup from "./tools/TestSetup";
+import TestSetup from "./TestSetup";
 
 // Defines a Mocha test suite to group tests of similar kind together
 suite("Trailing returns tests", () => {
