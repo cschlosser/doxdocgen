@@ -95,5 +95,8 @@ suite("C++ - Return type Tests", () => {
 
         result = testSetup.SetLine("long double foo();").GetResult();
         assert.equal("/**\n * @brief \n * \n * @return long double \n */", result);
+
+        result = testSetup.SetLine("long unsigned unsigned_foo();").GetResult();
+        assert.equal("/**\n * @brief \n * \n * @return long unsigned \n */", result);
     });
 });
