@@ -247,7 +247,7 @@ suite("C++ - Operators Tests", () => {
 
     test("new[] operator", () => {
         let result = testSetup.SetLine("void* operator new[]( std::size_t count, std::align_val_t al);").GetResult();
-        assert.equal("/**\n * @brief \n * \n * @param count  \n * @param al \n * @return void* \n */", result);
+        assert.equal("/**\n * @brief \n * \n * @param count \n * @param al \n * @return void* \n */", result);
 
         result = testSetup.SetLine("void* operator new[ ]( std::size_t count, std::align_val_t al);").GetResult();
         assert.equal("/**\n * @brief \n * \n * @param count \n * @param al \n * @return void* \n */", result);
@@ -268,12 +268,33 @@ suite("C++ - Operators Tests", () => {
     });
 
     test("user literal operator", () => {
-        const result = testSetup.SetLine("T operator+(const T& lhs, const T2& rhs);").GetResult();
-        assert.equal("/**\n * @brief \n * \n * @param lhs \n * @param rhs \n * @return T \n */", result);
+        let result = testSetup.SetLine("long double operator\"\"_My_C00l_Conversion(const char * str);").GetResult();
+        assert.equal("/**\n * @brief \n * \n * @param str \n * @return long double \n */", result);
+
+        result = testSetup.SetLine("long double operator \"\"_My_C00l_Conversion(const char * str);").GetResult();
+        assert.equal("/**\n * @brief \n * \n * @param str \n * @return long double \n */", result);
+
+        result = testSetup.SetLine("long double operator\"\"_My_C00l_Conversion (const char * str);").GetResult();
+        assert.equal("/**\n * @brief \n * \n * @param str \n * @return long double \n */", result);
     });
 
-    test("conversion operator", () => {
-        const result = testSetup.SetLine("T operator+(const T& lhs, const T2& rhs);").GetResult();
-        assert.equal("/**\n * @brief \n * \n * @param lhs \n * @param rhs \n * @return T \n */", result);
+    test("Implicit conversion operator", () => {
+        const result = testSetup.SetLine("operator int() const").GetResult();
+        assert.equal("/**\n * @brief \n * \n * @return int \n */", result);
+    });
+
+    test("Explicit conversion operator", () => {
+        const result = testSetup.SetLine("explicit operator int() const").GetResult();
+        assert.equal("/**\n * @brief \n * \n * @return int \n */", result);
+    });
+
+    test("conversion operator to struct", () => {
+        const result = testSetup.SetLine("explicit operator struct foo() const").GetResult();
+        assert.equal("/**\n * @brief \n * \n * @return struct foo \n */", result);
+    });
+
+    test("conversion operator to struct pointer", () => {
+        const result = testSetup.SetLine("explicit operator struct foo*() const").GetResult();
+        assert.equal("/**\n * @brief \n * \n * @return struct foo* \n */", result);
     });
 });
