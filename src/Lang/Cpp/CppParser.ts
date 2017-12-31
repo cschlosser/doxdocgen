@@ -2,10 +2,10 @@ import { Position, TextDocumentContentChangeEvent, TextEditor, TextLine, workspa
 import ICodeParser from "../../Common/ICodeParser";
 import { IDocGen } from "../../Common/IDocGen";
 import { Config } from "../../Config";
-import { CArgument } from "./CArgument";
-import CDocGen from "./CDocGen";
-import { CParseTree } from "./CParseTree";
-import { CToken, CTokenType } from "./CToken";
+import { CppArgument } from "./CppArgument";
+import CppDocGen from "./CppDocGen";
+import { CppParseTree } from "./CppParseTree";
+import { CppToken, CppTokenType } from "./CppToken";
 
 /**
  *
@@ -15,7 +15,7 @@ import { CToken, CTokenType } from "./CToken";
  * @class CParser
  * @implements {ICodeParser}
  */
-export default class CParser implements ICodeParser {
+export default class CppParser implements ICodeParser {
     protected activeEditor: TextEditor;
     protected activeSelection: Position;
     protected readonly cfg: Config;
@@ -134,7 +134,7 @@ export default class CParser implements ICodeParser {
 
                 // Special case group up the fundamental types with the modifiers.
                 // tslint:disable-next-line:max-line-length
-                let reMatch: string = (x.match("^(unsigned|signed|short|long|int|char|double)(\\s+(unsigned|signed|short|long|int|char|double))+") || [])[0];
+                let reMatch: string = (x.match("^(unsigned|signed|short|long|int|char|double)(\\s+(unsigned|signed|short|long|int|char|double))+(?!a-z|A-Z|:|_)") || [])[0];
                 if (reMatch !== undefined) {
                     return reMatch.trim();
                 }
@@ -142,7 +142,7 @@ export default class CParser implements ICodeParser {
                 // Regex to handle a part of all symbols and includes all symbol special cases.
                 // This is run in a loop because template parts of a symbol can't be parsed using regex.
                 // tslint:disable-next-line:max-line-length
-                const symbolRegex: string = "^([a-z|A-Z|:|_|~|\\d]*operator\\s*(\"\"_[a-z|A-Z]+|>>=|<<=|->\\*|\\+=|-=|\\*=|\\/=|%=|\\^=|&=|\\|=|<<|>>|==|!=|<=|->|>=|&&|\\|\\||\\+\\+|--|\\+|-|\\*|\\/|%|\\^|&|\||~|!|=|<|>|,|\\[\\s*\\]|\\(\\s*\\)|(new|delete)\\s*(\\[\\s*\\]){0,1}){0,1}|[a-z|A-Z|:|_|~|\\d]+)";
+                const symbolRegex: string = "^([a-z|A-Z|:|_|~|\\d]*operator\\s*(\"\"_[a-z|A-Z|_|\\d]+|>>=|<<=|->\\*|\\+=|-=|\\*=|\\/=|%=|\\^=|&=|\\|=|<<|>>|==|!=|<=|->|>=|&&|\\|\\||\\+\\+|--|\\+|-|\\*|\\/|%|\\^|&|\||~|!|=|<|>|,|\\[\\s*\\]|\\(\\s*\\)|(new|delete)\\s*(\\[\\s*\\]){0,1}){0,1}|[a-z|A-Z|:|_|~|\\d]+)";
 
                 reMatch = (x.match(symbolRegex) || [])[0];
                 if (reMatch === undefined) {
@@ -186,7 +186,7 @@ export default class CParser implements ICodeParser {
             // console.dir(err);
         }
 
-        // template parsing is simpler by using heuristics rather then CTokenizing first.
+        // template parsing is simpler by using heuristics rather then CppTokenizing first.
         const templateArgs: string[] = [];
         while (line.startsWith("template")) {
             const template: string = this.GetTemplate(line);
@@ -196,14 +196,14 @@ export default class CParser implements ICodeParser {
             line = line.slice(template.length, line.length + 1).trim();
         }
 
-        let args: [CArgument, CArgument[]] = [new CArgument(), []];
+        let args: [CppArgument, CppArgument[]] = [new CppArgument(), []];
         try {
             args = this.GetReturnAndArgs(line);
         } catch (err) {
             // console.dir(err);
         }
 
-        return new CDocGen(
+        return new CppDocGen(
             this.activeEditor,
             this.activeSelection,
             this.cfg,
@@ -262,36 +262,36 @@ export default class CParser implements ICodeParser {
         throw new Error("More then 20 lines were gotten from editor and no end of expression was found.");
     }
 
-    private Tokenize(expression: string): CToken[] {
-        const CTokens: CToken[] = [];
+    private Tokenize(expression: string): CppToken[] {
+        const CppTokens: CppToken[] = [];
         expression = expression.replace(/^\s+|\s+$/g, "");
 
         while (expression.length !== 0) {
-            const matches: CToken[] = Object.keys(this.lexerVocabulary)
-                .map((k): CToken => new CToken(CTokenType[k], this.lexerVocabulary[k](expression)))
+            const matches: CppToken[] = Object.keys(this.lexerVocabulary)
+                .map((k): CppToken => new CppToken(CppTokenType[k], this.lexerVocabulary[k](expression)))
                 .filter((t) => t.value !== undefined);
 
             if (matches.length === 0) {
-                throw new Error("Next CToken couldn\'t be determined: " + expression);
+                throw new Error("Next CppToken couldn\'t be determined: " + expression);
             } else if (matches.length > 1) {
-                throw new Error("Multiple matches for next CToken: " + expression);
+                throw new Error("Multiple matches for next CppToken: " + expression);
             }
 
-            CTokens.push(matches[0]);
+            CppTokens.push(matches[0]);
             expression = expression.slice(matches[0].value.length, expression.length).replace(/^\s+|\s+$/g, "");
         }
 
-        return CTokens;
+        return CppTokens;
     }
 
-    private GetReturnAndArgs(line: string): [CArgument, CArgument[]] {
-        // CTokenize rest of expression and remove comment CTokens;
-        const CTokens: CToken[] = this.Tokenize(line)
-            .filter((t) => t.type !== CTokenType.CommentBlock)
-            .filter((t) => t.type !== CTokenType.CommentLine);
+    private GetReturnAndArgs(line: string): [CppArgument, CppArgument[]] {
+        // CppTokenize rest of expression and remove comment CppTokens;
+        const CppTokens: CppToken[] = this.Tokenize(line)
+            .filter((t) => t.type !== CppTokenType.CommentBlock)
+            .filter((t) => t.type !== CppTokenType.CommentLine);
 
         // Create hierarchical tree based on the parenthesis.
-        const tree: CParseTree = CParseTree.CreateTree(CTokens).Compact();
+        const tree: CppParseTree = CppParseTree.CreateTree(CppTokens).Compact();
 
         // return argument.
         const func = this.GetArgument(tree);
@@ -300,58 +300,59 @@ export default class CParser implements ICodeParser {
         if (func.name === null) {
             if (func.type.nodes.length !== 1) {
                 throw new Error("Too many symbols found for constructor/descructor.");
-            } else if (func.type.nodes[0] instanceof CParseTree) {
-                throw new Error("One node found with just a CParseTree. Malformed input.");
+            } else if (func.type.nodes[0] instanceof CppParseTree) {
+                throw new Error("One node found with just a CppParseTree. Malformed input.");
             }
 
-            func.name = (func.type.nodes[0] as CToken).value;
+            func.name = (func.type.nodes[0] as CppToken).value;
             func.type.nodes = [];
         }
 
-        // Get arguments list as a CParseTree and create arguments from them.
+        // Get arguments list as a CppParseTree and create arguments from them.
         const params = this.GetArgumentList(tree)
             .map((a) => this.GetArgument(a));
 
         return [func, params];
     }
 
-    private RemoveUnusedTokens(tree: CParseTree): CParseTree {
+    private RemoveUnusedTokens(tree: CppParseTree): CppParseTree {
         tree = tree.Copy();
 
         // First slice of everything after assignment since that will not be used.
-        const assignmentIndex = tree.nodes.findIndex((n) => n instanceof CToken && n.type === CTokenType.Assignment);
+        const assignmentIndex = tree.nodes
+            .findIndex((n) => n instanceof CppToken && n.type === CppTokenType.Assignment);
         if (assignmentIndex !== -1) {
             tree.nodes = tree.nodes.slice(0, assignmentIndex);
         }
 
         // Specifiers aren't needed so remove them.
         tree.nodes = tree.nodes
-            .filter((n) => n instanceof CParseTree || (n instanceof CToken && n.type !== CTokenType.Attribute));
+            .filter((n) => n instanceof CppParseTree || (n instanceof CppToken && n.type !== CppTokenType.Attribute));
 
         return tree;
     }
 
-    private GetArgumentList(tree: CParseTree): CParseTree[] {
-        const args: CParseTree[] = [];
+    private GetArgumentList(tree: CppParseTree): CppParseTree[] {
+        const args: CppParseTree[] = [];
 
         tree = this.RemoveUnusedTokens(tree);
 
-        let cursor: CParseTree = tree;
+        let cursor: CppParseTree = tree;
         while (this.IsFuncPtr(cursor.nodes) === true) {
-            cursor = cursor.nodes.find((n) => n instanceof CParseTree) as CParseTree;
+            cursor = cursor.nodes.find((n) => n instanceof CppParseTree) as CppParseTree;
         }
 
-        const argTree: CParseTree = cursor.nodes.find((n) => n instanceof CParseTree) as CParseTree;
+        const argTree: CppParseTree = cursor.nodes.find((n) => n instanceof CppParseTree) as CppParseTree;
         if (argTree === undefined) {
             throw new Error("Function arguments not found.");
         }
 
         // Split the argument tree on commas
-        let arg: CParseTree = new CParseTree();
+        let arg: CppParseTree = new CppParseTree();
         for (const node of argTree.nodes) {
-            if (node instanceof CToken && node.type === CTokenType.Comma) {
+            if (node instanceof CppToken && node.type === CppTokenType.Comma) {
                 args.push(arg);
-                arg = new CParseTree();
+                arg = new CppParseTree();
             } else {
                 arg.nodes.push(node);
             }
@@ -364,33 +365,33 @@ export default class CParser implements ICodeParser {
         return args;
     }
 
-    private IsFuncPtr(nodes: Array<CToken | CParseTree>) {
-        return nodes.filter((n) => n instanceof CParseTree).length === 2;
+    private IsFuncPtr(nodes: Array<CppToken | CppParseTree>) {
+        return nodes.filter((n) => n instanceof CppParseTree).length === 2;
     }
 
-    private StripNonTypeNodes(tree: CParseTree) {
+    private StripNonTypeNodes(tree: CppParseTree) {
         tree.nodes = tree.nodes
             // All strippable keywords.
             .filter((n) => {
-                return !(n instanceof CToken
-                    && n.type === CTokenType.Symbol
+                return !(n instanceof CppToken
+                    && n.type === CppTokenType.Symbol
                     && this.stripKeywords.find((k) => k === n.value) !== undefined);
             });
     }
 
-    private GetArgumentFromTrailingReturn(tree: CParseTree, startTrailingReturn: number): CArgument {
-        const argument: CArgument = new CArgument();
+    private GetArgumentFromTrailingReturn(tree: CppParseTree, startTrailingReturn: number): CppArgument {
+        const argument: CppArgument = new CppArgument();
 
-        // Find index of auto prior to the first CParseTree.
+        // Find index of auto prior to the first CppParseTree.
         // If auto is not found something is going wrong since trailing return
         // requires auto.
         let autoIndex: number = -1;
         for (let i: number = 0; i < tree.nodes.length; i++) {
             const node = tree.nodes[i];
-            if (node instanceof CParseTree) {
+            if (node instanceof CppParseTree) {
                 break;
             }
-            if (node.type === CTokenType.Symbol && node.value === "auto") {
+            if (node.type === CppTokenType.Symbol && node.value === "auto") {
                 autoIndex = i;
                 break;
             }
@@ -400,13 +401,13 @@ export default class CParser implements ICodeParser {
             throw new Error("Function declaration has trailing return but type is not auto.");
         }
 
-        // Get symbol between auto and CParseTree which is the argument name. It also may not be a keyword.
+        // Get symbol between auto and CppParseTree which is the argument name. It also may not be a keyword.
         for (let i: number = autoIndex + 1; i < tree.nodes.length; i++) {
             const node = tree.nodes[i];
-            if (node instanceof CParseTree) {
+            if (node instanceof CppParseTree) {
                 break;
             }
-            if (node.type === CTokenType.Symbol && this.keywords.find((k) => k === node.value) === undefined) {
+            if (node.type === CppTokenType.Symbol && this.keywords.find((k) => k === node.value) === undefined) {
                 argument.name = node.value;
                 break;
             }
@@ -418,19 +419,19 @@ export default class CParser implements ICodeParser {
         return argument;
     }
 
-    private GetArgumentFromFuncPtr(tree: CParseTree): CArgument {
-        const argument: CArgument = new CArgument();
+    private GetArgumentFromFuncPtr(tree: CppParseTree): CppArgument {
+        const argument: CppArgument = new CppArgument();
 
         argument.type = tree;
 
-        let cursor: CParseTree = tree;
+        let cursor: CppParseTree = tree;
 
         while (this.IsFuncPtr(cursor.nodes) === true) {
-            cursor = cursor.nodes.find((n) => n instanceof CParseTree) as CParseTree;
+            cursor = cursor.nodes.find((n) => n instanceof CppParseTree) as CppParseTree;
         }
 
-        // Remove CParseTree. This can be if it is a function declaration.
-        const argumentsIndex = cursor.nodes.findIndex((n) => n instanceof CParseTree);
+        // Remove CppParseTree. This can be if it is a function declaration.
+        const argumentsIndex = cursor.nodes.findIndex((n) => n instanceof CppParseTree);
         if (argumentsIndex !== -1) {
             cursor.nodes.splice(argumentsIndex, 1);
         }
@@ -439,11 +440,11 @@ export default class CParser implements ICodeParser {
         // Remove it from the tree and set the name to the argument name
         for (let i: number = 0; i < cursor.nodes.length; i++) {
             const node = cursor.nodes[i];
-            if (node instanceof CParseTree) {
+            if (node instanceof CppParseTree) {
                 continue;
             }
 
-            if (node.type === CTokenType.Symbol && this.keywords.find((k) => k === node.value) === undefined) {
+            if (node.type === CppTokenType.Symbol && this.keywords.find((k) => k === node.value) === undefined) {
                 argument.name = node.value;
                 cursor.nodes.splice(i, 1);
             }
@@ -453,21 +454,21 @@ export default class CParser implements ICodeParser {
         return argument;
     }
 
-    private GetDefaultArgument(tree: CParseTree): CArgument {
-        const argument: CArgument = new CArgument();
+    private GetDefaultArgument(tree: CppParseTree): CppArgument {
+        const argument: CppArgument = new CppArgument();
 
         for (const node of tree.nodes) {
-            if (node instanceof CParseTree) {
+            if (node instanceof CppParseTree) {
                 break;
             }
             const symbolCount = argument.type.nodes
-                .filter((n) => n instanceof CToken)
-                .map((n) => n as CToken)
-                .filter((n) => n.type === CTokenType.Symbol)
+                .filter((n) => n instanceof CppToken)
+                .map((n) => n as CppToken)
+                .filter((n) => n.type === CppTokenType.Symbol)
                 .filter((n) => this.keywords.find((k) => k === n.value) === undefined)
                 .length;
 
-            if (node.type === CTokenType.Symbol
+            if (node.type === CppTokenType.Symbol
                 && this.keywords.find((k) => k === node.value) === undefined
             ) {
                 if (symbolCount === 1 && argument.name === null) {
@@ -485,15 +486,15 @@ export default class CParser implements ICodeParser {
         return argument;
     }
 
-    private GetArgument(tree: CParseTree): CArgument {
+    private GetArgument(tree: CppParseTree): CppArgument {
         // Copy tree structure leave original untouched.
         const copy = this.RemoveUnusedTokens(tree);
 
         // Special case with only ellipsis. C style variadic arguments
         if (copy.nodes.length === 1) {
             const node = copy.nodes[0];
-            if (node instanceof CToken && node.type === CTokenType.Ellipsis) {
-                const argument: CArgument = new CArgument();
+            if (node instanceof CppToken && node.type === CppTokenType.Ellipsis) {
+                const argument: CppArgument = new CppArgument();
                 argument.name = node.value;
                 return argument;
             }
@@ -501,7 +502,7 @@ export default class CParser implements ICodeParser {
 
         // Check if it is has a trailing return.
         const startTrailingReturn: number = copy.nodes
-            .findIndex((t) => t instanceof CToken ? t.type === CTokenType.Arrow : false);
+            .findIndex((t) => t instanceof CppToken ? t.type === CppTokenType.Arrow : false);
 
         // Special case trailing return.
         if (startTrailingReturn !== -1) {
