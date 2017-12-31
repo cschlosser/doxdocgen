@@ -59,6 +59,16 @@
                     "type": "boolean",
                     "default": true
                 },
+                "doxdocgen.generic.boolReturnsTrueFalse": {
+                    "description": "If this is enabled a bool return value will be split into true and false return param.",
+                    "type": "boolean",
+                    "default": true
+                },
+                "doxdocgen.generic.boolPointerReturnsNull": {
+                    "description": "If this is enabled a pointer to a bool return value will include a null return param.",
+                    "type": "boolean",
+                    "default": true
+                },
                 "doxdocgen.generic.briefTemplate": {
                     "description": "The template of the brief DoxyGen line that is generated. If empty it won't get generated at all.",
                     "type": "string",

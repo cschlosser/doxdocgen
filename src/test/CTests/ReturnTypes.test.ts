@@ -9,7 +9,7 @@ import * as assert from "assert";
 // You can import and use all API from the 'vscode' module
 // as well as import your extension to test it
 import * as vscode from "vscode";
-import TestSetup from "./tools/TestSetup";
+import TestSetup from "./TestSetup";
 
 // Defines a Mocha test suite to group tests of similar kind together
 suite("Return type Tests", () => {
@@ -17,12 +17,12 @@ suite("Return type Tests", () => {
     const testSetup: TestSetup = new TestSetup("void foo();");
 
     // Tests
-    test("void return", () => {
+    test("Void return", () => {
         const result = testSetup.SetLine("void foo();").GetResult();
         assert.equal("/**\n * @brief \n * \n */", result);
     });
 
-    test("void pointer return", () => {
+    test("Void pointer return", () => {
         const result = testSetup.SetLine("void* foo();").GetResult();
         assert.equal("/**\n * @brief \n * \n * @return void* \n */", result);
     });
@@ -32,22 +32,22 @@ suite("Return type Tests", () => {
         assert.equal("/**\n * @brief \n * \n * @return int& \n */", result);
     });
 
-    test("simple type return", () => {
+    test("Simple type return", () => {
         const result = testSetup.SetLine("int foo();").GetResult();
         assert.equal("/**\n * @brief \n * \n * @return int \n */", result);
     });
 
-    test("bool return type", () => {
+    test("Bool return type", () => {
         const result = testSetup.SetLine("bool foo();").GetResult();
         assert.equal("/**\n * @brief \n * \n * @return true \n * @return false \n */", result);
     });
 
-    test("pointer return type", () => {
+    test("Pointer return type", () => {
         const result = testSetup.SetLine("int* foo();").GetResult();
         assert.equal("/**\n * @brief \n * \n * @return int* \n */", result);
     });
 
-    test("bool pointer return type", () => {
+    test("Bool pointer return type", () => {
         const result = testSetup.SetLine("bool* foo();").GetResult();
         assert.equal("/**\n * @brief \n * \n * @return true \n * @return false \n * @return null \n */", result);
     });
