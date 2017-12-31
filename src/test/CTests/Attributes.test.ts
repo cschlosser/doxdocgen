@@ -9,7 +9,7 @@ import * as assert from "assert";
 // You can import and use all API from the 'vscode' module
 // as well as import your extension to test it
 import * as vscode from "vscode";
-import TestSetup from "./tools/TestSetup";
+import TestSetup from "./TestSetup";
 
 // Defines a Mocha test suite to group tests of similar kind together
 suite("Attributes Tests", () => {
@@ -45,5 +45,18 @@ suite("Attributes Tests", () => {
     test("Specifier and attribute on struct", () => {
         const result = testSetup.SetLine("struct [[nodiscard]] alignas(8) Matrix {").GetResult();
         assert.equal("/**\n * @brief \n * \n */", result);
+    });
+
+    test("Noexcept on function", () => {
+        let result = testSetup.SetLine("constexpr int foo(int a, double& b) noexcept(true);").GetResult();
+        assert.equal("/**\n * @brief \n * \n * @param a \n * @param b \n * @return constexpr int \n */", result);
+
+        result = testSetup.SetLine("constexpr int foo(int a, double& b) noexcept;").GetResult();
+        assert.equal("/**\n * @brief \n * \n * @param a \n * @param b \n * @return constexpr int \n */", result);
+    });
+
+    test("Throw on function", () => {
+        const result = testSetup.SetLine("constexpr int foo(int a, double& b) throw(std::except);").GetResult();
+        assert.equal("/**\n * @brief \n * \n * @param a \n * @param b \n * @return constexpr int \n */", result);
     });
 });

@@ -1,15 +1,19 @@
 import * as vscode from "vscode";
-import CodeParser from "../../CodeParser/CodeParser";
-import CParser from "../../CodeParser/CParser/CParser";
-import { IDocGen } from "../../DocGen/DocGen";
+
+import CodeParser from "../../Common/ICodeParser";
+import { IDocGen } from "../../Common/IDocGen";
+import { Config } from "../../Config";
 import * as myExtension from "../../extension";
-import MockDocument from "./MockDocument";
-import MockEditor from "./MockEditor";
-import MockLine from "./MockLine";
-import MockPosition from "./MockPosition";
-import MockSelection from "./MockSelection";
+import CParser from "../../Lang/C/CParser";
+import MockDocument from "../tools/MockDocument";
+import MockEditor from "../tools/MockEditor";
+import MockLine from "../tools/MockLine";
+import MockPosition from "../tools/MockPosition";
+import MockSelection from "../tools/MockSelection";
 
 export default class TestSetup {
+    public cfg: Config;
+
     private editor: MockEditor;
 
     constructor(method: string) {
@@ -17,6 +21,8 @@ export default class TestSetup {
     }
 
     public SetLine(method: string): TestSetup {
+        this.cfg = new Config();
+
         let position: MockPosition;
         position = new MockPosition(0, 0);
 
@@ -36,7 +42,7 @@ export default class TestSetup {
 
     public GetResult(): string {
         let parser: CodeParser;
-        parser = new CParser();
+        parser = new CParser(new Config());
 
         const gen: IDocGen = parser.Parse(this.editor);
         gen.GenerateDoc(new vscode.Range(new vscode.Position(0, 0), new vscode.Position(0, 0)));
