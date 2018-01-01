@@ -60,7 +60,53 @@ export default class CppParser implements ICodeParser {
         this.lexerVocabulary = {
             ArraySubscript: (x: string): string => (x.match("^\\[[^\\[]*?\\]") || [])[0],
             Arrow: (x: string): string => (x.match("^->") || [])[0],
-            Assignment: (x: string): string => (x.match("^=") || [])[0],
+            Assignment: (x: string): string => {
+                if (!x.match("^=")) {
+                    return undefined;
+                }
+
+                const nesters: Map<string, string> = new Map<string, string>([
+                    ["<", ">"], ["(", ")"], ["{", "}"], ["[", "]"],
+                ]);
+
+                for (let i = 0; i < x.length; i++) {
+                    const v = nesters.get(x[i]);
+                    if (v !== undefined) {
+                        const startEndOffset: number[] = this.GetSubExprStartEnd(x, i, x[i], v);
+                        if (startEndOffset[1] === 0) {
+                            return undefined;
+                        }
+                        i = startEndOffset[1] - 1;
+                    } else if (x[i] === "\"" || x[i] === "'") {
+                        // Check if raw literal. Since those may have unescaped characters
+                        // but require ()
+                        if (x[i - 1] !== "R") {
+                            // Skip to next end of the string or char literal.
+                            let found: boolean = false;
+                            for (let j = i + 1; j < x.length; j++) {
+                                if (x[j] === x[i] && x[j - 1] !== "\\") {
+                                    found = true;
+                                    i = j;
+                                    break;
+                                }
+                            }
+                            if (!found) {
+                                return undefined;
+                            }
+                        } else {
+                            const startEndOffset: number[] = this.GetSubExprStartEnd(x, i, "(", ")");
+                            if (startEndOffset[1] === 0) {
+                                return undefined;
+                            }
+                            i = startEndOffset[1];
+                        }
+                    } else if (x[i] === "," || x[i] === ")") {
+                        return x.slice(0, i);
+                    }
+                }
+
+                return x;
+            },
             Attribute: (x: string): string => {
                 const attribute: string = (x.match("^\\[\\[[^\\[]*?\\]\\]") || [])[0];
                 if (attribute !== undefined) {
@@ -113,11 +159,6 @@ export default class CppParser implements ICodeParser {
             Pointer: (x: string): string => (x.match("^\\*") || [])[0],
             Reference: (x: string): string => (x.match("^&") || [])[0],
             Symbol: (x: string): string => {
-                // Handle access specifiers since they aren't really symbols.
-                if (x.startsWith("public:") || x.startsWith("protected:") || x.startsWith("private:")) {
-                    return undefined;
-                }
-
                 // Handle specifiers
                 const specifierFound: number = this.attributes
                     .findIndex((n: string) => x.startsWith(n) === true);
@@ -134,18 +175,19 @@ export default class CppParser implements ICodeParser {
 
                 // Special case group up the fundamental types with the modifiers.
                 // tslint:disable-next-line:max-line-length
-                let reMatch: string = (x.match("^(unsigned|signed|short|long|int|char|double)(\\s+(unsigned|signed|short|long|int|char|double))+(?!a-z|A-Z|:|_)") || [])[0];
+                let reMatch: string = (x.match("^(unsigned|signed|short|long|int|char|double)(\\s+(unsigned|signed|short|long|int|char|double))+(?!a-z|A-Z|:|_|\\d)") || [])[0];
                 if (reMatch !== undefined) {
                     return reMatch.trim();
                 }
 
                 // Regex to handle a part of all symbols and includes all symbol special cases.
                 // This is run in a loop because template parts of a symbol can't be parsed using regex.
+                // Also check if it doesn't start with a number since those are always literals
                 // tslint:disable-next-line:max-line-length
                 const symbolRegex: string = "^([a-z|A-Z|:|_|~|\\d]*operator\\s*(\"\"_[a-z|A-Z|_|\\d]+|>>=|<<=|->\\*|\\+=|-=|\\*=|\\/=|%=|\\^=|&=|\\|=|<<|>>|==|!=|<=|->|>=|&&|\\|\\||\\+\\+|--|\\+|-|\\*|\\/|%|\\^|&|\||~|!|=|<|>|,|\\[\\s*\\]|\\(\\s*\\)|(new|delete)\\s*(\\[\\s*\\]){0,1}){0,1}|[a-z|A-Z|:|_|~|\\d]+)";
 
                 reMatch = (x.match(symbolRegex) || [])[0];
-                if (reMatch === undefined) {
+                if (reMatch === undefined || x.match(/^\d/)) {
                     return undefined;
                 }
 

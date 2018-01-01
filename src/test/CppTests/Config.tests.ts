@@ -16,5 +16,4 @@ suite("C++ - Configuration Tests", () => {
     const testSetup: TestSetup = new TestSetup("void foo();");
 
     // Tests
-
 });
