@@ -55,8 +55,7 @@ export default class CppDocGen implements IDocGen {
                                     Implementation
      ***************************************************************************/
     protected getIndentation(): string {
-        const line: TextLine = this.activeEditor.document.lineAt(this.activeEditor.selection.start.line);
-        return line.text.slice(0, line.firstNonWhitespaceCharacterIndex - 1);
+        return this.activeEditor.document.lineAt(this.activeEditor.selection.start.line).text.match("^\\s*")[0];
     }
 
     protected getTemplatedString(replace: string, template: string, param: string): string {
@@ -81,6 +80,10 @@ export default class CppDocGen implements IDocGen {
     }
 
     protected generateReturnParams(): string[] {
+        if (this.cfg.includeTypeAtReturn === false) {
+            return [""];
+        }
+
         const params: string[] = [];
 
         // Check if return type is a pointer
