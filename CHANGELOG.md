@@ -1,5 +1,27 @@
 # Change Log
 
+## [0.1.0]
+
+- Fix #40
+
+- Fix #38
+
+- Fix #37
+
+- Fix #36
+
+- Fix #28
+
+- Fix #24
+
+- Implemented support for noexcept and throw
+
+- Implemented support for constexpr and final
+
+- Implemented support for unnamed parameters, this broke in version 0.7
+
+- Add new config variable that allows a user to disable the true and false return on bool types and make it behave like a normal type
+
 ## [0.0.7]
 
 - Fix #31
