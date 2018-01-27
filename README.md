@@ -65,7 +65,4 @@ See [Below](#whats-to-come)
 * Configuration options
   * Support more configuration options
 
-* Tests
-
 * More languages
-  * C++11 and newer
