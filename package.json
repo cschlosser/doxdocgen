@@ -11,7 +11,8 @@
         "Other"
     ],
     "activationEvents": [
-        "onLanguage:cpp"
+        "onLanguage:cpp",
+        "onLanguage:c"
     ],
     "contributes": {
         "configuration": {
