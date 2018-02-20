@@ -108,14 +108,14 @@
         "test": "npm run compile && node ./node_modules/vscode/bin/test"
     },
     "devDependencies": {
-        "typescript": "^2.5.3",
+        "typescript": "^2.7.2",
         "vscode": "^1.1.10",
         "@types/node": "^7.0.43",
         "@types/mocha": "^2.2.42",
-        "tslint": "^5.7.0",
+        "tslint": "^5.9.1",
         "istanbul": "^0.4.5",
-        "mocha": "^3.2.0",
-        "remap-istanbul": "^0.8.4",
-        "decache": "^4.1.0"
+        "mocha": "^5.0.1",
+        "remap-istanbul": "^0.10.1",
+        "decache": "^4.4.0"
     }
 }
