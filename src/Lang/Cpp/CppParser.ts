@@ -327,6 +327,12 @@ export default class CppParser implements ICodeParser {
     }
 
     private GetReturnAndArgs(line: string): [CppArgument, CppArgument[]] {
+        if (this.GetArgumentFromCastOperator(line) !== null) {
+            const opFunc = new CppArgument();
+            opFunc.name = this.GetArgumentFromCastOperator(line)[1];
+            opFunc.type.nodes.push(new CppToken(CppTokenType.Symbol, opFunc.name));
+            return [opFunc, []];
+        }
         // CppTokenize rest of expression and remove comment CppTokens;
         const CppTokens: CppToken[] = this.Tokenize(line)
             .filter((t) => t.type !== CppTokenType.CommentBlock)
@@ -419,6 +425,11 @@ export default class CppParser implements ICodeParser {
                     && n.type === CppTokenType.Symbol
                     && this.stripKeywords.find((k) => k === n.value) !== undefined);
             });
+    }
+
+    private GetArgumentFromCastOperator(line: string) {
+        const copy = line;
+        return copy.match("[explicit|\\s]*\\s*operator\\s*([a-zA-Z].*)\\(\\).*");
     }
 
     private GetArgumentFromTrailingReturn(tree: CppParseTree, startTrailingReturn: number): CppArgument {
