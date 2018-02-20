@@ -3,7 +3,7 @@ sudo: false
 branches:
   only:
     - master
-    - ^\d\.\d\.\d$
+    - /^\d\.\d\.\d$/
 
 os:
   - linux
