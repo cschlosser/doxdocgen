@@ -18,7 +18,7 @@
 
 - Implemented support for constexpr and final
 
-- Implemented support for unnamed parameters, this broke in version 0.7
+- Implemented support for unnamed parameters, this broke in version 0.0.7
 
 - Add new config variable that allows a user to disable the true and false return on bool types and make it behave like a normal type
 
