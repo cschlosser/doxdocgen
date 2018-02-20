@@ -112,6 +112,10 @@
         "vscode": "^1.1.10",
         "@types/node": "^7.0.43",
         "@types/mocha": "^2.2.42",
-        "tslint": "^5.7.0"
+        "tslint": "^5.7.0",
+        "istanbul": "^0.4.5",
+        "mocha": "^3.2.0",
+        "remap-istanbul": "^0.8.4",
+        "decache": "^4.1.0"
     }
 }
