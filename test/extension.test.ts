@@ -9,10 +9,10 @@ import * as assert from "assert";
 // You can import and use all API from the 'vscode' module
 // as well as import your extension to test it
 import * as vscode from "vscode";
-import CodeParser from "../CodeParser/CodeParser";
-import CParser from "../CodeParser/CParser/CParser";
-import { IDocGen } from "../DocGen/DocGen";
-import * as myExtension from "../extension";
+import CodeParser from "../src/CodeParser/CodeParser";
+import CParser from "../src/CodeParser/CParser/CParser";
+import { IDocGen } from "../src/DocGen/DocGen";
+import * as myExtension from "../src/extension";
 import MockDocument from "./MockDocument";
 import MockEditor from "./MockEditor";
 import MockLine from "./MockLine";
