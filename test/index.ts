@@ -136,7 +136,8 @@ class CoverageRunner {
             decache(fullPath);
         });
 
-        self.matchFn = (file): boolean => fileMap[file];
+        // tslint:disable-next-line:arrow-return-shorthand
+        self.matchFn = (file): boolean => { return fileMap[file]; };
         self.matchFn.files = Object.keys(fileMap);
 
         // Hook up to the Require function so that when this is called, if any of our source files

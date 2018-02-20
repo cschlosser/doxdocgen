@@ -38,7 +38,6 @@ install:
 
 jobs:
   include:
-    - stage: test
       script:
         - npm test --silent
         - bash <(curl -s https://codecov.io/bash)
