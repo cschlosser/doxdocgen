@@ -38,9 +38,8 @@ install:
 
 jobs:
   include:
-      script:
-        - npm test --silent
-        - bash <(curl -s https://codecov.io/bash)
+    - script: npm test --silent
+    - script: bash <(curl -s https://codecov.io/bash)
     - stage: lint
       script: tslint -c tslint.json 'src/**/*.ts'
     - stage: build
