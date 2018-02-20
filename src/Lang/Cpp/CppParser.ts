@@ -329,7 +329,7 @@ export default class CppParser implements ICodeParser {
     private GetReturnAndArgs(line: string): [CppArgument, CppArgument[]] {
         if (this.GetArgumentFromCastOperator(line) !== null) {
             const opFunc = new CppArgument();
-            opFunc.name = this.GetArgumentFromCastOperator(line)[1];
+            opFunc.name = this.GetArgumentFromCastOperator(line)[1].trim();
             opFunc.type.nodes.push(new CppToken(CppTokenType.Symbol, opFunc.name));
             return [opFunc, []];
         }
