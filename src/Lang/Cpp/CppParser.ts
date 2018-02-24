@@ -227,22 +227,27 @@ export default class CppParser implements ICodeParser {
         } catch (err) {
             // console.dir(err);
         }
-
-        // template parsing is simpler by using heuristics rather then CppTokenizing first.
         const templateArgs: string[] = [];
-        while (line.startsWith("template")) {
-            const template: string = this.GetTemplate(line);
-
-            templateArgs.push.apply(templateArgs, this.GetArgsFromTemplate(template));
-
-            line = line.slice(template.length, line.length + 1).trim();
-        }
-
         let args: [CppArgument, CppArgument[]] = [new CppArgument(), []];
-        try {
-            args = this.GetReturnAndArgs(line);
-        } catch (err) {
-            // console.dir(err);
+
+        if (line === "#include" ||
+            (activeEdit.selection.active.line === 0 && line.length === 0)) { // head of file
+            args[0].name = "#include";
+        } else { // method
+            // template parsing is simpler by using heuristics rather then CppTokenizing first.
+            while (line.startsWith("template")) {
+                const template: string = this.GetTemplate(line);
+
+                templateArgs.push.apply(templateArgs, this.GetArgsFromTemplate(template));
+
+                line = line.slice(template.length, line.length + 1).trim();
+            }
+
+            try {
+                args = this.GetReturnAndArgs(line);
+            } catch (err) {
+                // console.dir(err);
+            }
         }
 
         return new CppDocGen(
@@ -296,6 +301,11 @@ export default class CppParser implements ICodeParser {
                     logicalLine += "\n" + nextLineTxt.slice(0, i);
                     return logicalLine.replace(/^\s+|\s+$/g, "");
                 }
+            }
+
+            // Head of file probably
+            if (nextLineTxt.startsWith("#include")) {
+                return "#include";
             }
 
             logicalLine += "\n" + nextLineTxt;

@@ -20,12 +20,15 @@ export class Config {
         values.tparamTemplate = cfg.get<string>("tparamTemplate", values.tparamTemplate);
         values.returnTemplate = cfg.get<string>("returnTemplate", values.returnTemplate);
         values.linesToGet = cfg.get<number>("linesToGet", values.linesToGet);
+        values.authorTag = cfg.get<string>("authorTag", values.authorTag);
+        values.fileTemplate = cfg.get<string>("fileTemplate", values.fileTemplate);
 
         return values;
     }
 
     public readonly paramTemplateReplace: string = "{param}";
     public readonly typeTemplateReplace: string = "{type}";
+    public readonly nameTemplateReplace: string = "{name}";
 
     public triggerSequence: string = "/**";
     public firstLine: string = "/**";
@@ -41,4 +44,6 @@ export class Config {
     public tparamTemplate: string = "@tparam {param} ";
     public returnTemplate: string = "@return {type} ";
     public linesToGet: number = 20;
+    public authorTag: string = "@author your name";
+    public fileTemplate: string = "@file {name}";
 }
