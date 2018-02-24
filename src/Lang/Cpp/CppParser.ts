@@ -301,7 +301,7 @@ export default class CppParser implements ICodeParser {
             logicalLine += "\n" + nextLineTxt;
         }
 
-        throw new Error("More then 20 lines were gotten from editor and no end of expression was found.");
+        throw new Error("More than " + linesToGet + " lines were read from editor and no end of expression was found.");
     }
 
     private Tokenize(expression: string): CppToken[] {
