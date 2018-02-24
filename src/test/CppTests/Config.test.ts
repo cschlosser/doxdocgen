@@ -8,6 +8,7 @@ import * as assert from "assert";
 
 // You can import and use all API from the 'vscode' module
 // as well as import your extension to test it
+import * as moment from "moment";
 import * as vscode from "vscode";
 import { Config } from "../../Config";
 import TestSetup from "./TestSetup";
@@ -91,5 +92,14 @@ suite("C++ - Configuration Tests", () => {
         testSetup.firstLine = 1;
         const negativeResult = testSetup.SetLines(["template<typename T> bool \n", "foo(T a);"]).GetResult();
         assert.equal("/**\n * @brief \n * \n */", negativeResult);
+    });
+
+    test("File description order test", () => {
+        testSetup.cfg = new Config();
+        testSetup.firstLine = 0;
+        testSetup.cfg.fileOrder = ["brief", "author", "date", "file"];
+        const result = testSetup.SetLine("").GetResult();
+        assert.equal("/**\n * @brief \n * \n * @author your name\n" +
+            " * @date " + moment().format("YYYY-MM-DD") + "\n * @file MockDocument.h\n */", result);
     });
 });
