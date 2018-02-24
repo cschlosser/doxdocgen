@@ -19,6 +19,7 @@ export class Config {
         values.paramTemplate = cfg.get<string>("paramTemplate", values.paramTemplate);
         values.tparamTemplate = cfg.get<string>("tparamTemplate", values.tparamTemplate);
         values.returnTemplate = cfg.get<string>("returnTemplate", values.returnTemplate);
+        values.linesToGet = cfg.get<number>("linesToGet", values.linesToGet);
 
         return values;
     }
@@ -39,4 +40,5 @@ export class Config {
     public paramTemplate: string = "@param {param} ";
     public tparamTemplate: string = "@tparam {param} ";
     public returnTemplate: string = "@return {type} ";
+    public linesToGet: number = 20;
 }
