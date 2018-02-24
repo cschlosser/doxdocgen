@@ -32,8 +32,8 @@ export default class CppDocGen implements IDocGen {
     ) {
         this.activeEditor = actEdit;
         this.cfg = cfg;
-        this.func = func;
         this.templateParams = templateParams;
+        this.func = func;
         this.params = params;
     }
 
@@ -41,7 +41,12 @@ export default class CppDocGen implements IDocGen {
      * @inheritdoc
      */
     public GenerateDoc(rangeToReplace: Range) {
-        const comment: string = this.generateComment();
+        let comment: string;
+        if (this.func.name === "#include") {
+            comment = this.generateFileDescription();
+        } else {
+            comment = this.generateComment();
+        }
 
         this.activeEditor.edit((editBuilder) => {
             editBuilder.replace(rangeToReplace, comment); // Insert the comment
@@ -108,6 +113,39 @@ export default class CppDocGen implements IDocGen {
         }
 
         return params;
+    }
+
+    protected generateFileDescription(): string {
+        const lines: string[] = [];
+
+        if (this.cfg.firstLine.trim().length !== 0) {
+            lines.push(this.cfg.firstLine);
+        }
+
+        if (this.cfg.briefTemplate.trim().length !== 0) {
+            this.generateBrief(lines);
+            if (this.cfg.newLineAfterBrief === true) {
+                lines.push(this.cfg.commentPrefix);
+            }
+        }
+
+        lines.push(this.cfg.commentPrefix + this.cfg.authorTag);
+
+        this.generateFromTemplate(
+            lines,
+            this.cfg.nameTemplateReplace,
+            this.cfg.fileTemplate,
+            [this.activeEditor.document.fileName.replace(/^.*[\\\/]/, "")],
+        );
+
+        // todo add date to file creation
+        // lines.push(new Date().toLocaleDateString());
+
+        if (this.cfg.lastLine.trim().length !== 0) {
+            lines.push(this.cfg.lastLine);
+        }
+
+        return lines.join("\n");
     }
 
     protected generateComment(): string {
