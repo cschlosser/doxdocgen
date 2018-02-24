@@ -83,12 +83,13 @@ suite("C++ - Configuration Tests", () => {
 
     test("Lines to get test", () => {
         testSetup.cfg = new Config();
-        testSetup.cfg.linesToGet = 1;
-        const negativeResult = testSetup.SetLines(["template<typename T> bool \n", "foo(T a);"]).GetResult();
-        assert.equal("/**\n * @brief \n * \n */", negativeResult);
         testSetup.cfg.linesToGet = 2;
         const positiveResult = testSetup.SetLines(["template<typename T> bool \n", "foo(T a);"]).GetResult();
         assert.equal("/**\n * @brief \n * \n * @tparam T \n * @param a \n * "
             + "@return true \n * @return false \n */", positiveResult);
+        testSetup.cfg.linesToGet = 0;
+        testSetup.firstLine = 1;
+        const negativeResult = testSetup.SetLines(["template<typename T> bool \n", "foo(T a);"]).GetResult();
+        assert.equal("/**\n * @brief \n * \n */", negativeResult);
     });
 });
