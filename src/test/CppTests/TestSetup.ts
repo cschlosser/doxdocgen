@@ -13,11 +13,12 @@ import MockSelection from "../tools/MockSelection";
 
 export default class TestSetup {
     public cfg: Config;
-
+    public firstLine: number;
     private editor: MockEditor;
 
     constructor(method: string) {
         this.cfg = new Config();
+        this.firstLine = 0;
         this.SetLine(method);
     }
 
@@ -38,7 +39,7 @@ export default class TestSetup {
                 .map((l) => new MockLine(l));
         }
 
-        const selection: MockSelection =  new MockSelection(new MockPosition(0, 0));
+        const selection: MockSelection =  new MockSelection(new MockPosition(this.firstLine, 0));
         const doc: MockDocument = new MockDocument(mockLines);
 
         this.editor = new MockEditor(selection, doc);
@@ -51,7 +52,8 @@ export default class TestSetup {
         parser = new CppParser(this.cfg);
 
         const gen: IDocGen = parser.Parse(this.editor);
-        gen.GenerateDoc(new vscode.Range(new vscode.Position(0, 0), new vscode.Position(0, 0)));
+        // tslint:disable-next-line:max-line-length
+        gen.GenerateDoc(new vscode.Range(new vscode.Position(this.firstLine, 0), new vscode.Position(this.firstLine, 0)));
 
         return this.editor.editBuilder.text;
     }
