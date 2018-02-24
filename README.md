@@ -45,6 +45,10 @@ Featuring an extensive generation customization system
 ![options](images/options.gif)
 ![xml options](images/opts-xml.gif)
 
+Generate documentation for the file you just created
+
+![file description](images/file.gif)
+
 ## Extension Settings
 
 See [Below](#whats-to-come)
