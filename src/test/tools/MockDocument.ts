@@ -14,6 +14,7 @@ export default class MockDocument implements vscode.TextDocument {
     private lines: vscode.TextLine[];
     public constructor(lines: vscode.TextLine[]) {
         this.lines = lines;
+        this.fileName = "MockDocument.h";
     }
     public save(): Thenable<boolean> {
         throw new Error("Method not implemented.");

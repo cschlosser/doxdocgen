@@ -22,6 +22,9 @@ export class Config {
         values.linesToGet = cfg.get<number>("linesToGet", values.linesToGet);
         values.authorTag = cfg.get<string>("authorTag", values.authorTag);
         values.fileTemplate = cfg.get<string>("fileTemplate", values.fileTemplate);
+        values.dateTemplate = cfg.get<string>("dateTemplate", values.dateTemplate);
+        values.dateFormat = cfg.get<string>("dateFormat", values.dateFormat);
+        values.fileOrder = cfg.get<string[]>("fileOrder", values.fileOrder);
 
         return values;
     }
@@ -29,6 +32,7 @@ export class Config {
     public readonly paramTemplateReplace: string = "{param}";
     public readonly typeTemplateReplace: string = "{type}";
     public readonly nameTemplateReplace: string = "{name}";
+    public readonly dateTemplateReplace: string = "{date}";
 
     public triggerSequence: string = "/**";
     public firstLine: string = "/**";
@@ -46,4 +50,7 @@ export class Config {
     public linesToGet: number = 20;
     public authorTag: string = "@author your name";
     public fileTemplate: string = "@file {name}";
+    public dateTemplate: string = "@date {date}";
+    public dateFormat: string = "YYYY-MM-DD";
+    public fileOrder: string[] = ["brief", "file", "author", "date"];
 }

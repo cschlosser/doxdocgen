@@ -1,3 +1,4 @@
+import * as moment from "moment";
 import { Position, Range, Selection, TextEditor, TextLine, WorkspaceEdit } from "vscode";
 import { IDocGen } from "../../Common/IDocGen";
 import { Config } from "../../Config";
@@ -115,35 +116,86 @@ export default class CppDocGen implements IDocGen {
         return params;
     }
 
-    protected generateFileDescription(): string {
-        const lines: string[] = [];
+    protected generateAuthorTag(lines: string[]) {
+        if (this.cfg.authorTag.trim().length !== 0) {
+            lines.push(this.cfg.commentPrefix + this.cfg.authorTag);
+        }
+    }
 
+    protected generateFilenameFromTemplate(lines: string[]) {
+        if (this.cfg.fileTemplate.trim().length !== 0) {
+            this.generateFromTemplate(
+                lines,
+                this.cfg.nameTemplateReplace,
+                this.cfg.fileTemplate,
+                [this.activeEditor.document.fileName.replace(/^.*[\\\/]/, "")],
+            );
+        }
+    }
+
+    protected generateDateFromTemplate(lines: string[]) {
+        if (this.cfg.dateTemplate.trim().length !== 0 &&
+            this.cfg.dateFormat.trim().length !== 0) {
+            this.generateFromTemplate(
+                lines,
+                this.cfg.dateTemplateReplace,
+                this.cfg.dateTemplate,
+                [moment().format(this.cfg.dateFormat)],
+            );
+        }
+    }
+
+    protected insertFirstLine(lines: string[]) {
         if (this.cfg.firstLine.trim().length !== 0) {
             lines.push(this.cfg.firstLine);
         }
+    }
 
+    protected insertBrief(lines: string[]) {
         if (this.cfg.briefTemplate.trim().length !== 0) {
             this.generateBrief(lines);
             if (this.cfg.newLineAfterBrief === true) {
                 lines.push(this.cfg.commentPrefix);
             }
         }
+    }
 
-        lines.push(this.cfg.commentPrefix + this.cfg.authorTag);
-
-        this.generateFromTemplate(
-            lines,
-            this.cfg.nameTemplateReplace,
-            this.cfg.fileTemplate,
-            [this.activeEditor.document.fileName.replace(/^.*[\\\/]/, "")],
-        );
-
-        // todo add date to file creation
-        // lines.push(new Date().toLocaleDateString());
-
+    protected insertLastLine(lines: string[]) {
         if (this.cfg.lastLine.trim().length !== 0) {
             lines.push(this.cfg.lastLine);
         }
+    }
+
+    protected generateFileDescription(): string {
+        const lines: string[] = [];
+
+        this.insertFirstLine(lines);
+
+        this.cfg.fileOrder.forEach((element) => {
+            switch (element) {
+                case "brief": {
+                    this.insertBrief(lines);
+                    break;
+                }
+                case "file": {
+                    this.generateFilenameFromTemplate(lines);
+                    break;
+                }
+                case "author": {
+                    this.generateAuthorTag(lines);
+                    break;
+                }
+                case "date": {
+                    this.generateDateFromTemplate(lines);
+                    break;
+                }
+                default: {
+                    break;
+                }
+            }
+        });
+
+        this.insertLastLine(lines);
 
         return lines.join("\n");
     }
@@ -151,16 +203,9 @@ export default class CppDocGen implements IDocGen {
     protected generateComment(): string {
         const lines: string[] = [];
 
-        if (this.cfg.firstLine.trim().length !== 0) {
-            lines.push(this.cfg.firstLine);
-        }
+        this.insertFirstLine(lines);
 
-        if (this.cfg.briefTemplate.trim().length !== 0) {
-            this.generateBrief(lines);
-            if (this.cfg.newLineAfterBrief === true) {
-                lines.push(this.cfg.commentPrefix);
-            }
-        }
+        this.insertBrief(lines);
 
         if (this.cfg.tparamTemplate.trim().length !== 0 && this.templateParams.length > 0) {
             this.generateFromTemplate(
@@ -187,9 +232,7 @@ export default class CppDocGen implements IDocGen {
             this.generateFromTemplate(lines, this.cfg.typeTemplateReplace, this.cfg.returnTemplate, returnParams);
         }
 
-        if (this.cfg.lastLine.trim().length !== 0) {
-            lines.push(this.cfg.lastLine);
-        }
+        this.insertLastLine(lines);
 
         const comment: string = lines.join("\n" + this.getIndentation());
         return comment;
