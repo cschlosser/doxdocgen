@@ -3,7 +3,7 @@ import ICodeParser from "../../Common/ICodeParser";
 import { IDocGen } from "../../Common/IDocGen";
 import { Config } from "../../Config";
 import { CppArgument } from "./CppArgument";
-import CppDocGen from "./CppDocGen";
+import { CommentType, CppDocGen, SpecialCase } from "./CppDocGen";
 import { CppParseTree } from "./CppParseTree";
 import { CppToken, CppTokenType } from "./CppToken";
 
@@ -25,6 +25,9 @@ export default class CppParser implements ICodeParser {
     private keywords: string[];
     private attributes: string[];
     private lexerVocabulary;
+
+    private specialCase: SpecialCase;
+    private commentType: CommentType;
 
     constructor(cfg: Config) {
         this.cfg = cfg;
@@ -212,6 +215,9 @@ export default class CppParser implements ICodeParser {
                 return symbol.replace(/\s+$/, "");
             },
         };
+
+        this.specialCase = SpecialCase.none;
+        this.commentType = CommentType.method;
     }
 
     /**
@@ -230,9 +236,8 @@ export default class CppParser implements ICodeParser {
         const templateArgs: string[] = [];
         let args: [CppArgument, CppArgument[]] = [new CppArgument(), []];
 
-        if (line === "#include" ||
-            (activeEdit.selection.active.line === 0 && line.length === 0)) { // head of file
-            args[0].name = "#include";
+        if (activeEdit.selection.active.line === 0 && line.length === 0) { // head of file
+            this.commentType = CommentType.file;
         } else { // method
             // template parsing is simpler by using heuristics rather then CppTokenizing first.
             while (line.startsWith("template")) {
@@ -257,6 +262,8 @@ export default class CppParser implements ICodeParser {
             templateArgs,
             args[0],
             args[1],
+            this.specialCase,
+            this.commentType,
         );
     }
 
@@ -305,7 +312,8 @@ export default class CppParser implements ICodeParser {
 
             // Head of file probably
             if (nextLineTxt.startsWith("#include")) {
-                return "#include";
+                this.commentType = CommentType.file;
+                return "";
             }
 
             logicalLine += "\n" + nextLineTxt;
@@ -353,13 +361,19 @@ export default class CppParser implements ICodeParser {
 
         // return argument.
         const func = this.GetArgument(tree);
-        // check if it is a constructor or descructor since these have no name..
-        // and reverse the assignment of type and name.
+        // check if it is a constructor or descructor since these have no name.
+        // Also reverse the assignment of type and name.
         if (func.name === null) {
             if (func.type.nodes.length !== 1) {
                 throw new Error("Too many symbols found for constructor/descructor.");
             } else if (func.type.nodes[0] instanceof CppParseTree) {
                 throw new Error("One node found with just a CppParseTree. Malformed input.");
+            }
+
+            if (line.includes("~")) {
+                this.specialCase = SpecialCase.destructor;
+            } else {
+                this.specialCase = SpecialCase.constructor;
             }
 
             func.name = (func.type.nodes[0] as CppToken).value;
