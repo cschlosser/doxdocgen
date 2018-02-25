@@ -6,52 +6,70 @@ This VS Code Extensions provides Doxygen Documentation generation on the fly by 
 [![Build status](https://ci.appveyor.com/api/projects/status/4h84071p9tv0y9r6?svg=true)](https://ci.appveyor.com/project/christophschlosser/doxdocgen)
 [![codecov](https://codecov.io/gh/christophschlosser/doxdocgen/branch/master/graph/badge.svg)](https://codecov.io/gh/christophschlosser/doxdocgen)
 
+## Table of Contents
+
+* [Features](#features)
+  * [Attributes](#attributes)
+  * [Con- and Destructors](#con--and-destructors)
+  * [Extensive customization](#extensive-customization)
+  * [File descriptions](#file-descriptions)
+  * [Function pointers](#function-pointers)
+  * [Operators](#operators)
+  * [Parameters](#parameters)
+  * [Return types](#return-types)
+    * [Trailing](#trailing)
+  * [Templates](#templates)
+* [Contributors](#contributors)
+* [Known Issues](#known-issues)
+* [What's to come](#whats-to-come)
+
 ## Features
 
-Generate Doxygen Comments from method signatures.
+### Attributes
 
-From simple setter methods
+![Attribute](images/attributes.gif)
 
-![Simple Parameter](images/param_simple.gif)
-
-over declarations
-
-![Declaration](images/declaration.gif)
-
-to bool return values.
-
-![Bool return val](images/bool.gif)
-
-And some special cases:
-
-Like Constructors
+### Con- and Destructors
 
 ![Constructor](images/ctor.gif)
+![Destructor](images/dtor.gif)
 
-Multi line definitions/declarations
-
-![method](images/method.gif)
-
-Strip reserved keywords
-
-![keywords](images/keywords.gif)
-
-Or even function pointers
-
-![func_ptr](images/function_ptr.gif)
-
-Featuring an extensive generation customization system
+### Extensive customization
 
 ![options](images/options.gif)
 ![xml options](images/opts-xml.gif)
 
-Generate documentation for the file you just created
+### File descriptions
 
 ![file description](images/file.gif)
 
-## Extension Settings
+### Function pointers
 
-See [Below](#whats-to-come)
+![func_ptr](images/function_ptr.gif)
+
+### Operators
+
+![Operator](images/operator.gif)
+![Delete Operator](images/op-delete.gif)
+
+### Parameters
+
+![Simple Parameter](images/param_simple.gif)
+![Long Parameter](images/long-param.gif)
+
+### Return types
+
+![Bool return val](images/bool.gif)
+![Declaration](images/declaration.gif)
+
+#### Trailing
+
+![Trailing return](images/trailing.gif)
+
+### Templates
+
+![Template method](images/template.gif)
+![Template class](images/template-class.gif)
 
 ## Contributors
 
@@ -65,9 +83,4 @@ See [Below](#whats-to-come)
 
 ## What's to come
 
-* Suggest smart text
-
-* Configuration options
-  * Support more configuration options
-
-* More languages
+[See open features](https://github.com/christophschlosser/doxdocgen/labels/enhancement)
