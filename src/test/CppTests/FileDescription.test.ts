@@ -30,4 +30,9 @@ suite("File Description Tests", () => {
             " * @date " + date + "\n */", result);
     });
 
+    test("Don't generate non existing commands", () => {
+        testSetup.cfg.fileOrder = ["dates"];
+        const result = testSetup.SetLine("").GetResult();
+        assert.equal("/**\n */", result);
+    });
 });
