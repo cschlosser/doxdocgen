@@ -6,7 +6,18 @@ import { CppArgument } from "./CppArgument";
 import { CppParseTree } from "./CppParseTree";
 import { CppToken, CppTokenType } from "./CppToken";
 
-export default class CppDocGen implements IDocGen {
+export enum SpecialCase {
+    none,
+    constructor,
+    destructor,
+}
+
+export enum CommentType {
+    method,
+    file,
+}
+
+export class CppDocGen implements IDocGen {
     protected activeEditor: TextEditor;
 
     protected readonly cfg: Config;
@@ -14,6 +25,9 @@ export default class CppDocGen implements IDocGen {
     protected func: CppArgument;
     protected templateParams: string[];
     protected params: CppArgument[];
+
+    protected specialCase: SpecialCase;
+    protected commentType: CommentType;
 
     /**
      * @param  {TextEditor} actEdit Active editor window
@@ -30,12 +44,16 @@ export default class CppDocGen implements IDocGen {
         templateParams: string[],
         func: CppArgument,
         params: CppArgument[],
+        specialCase: SpecialCase,
+        commentType: CommentType,
     ) {
         this.activeEditor = actEdit;
         this.cfg = cfg;
         this.templateParams = templateParams;
         this.func = func;
         this.params = params;
+        this.specialCase = specialCase;
+        this.commentType = commentType;
     }
 
     /**
@@ -43,7 +61,7 @@ export default class CppDocGen implements IDocGen {
      */
     public GenerateDoc(rangeToReplace: Range) {
         let comment: string;
-        if (this.func.name === "#include") {
+        if (this.commentType === CommentType.file) {
             comment = this.generateFileDescription();
         } else {
             comment = this.generateComment();
@@ -68,8 +86,33 @@ export default class CppDocGen implements IDocGen {
         return template.replace(replace, param);
     }
 
+    protected getSmartText(): string {
+        // todo: Make the text customizable
+        switch (this.specialCase) {
+            case SpecialCase.constructor: {
+                if (this.func.name === null) {
+                    return "";
+                } else {
+                    return "Construct a new " + this.func.name.trim() + " object";
+                }
+            }
+            case SpecialCase.destructor: {
+                if (this.func.name === null) {
+                    return "";
+                } else {
+                    return "Destroy the " + this.func.name.replace("~", "").trim() + " object";
+                }
+            }
+            // tslint:disable-next-line:no-empty
+            case SpecialCase.none:
+            default: {
+                return "";
+            }
+        }
+    }
+
     protected generateBrief(lines: string[]) {
-        lines.push(this.cfg.commentPrefix + this.cfg.briefTemplate);
+        lines.push(this.cfg.commentPrefix + this.cfg.briefTemplate + this.getSmartText());
     }
 
     protected generateFromTemplate(lines: string[], replace: string, template: string, templateWith: string[]) {
