@@ -56,7 +56,7 @@ export class Config {
     public dateTemplate: string = "@date {date}";
     public dateFormat: string = "YYYY-MM-DD";
     public fileOrder: string[] = ["brief", "file", "author", "date"];
-    public ctorText: string = "YYYY-MM-DD";
-    public dtorText: string = "YYYY-MM-DD";
+    public ctorText: string = "Construct a new {name} object";
+    public dtorText: string = "Destroy the {name} object";
     public generateSmartText: boolean = true;
 }
