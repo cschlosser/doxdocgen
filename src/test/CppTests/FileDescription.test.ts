@@ -31,7 +31,7 @@ suite("File Description Tests", () => {
     });
 
     test("Don't generate non existing commands", () => {
-        testSetup.cfg.fileOrder = ["dates"];
+        testSetup.cfg.File.fileOrder = ["dates"];
         const result = testSetup.SetLine("").GetResult();
         assert.equal("/**\n */", result);
     });

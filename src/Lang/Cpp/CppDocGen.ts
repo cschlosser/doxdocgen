@@ -90,7 +90,7 @@ export class CppDocGen implements IDocGen {
     }
 
     protected getSmartText(): string {
-        if (!this.cfg.generateSmartText) {
+        if (!this.cfg.Generic.generateSmartText) {
             return "";
         }
         switch (this.specialCase) {
@@ -99,7 +99,7 @@ export class CppDocGen implements IDocGen {
                     return "";
                 } else {
                     const str = this.getTemplatedString(this.cfg.nameTemplateReplace,
-                                                        this.cfg.ctorText,
+                                                        this.cfg.Cpp.ctorText,
                                                         this.func.name.trim());
                     this.smartTextLength = str.length;
                     return str;
@@ -110,7 +110,7 @@ export class CppDocGen implements IDocGen {
                     return "";
                 } else {
                     const str = this.getTemplatedString(this.cfg.nameTemplateReplace,
-                                                        this.cfg.dtorText,
+                                                        this.cfg.Cpp.dtorText,
                                                         this.func.name.replace("~", "").trim());
                     this.smartTextLength = str.length;
                     return str;
@@ -125,7 +125,7 @@ export class CppDocGen implements IDocGen {
     }
 
     protected generateBrief(lines: string[]) {
-        lines.push(this.cfg.commentPrefix + this.cfg.briefTemplate + this.getSmartText());
+        lines.push(this.cfg.C.commentPrefix + this.cfg.Generic.briefTemplate + this.getSmartText());
     }
 
     protected generateFromTemplate(lines: string[], replace: string, template: string, templateWith: string[]) {
@@ -134,7 +134,7 @@ export class CppDocGen implements IDocGen {
         templateWith.forEach((element: string) => {
             // Ignore null values
             if (element !== null) {
-                line = this.cfg.commentPrefix;
+                line = this.cfg.C.commentPrefix;
                 line += this.getTemplatedString(replace, template, element);
                 lines.push(line);
             }
@@ -142,7 +142,7 @@ export class CppDocGen implements IDocGen {
     }
 
     protected generateReturnParams(): string[] {
-        if (this.cfg.includeTypeAtReturn === false) {
+        if (this.cfg.Generic.includeTypeAtReturn === false) {
             return [""];
         }
 
@@ -160,65 +160,65 @@ export class CppDocGen implements IDocGen {
         const boolReturnIndex: number = this.func.type.nodes
             .findIndex((n) => n instanceof CppToken && n.type === CppTokenType.Symbol && n.value === "bool");
 
-        if (boolReturnIndex !== -1 && this.cfg.boolReturnsTrueFalse === true) {
+        if (boolReturnIndex !== -1 && this.cfg.Generic.boolReturnsTrueFalse === true) {
             params.push("true");
             params.push("false");
         } else if (voidReturnIndex !== -1 && ptrReturnIndex !== -1) {
-            params.push(this.cfg.includeTypeAtReturn === true ? this.func.type.Yield() : "");
+            params.push(this.cfg.Generic.includeTypeAtReturn === true ? this.func.type.Yield() : "");
         } else if (voidReturnIndex === -1 && this.func.type.nodes.length > 0) {
-            params.push(this.cfg.includeTypeAtReturn === true ? this.func.type.Yield() : "");
+            params.push(this.cfg.Generic.includeTypeAtReturn === true ? this.func.type.Yield() : "");
         }
 
         return params;
     }
 
     protected generateAuthorTag(lines: string[]) {
-        if (this.cfg.authorTag.trim().length !== 0) {
-            lines.push(this.cfg.commentPrefix + this.cfg.authorTag);
+        if (this.cfg.Generic.authorTag.trim().length !== 0) {
+            lines.push(this.cfg.C.commentPrefix + this.cfg.Generic.authorTag);
         }
     }
 
     protected generateFilenameFromTemplate(lines: string[]) {
-        if (this.cfg.fileTemplate.trim().length !== 0) {
+        if (this.cfg.File.fileTemplate.trim().length !== 0) {
             this.generateFromTemplate(
                 lines,
                 this.cfg.nameTemplateReplace,
-                this.cfg.fileTemplate,
+                this.cfg.File.fileTemplate,
                 [this.activeEditor.document.fileName.replace(/^.*[\\\/]/, "")],
             );
         }
     }
 
     protected generateDateFromTemplate(lines: string[]) {
-        if (this.cfg.dateTemplate.trim().length !== 0 &&
-            this.cfg.dateFormat.trim().length !== 0) {
+        if (this.cfg.Generic.dateTemplate.trim().length !== 0 &&
+            this.cfg.Generic.dateFormat.trim().length !== 0) {
             this.generateFromTemplate(
                 lines,
                 this.cfg.dateTemplateReplace,
-                this.cfg.dateTemplate,
-                [moment().format(this.cfg.dateFormat)],
+                this.cfg.Generic.dateTemplate,
+                [moment().format(this.cfg.Generic.dateFormat)],
             );
         }
     }
 
     protected insertFirstLine(lines: string[]) {
-        if (this.cfg.firstLine.trim().length !== 0) {
-            lines.push(this.cfg.firstLine);
+        if (this.cfg.C.firstLine.trim().length !== 0) {
+            lines.push(this.cfg.C.firstLine);
         }
     }
 
     protected insertBrief(lines: string[]) {
-        if (this.cfg.briefTemplate.trim().length !== 0) {
+        if (this.cfg.Generic.briefTemplate.trim().length !== 0) {
             this.generateBrief(lines);
-            if (this.cfg.newLineAfterBrief === true) {
-                lines.push(this.cfg.commentPrefix);
+            if (this.cfg.Generic.newLineAfterBrief === true) {
+                lines.push(this.cfg.C.commentPrefix);
             }
         }
     }
 
     protected insertLastLine(lines: string[]) {
-        if (this.cfg.lastLine.trim().length !== 0) {
-            lines.push(this.cfg.lastLine);
+        if (this.cfg.C.lastLine.trim().length !== 0) {
+            lines.push(this.cfg.C.lastLine);
         }
     }
 
@@ -227,7 +227,7 @@ export class CppDocGen implements IDocGen {
 
         this.insertFirstLine(lines);
 
-        this.cfg.fileOrder.forEach((element) => {
+        this.cfg.File.fileOrder.forEach((element) => {
             switch (element) {
                 case "brief": {
                     this.insertBrief(lines);
@@ -263,29 +263,30 @@ export class CppDocGen implements IDocGen {
 
         this.insertBrief(lines);
 
-        if (this.cfg.tparamTemplate.trim().length !== 0 && this.templateParams.length > 0) {
+        if (this.cfg.Cpp.tparamTemplate.trim().length !== 0 && this.templateParams.length > 0) {
             this.generateFromTemplate(
                 lines,
                 this.cfg.paramTemplateReplace,
-                this.cfg.tparamTemplate,
+                this.cfg.Cpp.tparamTemplate,
                 this.templateParams,
             );
-            if (this.cfg.newLineAfterTParams === true) {
-                lines.push(this.cfg.commentPrefix);
+            if (this.cfg.Cpp.newLineAfterTParams === true) {
+                lines.push(this.cfg.C.commentPrefix);
             }
         }
 
-        if (this.cfg.paramTemplate.trim().length !== 0 && this.params.length > 0) {
+        if (this.cfg.Generic.paramTemplate.trim().length !== 0 && this.params.length > 0) {
             const paramNames: string[] = this.params.map((p) => p.name);
-            this.generateFromTemplate(lines, this.cfg.paramTemplateReplace, this.cfg.paramTemplate, paramNames);
-            if (this.cfg.newLineAfterParams === true) {
-                lines.push(this.cfg.commentPrefix);
+            this.generateFromTemplate(lines, this.cfg.paramTemplateReplace, this.cfg.Generic.paramTemplate, paramNames);
+            if (this.cfg.Generic.newLineAfterParams === true) {
+                lines.push(this.cfg.C.commentPrefix);
             }
         }
 
-        if (this.cfg.returnTemplate.trim().length !== 0 && this.func.type !== null) {
+        if (this.cfg.Generic.returnTemplate.trim().length !== 0 && this.func.type !== null) {
             const returnParams = this.generateReturnParams();
-            this.generateFromTemplate(lines, this.cfg.typeTemplateReplace, this.cfg.returnTemplate, returnParams);
+            // tslint:disable-next-line:max-line-length
+            this.generateFromTemplate(lines, this.cfg.typeTemplateReplace, this.cfg.Generic.returnTemplate, returnParams);
         }
 
         this.insertLastLine(lines);
@@ -300,7 +301,7 @@ export class CppDocGen implements IDocGen {
         let character: number = comment.indexOf("\n");
 
         // If a first line is included find the 2nd line with a newline.
-        if (this.cfg.firstLine.trim().length !== 0) {
+        if (this.cfg.C.firstLine.trim().length !== 0) {
             line++;
             const oldCharacter: number = character;
             character = comment.indexOf("\n", oldCharacter + 1) - oldCharacter;

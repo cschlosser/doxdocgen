@@ -1,7 +1,7 @@
 {
   "name": "doxdocgen",
   "displayName": "Doxygen Documentation Generator",
-  "description": "Generate doxygen documentation from source code",
+  "description": "Let it generate Doxygen documentation from your source code.",
   "version": "0.2.1",
   "publisher": "cschlosser",
   "engines": {
@@ -10,6 +10,23 @@
   "categories": [
     "Other"
   ],
+  "badges": [
+    {
+        "url": "https://travis-ci.org/christophschlosser/doxdocgen.svg?branch=master",
+        "href": "https://travis-ci.org/christophschlosser/doxdocgen",
+        "description": "Continuous Integration (Travis)"
+    },
+    {
+        "url": "https://ci.appveyor.com/api/projects/status/4h84071p9tv0y9r6?svg=true",
+        "href": "https://ci.appveyor.com/project/christophschlosser/doxdocgen",
+        "description": "Continuous Integration (AppVeyor)"
+    },
+    {
+        "url": "https://codecov.io/gh/christophschlosser/doxdocgen/branch/master/graph/badge.svg",
+        "href": "https://codecov.io/gh/christophschlosser/doxdocgen",
+        "description": "Code coverage"
+    }
+],
   "activationEvents": [
     "onLanguage:cpp",
     "onLanguage:c"
@@ -19,25 +36,55 @@
       "type": "object",
       "title": "Doxygen Documentation Generator Settings",
       "properties": {
-        "doxdocgen.generic.triggerSequence": {
+        "doxdocgen.c.triggerSequence": {
           "description": "Doxygen comment trigger. This character sequence triggers generation of DoxyGen comments.",
           "type": "string",
           "default": "/**"
         },
-        "doxdocgen.generic.firstLine": {
+        "doxdocgen.c.firstLine": {
           "description": "The first line of the comment that gets generated. If empty it won't get generated at all.",
           "type": "string",
           "default": "/**"
         },
-        "doxdocgen.generic.commentPrefix": {
+        "doxdocgen.c.commentPrefix": {
           "description": "The prefix that is used for each comment line.",
           "type": "string",
           "default": " * "
         },
-        "doxdocgen.generic.lastLine": {
+        "doxdocgen.c.lastLine": {
           "description": "The last line of the comment that gets generated. If empty it won't get generated at all.",
           "type": "string",
           "default": " */"
+        },
+        "doxdocgen.cpp.newLineAfterTParams": {
+          "description": "Whether to insert a newline after the template params.",
+          "type": "boolean",
+          "default": false
+        },
+        "doxdocgen.cpp.tparamTemplate": {
+          "description": "The template of the template parameter DoxyGen line(s) that are generated. If empty it won't get generated at all.",
+          "type": "string",
+          "default": "@tparam {param} "
+        },
+        "doxdocgen.cpp.ctorText": {
+          "description": "Smart text snippet for constructors.",
+          "type": "string",
+          "default": "Construct a new {name} object"
+        },
+        "doxdocgen.cpp.dtorText": {
+          "description": "Smart text snippet for destructors.",
+          "type": "string",
+          "default": "Destroy the {name} object"
+        },
+        "doxdocgen.file.fileTemplate": {
+          "description": "The template for the file parameter in DoxyGen.",
+          "type": "string",
+          "default": "@file {name}"
+        },
+        "doxdocgen.file.fileOrder": {
+          "description": "The order to use for the date. Valid values are shown in default setting.",
+          "type": ["array", "string"],
+          "default": ["brief", "file", "author", "date"]
         },
         "doxdocgen.generic.newLineAfterBrief": {
           "description": "Whether to insert a newline after a brief.",
@@ -46,11 +93,6 @@
         },
         "doxdocgen.generic.newLineAfterParams": {
           "description": "Whether to insert a newline after the params.",
-          "type": "boolean",
-          "default": false
-        },
-        "doxdocgen.generic.newLineAfterTParams": {
-          "description": "Whether to insert a newline after the template params.",
           "type": "boolean",
           "default": false
         },
@@ -74,11 +116,6 @@
           "type": "string",
           "default": "@param {param} "
         },
-        "doxdocgen.generic.tparamTemplate": {
-          "description": "The template of the template parameter DoxyGen line(s) that are generated. If empty it won't get generated at all.",
-          "type": "string",
-          "default": "@tparam {param} "
-        },
         "doxdocgen.generic.returnTemplate": {
           "description": "The template of the return DoxyGen line that is generated. If empty it won't get generated at all.",
           "type": "string",
@@ -94,11 +131,6 @@
           "type": "string",
           "default": "@author your name"
         },
-        "doxdocgen.generic.fileTemplate": {
-          "description": "The template for the file parameter in DoxyGen.",
-          "type": "string",
-          "default": "@file {name}"
-        },
         "doxdocgen.generic.dateTemplate": {
           "description": "The template for the date parameter in DoxyGen.",
           "type": "string",
@@ -108,21 +140,6 @@
           "description": "The format to use for the date.",
           "type": "string",
           "default": "YYYY-MM-DD"
-        },
-        "doxdocgen.generic.fileOrder": {
-          "description": "The order to use for the date. Valid values are shown in default setting.",
-          "type": ["array", "string"],
-          "default": ["brief", "file", "author", "date"]
-        },
-        "doxdocgen.generic.ctorText": {
-          "description": "Smart text snippet for constructors.",
-          "type": "string",
-          "default": "Construct a new {name} object"
-        },
-        "doxdocgen.generic.dtorText": {
-          "description": "Smart text snippet for destructors.",
-          "type": "string",
-          "default": "Destroy the {name} object"
         },
         "doxdocgen.generic.generateSmartText": {
           "description": "Decide if you want to get smart text for certain commands.",
@@ -146,7 +163,7 @@
     "url": "https://github.com/christophschlosser/doxdocgen.git"
   },
   "bugs": {
-    "url": "https://github.com/christophschlosser/doxdocgen/issues"
+    "url": "https://github.com/christophschlosser/doxdocgen/issues?q=is%3Aopen+is%3Aissue+label%3Abug+"
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

@@ -15,7 +15,7 @@ import TestSetup from "./TestSetup";
 suite("C++ - Con- and Destructor Tests", () => {
     const testSetup: TestSetup = new TestSetup("void foo();");
 
-    testSetup.cfg.generateSmartText = false;
+    testSetup.cfg.Generic.generateSmartText = false;
 
     // Tests
     test("Normal Constructor", () => {

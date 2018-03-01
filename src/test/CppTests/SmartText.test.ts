@@ -17,17 +17,17 @@ suite("Smart Text Tests", () => {
 
     // Tests
     test("Disable smart text Ctor", () => {
-        testSetup.cfg.generateSmartText = false;
+        testSetup.cfg.Generic.generateSmartText = false;
         const result = testSetup.SetLine("Foo();").GetResult();
         assert.equal("/**\n * @brief \n * \n */", result);
-        testSetup.cfg.generateSmartText = true; // for later tests
+        testSetup.cfg.Generic.generateSmartText = true; // for later tests
     });
 
     test("Disable smart text Dtor", () => {
-        testSetup.cfg.generateSmartText = false;
+        testSetup.cfg.Generic.generateSmartText = false;
         const result = testSetup.SetLine("~Foo();").GetResult();
         assert.equal("/**\n * @brief \n * \n */", result);
-        testSetup.cfg.generateSmartText = true; // for later tests
+        testSetup.cfg.Generic.generateSmartText = true; // for later tests
     });
 
     test("Standard smart text Ctor", () => {

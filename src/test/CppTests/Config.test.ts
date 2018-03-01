@@ -28,13 +28,13 @@ suite("C++ - Configuration Tests", () => {
     test("Modified template", () => {
         testSetup.cfg = new Config();
 
-        testSetup.cfg.firstLine = "";
-        testSetup.cfg.lastLine = "";
-        testSetup.cfg.commentPrefix = "/// ";
-        testSetup.cfg.briefTemplate = "\\brief ";
-        testSetup.cfg.paramTemplate = "\\param {param} ";
-        testSetup.cfg.tparamTemplate = "\\tparam {param} ";
-        testSetup.cfg.returnTemplate = "\\return {type} ";
+        testSetup.cfg.C.firstLine = "";
+        testSetup.cfg.C.lastLine = "";
+        testSetup.cfg.C.commentPrefix = "/// ";
+        testSetup.cfg.Generic.briefTemplate = "\\brief ";
+        testSetup.cfg.Generic.paramTemplate = "\\param {param} ";
+        testSetup.cfg.Cpp.tparamTemplate = "\\tparam {param} ";
+        testSetup.cfg.Generic.returnTemplate = "\\return {type} ";
 
         const result = testSetup.SetLine("template<typename T> bool foo(T a);").GetResult();
         assert.equal("/// \\brief \n/// \n/// \\tparam T \n/// \\param a \n"
@@ -44,7 +44,7 @@ suite("C++ - Configuration Tests", () => {
 
     test("Disable true false on bool", () => {
         testSetup.cfg = new Config();
-        testSetup.cfg.boolReturnsTrueFalse = false;
+        testSetup.cfg.Generic.boolReturnsTrueFalse = false;
         const result = testSetup.SetLine("template<typename T> bool foo(T a);").GetResult();
         assert.equal("/**\n * @brief \n * \n * @tparam T \n * @param a \n"
             + " * @return bool \n */", result);
@@ -52,7 +52,7 @@ suite("C++ - Configuration Tests", () => {
 
     test("Disable including return type.", () => {
         testSetup.cfg = new Config();
-        testSetup.cfg.includeTypeAtReturn = false;
+        testSetup.cfg.Generic.includeTypeAtReturn = false;
 
         const result = testSetup.SetLine("template<typename T> bool foo(T a);").GetResult();
         assert.equal("/**\n * @brief \n * \n * @tparam T \n * @param a \n"
@@ -61,9 +61,9 @@ suite("C++ - Configuration Tests", () => {
 
     test("Newlines after params and tparams but not after brief", () => {
         testSetup.cfg = new Config();
-        testSetup.cfg.newLineAfterBrief = false;
-        testSetup.cfg.newLineAfterParams = true;
-        testSetup.cfg.newLineAfterTParams = true;
+        testSetup.cfg.Generic.newLineAfterBrief = false;
+        testSetup.cfg.Generic.newLineAfterParams = true;
+        testSetup.cfg.Cpp.newLineAfterTParams = true;
 
         const result = testSetup.SetLine("template<typename T> bool foo(T a);").GetResult();
         assert.equal("/**\n * @brief \n * @tparam T \n * \n * @param a \n * \n"
@@ -84,11 +84,11 @@ suite("C++ - Configuration Tests", () => {
 
     test("Lines to get test", () => {
         testSetup.cfg = new Config();
-        testSetup.cfg.linesToGet = 2;
+        testSetup.cfg.Generic.linesToGet = 2;
         const positiveResult = testSetup.SetLines(["template<typename T> bool \n", "foo(T a);"]).GetResult();
         assert.equal("/**\n * @brief \n * \n * @tparam T \n * @param a \n * "
             + "@return true \n * @return false \n */", positiveResult);
-        testSetup.cfg.linesToGet = 0;
+        testSetup.cfg.Generic.linesToGet = 0;
         testSetup.firstLine = 1;
         const negativeResult = testSetup.SetLines(["template<typename T> bool \n", "foo(T a);"]).GetResult();
         assert.equal("/**\n * @brief \n * \n */", negativeResult);
@@ -97,20 +97,20 @@ suite("C++ - Configuration Tests", () => {
     test("File description order test", () => {
         testSetup.cfg = new Config();
         testSetup.firstLine = 0;
-        testSetup.cfg.fileOrder = ["brief", "author", "date", "file"];
+        testSetup.cfg.File.fileOrder = ["brief", "author", "date", "file"];
         const result = testSetup.SetLine("").GetResult();
         assert.equal("/**\n * @brief \n * \n * @author your name\n" +
             " * @date " + moment().format("YYYY-MM-DD") + "\n * @file MockDocument.h\n */", result);
     });
 
     test("Custom smart text Ctor", () => {
-        testSetup.cfg.ctorText = "Test {name}";
+        testSetup.cfg.Cpp.ctorText = "Test {name}";
         const result = testSetup.SetLine("Foo();").GetResult();
         assert.equal("/**\n * @brief Test Foo\n * \n */", result);
     });
 
     test("Custom smart text Dtor", () => {
-        testSetup.cfg.dtorText = "Test {name}";
+        testSetup.cfg.Cpp.dtorText = "Test {name}";
         const result = testSetup.SetLine("~Foo();").GetResult();
         assert.equal("/**\n * @brief Test Foo\n * \n */", result);
     });
