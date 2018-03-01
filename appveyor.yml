@@ -1,6 +1,4 @@
 environment:
-  ELECTRON_RUN_AS_NODE: 1
-  VSCODE_BUILD_VERBOSE: true
   nodejs_version: "6"
 
 branches:
