@@ -29,6 +29,8 @@ export class CppDocGen implements IDocGen {
     protected specialCase: SpecialCase;
     protected commentType: CommentType;
 
+    protected smartTextLength: number;
+
     /**
      * @param  {TextEditor} actEdit Active editor window
      * @param  {Position} cursorPosition Where the cursor of the user currently is
@@ -54,16 +56,17 @@ export class CppDocGen implements IDocGen {
         this.params = params;
         this.specialCase = specialCase;
         this.commentType = commentType;
+        this.smartTextLength = 0;
     }
 
     /**
      * @inheritdoc
      */
     public GenerateDoc(rangeToReplace: Range) {
-        let comment: string;
+        let comment: string = "";
         if (this.commentType === CommentType.file) {
             comment = this.generateFileDescription();
-        } else {
+        } else if (this.commentType === CommentType.method) {
             comment = this.generateComment();
         }
 
@@ -87,20 +90,30 @@ export class CppDocGen implements IDocGen {
     }
 
     protected getSmartText(): string {
-        // todo: Make the text customizable
+        if (!this.cfg.generateSmartText) {
+            return "";
+        }
         switch (this.specialCase) {
             case SpecialCase.constructor: {
                 if (this.func.name === null) {
                     return "";
                 } else {
-                    return "Construct a new " + this.func.name.trim() + " object";
+                    const str = this.getTemplatedString(this.cfg.nameTemplateReplace,
+                                                        this.cfg.ctorText,
+                                                        this.func.name.trim());
+                    this.smartTextLength = str.length;
+                    return str;
                 }
             }
             case SpecialCase.destructor: {
                 if (this.func.name === null) {
                     return "";
                 } else {
-                    return "Destroy the " + this.func.name.replace("~", "").trim() + " object";
+                    const str = this.getTemplatedString(this.cfg.nameTemplateReplace,
+                                                        this.cfg.dtorText,
+                                                        this.func.name.replace("~", "").trim());
+                    this.smartTextLength = str.length;
+                    return str;
                 }
             }
             // tslint:disable-next-line:no-empty
@@ -299,7 +312,8 @@ export class CppDocGen implements IDocGen {
             character = baseCharacter;
         }
 
-        const moveTo: Position = new Position(line, character);
-        this.activeEditor.selection = new Selection(moveTo, moveTo);
+        const from: Position = new Position(line, character - this.smartTextLength - 1);
+        const to: Position = new Position(line, character);
+        this.activeEditor.selection = new Selection(from, to);
     }
 }
