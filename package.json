@@ -113,6 +113,21 @@
           "description": "The order to use for the date. Valid values are shown in default setting.",
           "type": ["array", "string"],
           "default": ["brief", "file", "author", "date"]
+        },
+        "doxdocgen.generic.ctorText": {
+          "description": "Smart text snippet for constructors.",
+          "type": "string",
+          "default": "Construct a new {name} object"
+        },
+        "doxdocgen.generic.dtorText": {
+          "description": "Smart text snippet for destructors.",
+          "type": "string",
+          "default": "Destroy the {name} object"
+        },
+        "doxdocgen.generic.generateSmartText": {
+          "description": "Decide if you want to get smart text for certain commands.",
+          "type": "boolean",
+          "default": true
         }
       }
     }
