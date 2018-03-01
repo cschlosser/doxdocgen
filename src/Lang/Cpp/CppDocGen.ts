@@ -311,8 +311,8 @@ export class CppDocGen implements IDocGen {
             line = baseLine;
             character = baseCharacter;
         }
-
-        const from: Position = new Position(line, character - this.smartTextLength - 1);
+        const start = character - this.smartTextLength - 1;
+        const from: Position = new Position(line, (start > 0 ? start : 0));
         const to: Position = new Position(line, character);
         this.activeEditor.selection = new Selection(from, to);
     }
