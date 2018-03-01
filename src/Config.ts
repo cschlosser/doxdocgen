@@ -25,6 +25,9 @@ export class Config {
         values.dateTemplate = cfg.get<string>("dateTemplate", values.dateTemplate);
         values.dateFormat = cfg.get<string>("dateFormat", values.dateFormat);
         values.fileOrder = cfg.get<string[]>("fileOrder", values.fileOrder);
+        values.ctorText = cfg.get<string>("ctorText", values.ctorText);
+        values.dtorText = cfg.get<string>("dtorText", values.dtorText);
+        values.generateSmartText = cfg.get<boolean>("generateSmartText", values.generateSmartText);
 
         return values;
     }
@@ -53,4 +56,7 @@ export class Config {
     public dateTemplate: string = "@date {date}";
     public dateFormat: string = "YYYY-MM-DD";
     public fileOrder: string[] = ["brief", "file", "author", "date"];
+    public ctorText: string = "YYYY-MM-DD";
+    public dtorText: string = "YYYY-MM-DD";
+    public generateSmartText: boolean = true;
 }
