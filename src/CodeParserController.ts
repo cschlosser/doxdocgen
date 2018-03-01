@@ -72,7 +72,7 @@ export default class CodeParserController {
 
         const cont: string = activeLine.text.trim();
 
-        return this.cfg.triggerSequence === cont;
+        return this.cfg.C.triggerSequence === cont;
     }
 
     private onEvent(activeEditor: TextEditor, event: TextDocumentContentChangeEvent) {
@@ -97,7 +97,7 @@ export default class CodeParserController {
         const currentPos: Position = window.activeTextEditor.selection.active;
         const startReplace: Position = new Position(
             currentPos.line,
-            currentPos.character - this.cfg.triggerSequence.length,
+            currentPos.character - this.cfg.C.triggerSequence.length,
         );
 
         const nextLineText: string = window.activeTextEditor.document.lineAt(startReplace.line + 1).text;

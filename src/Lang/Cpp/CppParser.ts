@@ -286,7 +286,7 @@ export default class CppParser implements ICodeParser {
         logicalLine = nextLineTxt;
 
         // Get method end line
-        let linesToGet: number = this.cfg.linesToGet;
+        let linesToGet: number = this.cfg.Generic.linesToGet;
         while (linesToGet-- > 0) { // Check for end of expression.
             nextLine = new Position(nextLine.line + 1, nextLine.character);
             nextLineTxt = this.activeEditor.document.lineAt(nextLine.line).text.trim();
