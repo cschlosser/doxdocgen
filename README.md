@@ -5,6 +5,7 @@ This VS Code Extensions provides Doxygen Documentation generation on the fly by 
 [![Build Status](https://travis-ci.org/christophschlosser/doxdocgen.svg?branch=master)](https://travis-ci.org/christophschlosser/doxdocgen)
 [![Build status](https://ci.appveyor.com/api/projects/status/4h84071p9tv0y9r6?svg=true)](https://ci.appveyor.com/project/christophschlosser/doxdocgen)
 [![codecov](https://codecov.io/gh/christophschlosser/doxdocgen/branch/master/graph/badge.svg)](https://codecov.io/gh/christophschlosser/doxdocgen)
+[![Gitter chat](https://badges.gitter.im/doxdocgen.png)](https://gitter.im/doxdocgen)
 
 ## Table of Contents
 
