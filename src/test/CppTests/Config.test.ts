@@ -102,4 +102,16 @@ suite("C++ - Configuration Tests", () => {
         assert.equal("/**\n * @brief \n * \n * @author your name\n" +
             " * @date " + moment().format("YYYY-MM-DD") + "\n * @file MockDocument.h\n */", result);
     });
+
+    test("Custom smart text Ctor", () => {
+        testSetup.cfg.ctorText = "Test {name}";
+        const result = testSetup.SetLine("Foo();").GetResult();
+        assert.equal("/**\n * @brief Test Foo\n * \n */", result);
+    });
+
+    test("Custom smart text Dtor", () => {
+        testSetup.cfg.dtorText = "Test {name}";
+        const result = testSetup.SetLine("~Foo();").GetResult();
+        assert.equal("/**\n * @brief Test Foo\n * \n */", result);
+    });
 });
