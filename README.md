@@ -19,6 +19,7 @@ This VS Code Extensions provides Doxygen Documentation generation on the fly by 
   * [Parameters](#parameters)
   * [Return types](#return-types)
     * [Trailing](#trailing)
+  * [Smart text](#smart-text)
   * [Templates](#templates)
 * [Contributors](#contributors)
 * [Known Issues](#known-issues)
@@ -62,6 +63,10 @@ This VS Code Extensions provides Doxygen Documentation generation on the fly by 
 
 ![Bool return val](images/bool.gif)
 ![Declaration](images/declaration.gif)
+
+### Smart text
+
+todo
 
 #### Trailing
 
