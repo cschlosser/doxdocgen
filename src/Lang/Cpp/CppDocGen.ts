@@ -10,11 +10,23 @@ export enum SpecialCase {
     none,
     constructor,
     destructor,
+    getter,
+    setter,
+    factoryMethod,
 }
 
 export enum CommentType {
     method,
     file,
+}
+
+export enum CasingType {
+    Pascal,
+    camel,
+    snake,
+    SCREAMING_SNAKE,
+    UPPER,
+    uncertain,
 }
 
 export class CppDocGen implements IDocGen {
@@ -28,6 +40,7 @@ export class CppDocGen implements IDocGen {
 
     protected specialCase: SpecialCase;
     protected commentType: CommentType;
+    protected casingType: CasingType;
 
     protected smartTextLength: number;
 
@@ -48,6 +61,7 @@ export class CppDocGen implements IDocGen {
         params: CppArgument[],
         specialCase: SpecialCase,
         commentType: CommentType,
+        casingType: CasingType,
     ) {
         this.activeEditor = actEdit;
         this.cfg = cfg;
@@ -57,6 +71,7 @@ export class CppDocGen implements IDocGen {
         this.specialCase = specialCase;
         this.commentType = commentType;
         this.smartTextLength = 0;
+        this.casingType = casingType;
     }
 
     /**
@@ -93,35 +108,52 @@ export class CppDocGen implements IDocGen {
         if (!this.cfg.Generic.generateSmartText) {
             return "";
         }
+        let val: string = "";
+        let text: string = "";
         switch (this.specialCase) {
             case SpecialCase.constructor: {
                 if (this.func.name === null) {
                     return "";
                 } else {
-                    const str = this.getTemplatedString(this.cfg.nameTemplateReplace,
-                                                        this.cfg.Cpp.ctorText,
-                                                        this.func.name.trim());
-                    this.smartTextLength = str.length;
-                    return str;
+                    val = this.splitCasing(this.func.name.trim());
+                    text = this.cfg.Cpp.ctorText;
+                    break;
                 }
             }
             case SpecialCase.destructor: {
                 if (this.func.name === null) {
                     return "";
                 } else {
-                    const str = this.getTemplatedString(this.cfg.nameTemplateReplace,
-                                                        this.cfg.Cpp.dtorText,
-                                                        this.func.name.replace("~", "").trim());
-                    this.smartTextLength = str.length;
-                    return str;
+                    val = this.splitCasing(this.func.name.replace("~", "").trim());
+                    text = this.cfg.Cpp.dtorText;
+                    break;
                 }
             }
-            // tslint:disable-next-line:no-empty
+            case SpecialCase.getter: {
+                val = this.splitCasing(this.func.name.trim()).trim().substr(3).trim();
+                text = this.cfg.C.getterText;
+                break;
+            }
+            case SpecialCase.setter: {
+                val = this.splitCasing(this.func.name.trim()).trim().substr(3).trim();
+                text = this.cfg.C.setterText;
+                break;
+            }
+            case SpecialCase.factoryMethod: {
+                val = this.splitCasing(this.func.name.trim()).trim().substr(6).trim();
+                text = this.cfg.C.factoryMethodText;
+                break;
+            }
             case SpecialCase.none:
             default: {
                 return "";
             }
         }
+        const str = this.getTemplatedString(this.cfg.nameTemplateReplace,
+            text,
+            val);
+        this.smartTextLength = str.length;
+        return str;
     }
 
     protected generateBrief(lines: string[]) {
@@ -316,5 +348,39 @@ export class CppDocGen implements IDocGen {
         const from: Position = new Position(line, (start > 0 ? start : 0));
         const to: Position = new Position(line, character);
         this.activeEditor.selection = new Selection(from, to);
+    }
+
+    protected splitCasing(text: string): string {
+        if (!this.cfg.Generic.splitCasingSmartText) {
+            return text;
+        }
+        let txt = text;
+        let vals: string[] = [];
+        switch (this.casingType) {
+            case CasingType.SCREAMING_SNAKE: {
+                txt = txt.toLowerCase();
+            }
+            case CasingType.snake: {
+                vals = txt.split("_");
+                break;
+            }
+            case CasingType.Pascal: {
+                txt = txt.replace(/([A-Z0-9])/g, " $1");
+                vals.push(txt);
+                break;
+            }
+            case CasingType.camel: {
+                txt = txt.replace(/([a-zA-Z0-9])(?=[A-Z])/g, "$1 ");
+                vals.push(txt);
+                break;
+            }
+            case CasingType.UPPER:
+            case CasingType.uncertain:
+            default: {
+                return text;
+            }
+        }
+
+        return vals.join(" ");
     }
 }
