@@ -42,7 +42,7 @@ class Generic {
 
     public includeTypeAtReturn: boolean = true;
     public boolReturnsTrueFalse: boolean = true;
-    public briefTemplate: string = "@brief ";
+    public briefTemplate: string = "@brief {text}";
     public paramTemplate: string = "@param {param} ";
     public returnTemplate: string = "@return {type} ";
     public linesToGet: number = 20;
@@ -93,6 +93,7 @@ export class Config {
     public readonly typeTemplateReplace: string = "{type}";
     public readonly nameTemplateReplace: string = "{name}";
     public readonly dateTemplateReplace: string = "{date}";
+    public readonly textTemplateReplace: string = "{text}";
 
     public C: C;
     public Cpp: Cpp;

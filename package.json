@@ -109,7 +109,7 @@
         "doxdocgen.generic.briefTemplate": {
           "description": "The template of the brief DoxyGen line that is generated. If empty it won't get generated at all.",
           "type": "string",
-          "default": "@brief "
+          "default": "@brief {text}"
         },
         "doxdocgen.generic.paramTemplate": {
           "description": "The template of the param DoxyGen line(s) that are generated. If empty it won't get generated at all.",
