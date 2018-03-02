@@ -261,17 +261,17 @@ export default class CppParser implements ICodeParser {
             const methodName = args[0].name;
 
             if (methodName.toLowerCase().startsWith("get")) {
-                this.casingType = this.checkCasing(methodName);
+                this.casingType = this.checkCasing(methodName, 3);
                 if (this.casingType !== CasingType.uncertain) {
                     this.specialCase = SpecialCase.getter;
                 }
             } else if (methodName.toLowerCase().startsWith("set")) {
-                this.casingType = this.checkCasing(methodName);
+                this.casingType = this.checkCasing(methodName, 3);
                 if (this.casingType !== CasingType.uncertain) {
                     this.specialCase = SpecialCase.setter;
                 }
             } else if (methodName.toLowerCase().startsWith("create")) {
-                this.casingType = this.checkCasing(methodName);
+                this.casingType = this.checkCasing(methodName, 6);
                 if (this.casingType !== CasingType.uncertain) {
                     this.specialCase = SpecialCase.factoryMethod;
                 }
@@ -708,22 +708,70 @@ export default class CppParser implements ICodeParser {
         return args;
     }
 
-    private checkCasing(name: string): CasingType {
+    private checkCasing(name: string, validateFrom: number): CasingType {
         let containsUnderscores = name.indexOf("_") !== -1;
         if (containsUnderscores) {
             containsUnderscores = name.indexOf("_") !== name.length - 1; // last character _ may be Google style
         }
         // first letter upper case
+        let methodCasing: CasingType;
         let match = name.match("^([_|\\d|]*[A-Z]).+");
         if (match !== null) {
             match = name.match("^([A-Z|_|\\d]{2,})");
             if (match !== null) {
-                return containsUnderscores ? CasingType.SCREAMING_SNAKE : CasingType.UPPER;
+                methodCasing = containsUnderscores ? CasingType.SCREAMING_SNAKE : CasingType.UPPER;
             } else {
-                return containsUnderscores ? CasingType.uncertain : CasingType.Pascal;
+                methodCasing = containsUnderscores ? CasingType.uncertain : CasingType.Pascal;
             }
         } else {
-            return containsUnderscores ? CasingType.snake : CasingType.camel;
+            methodCasing = containsUnderscores ? CasingType.snake : CasingType.camel;
         }
+
+        if (validateFrom > 0) {
+            // validate after
+            switch (methodCasing) {
+                case CasingType.SCREAMING_SNAKE: {
+                    // Take the leading _ after removing the characters into consideration
+                    const testCasing = this.checkCasing(name.substr(validateFrom + 1), 0);
+                    // screaming or upper
+                    if (testCasing !== CasingType.SCREAMING_SNAKE && testCasing !== CasingType.UPPER) {
+                        methodCasing = CasingType.uncertain;
+                    }
+                    break;
+                }
+                case CasingType.snake: {
+                    // Take the leading _ after removing the characters into consideration
+                    const testCasing = this.checkCasing(name.substr(validateFrom + 1), 0);
+                    // snake
+                    if (testCasing !== CasingType.snake) {
+                        methodCasing = CasingType.uncertain;
+                    }
+                    break;
+                }
+                case CasingType.Pascal:
+                case CasingType.camel: {
+                    const testCasing = this.checkCasing(name.substr(validateFrom), 0);
+                    // pascal
+                    if (testCasing !== CasingType.Pascal) {
+                        methodCasing = CasingType.uncertain;
+                    }
+                    break;
+                }
+                case CasingType.UPPER: {
+                    const testCasing = this.checkCasing(name.substr(validateFrom), 0);
+                    // upper
+                    if (testCasing !== CasingType.UPPER) {
+                        methodCasing = CasingType.uncertain;
+                    }
+                    break;
+                }
+                case CasingType.uncertain:
+                default: {
+                    break; // No op
+                }
+            }
+        }
+
+        return methodCasing;
     }
 }
