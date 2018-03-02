@@ -124,15 +124,13 @@ Each of them can be configured with its own custom text and you can decide if th
 // Smart text snippet for destructors.
 "doxdocgen.cpp.dtorText": "Destroy the {name} object",
 
-// Whether to insert a newline after the template params.
-"doxdocgen.cpp.newLineAfterTParams": false,
-
 // The template of the template parameter DoxyGen line(s) that are generated. If empty it won't get generated at all.
 "doxdocgen.cpp.tparamTemplate": "@tparam {param} ",
 
-// The order to use for the date. Valid values are shown in default setting.
+// The order to use for the file comment. Values can be used multiple times. Valid values are shown in default setting.
 "doxdocgen.file.fileOrder": [
   "brief",
+  "empty",
   "file",
   "author",
   "date"
@@ -165,11 +163,14 @@ Each of them can be configured with its own custom text and you can decide if th
 // How many lines the plugin should look for to find the end of the declaration. Please be aware that setting this value too low may improve the speed of comment generation but the plugin also may not correctly detect all declarations or definitions anymore.
 "doxdocgen.generic.linesToGet": 20,
 
-// Whether to insert a newline after a brief.
-"doxdocgen.generic.newLineAfterBrief": true,
-
-// Whether to insert a newline after the params.
-"doxdocgen.generic.newLineAfterParams": false,
+// The order to use for the comment generation. Values can be used multiple times. Valid values are shown in default setting.
+"doxdocgen.generic.order": [
+  "brief",
+  "empty",
+  "tparam",
+  "param",
+  "return"
+],
 
 // The template of the param DoxyGen line(s) that are generated. If empty it won't get generated at all.
 "doxdocgen.generic.paramTemplate": "@param {param} ",
