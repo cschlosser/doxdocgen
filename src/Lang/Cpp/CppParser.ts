@@ -16,6 +16,86 @@ import { CppToken, CppTokenType } from "./CppToken";
  * @implements {ICodeParser}
  */
 export default class CppParser implements ICodeParser {
+    /**
+     * Get the casing of a specified text
+     *
+     * @private
+     * @param {string} name Text to check
+     * @param {number} validateFrom Check if only a substr is the same casing as the whole string.
+     *                              Set to 0 to disable check.
+     * @returns {CasingType} Detected type of casing
+     *
+     * @memberOf CppParser
+     */
+    public static checkCasing(name: string, validateFrom: number): CasingType {
+        let containsUnderscores = name.indexOf("_") !== -1;
+        if (containsUnderscores) {
+            containsUnderscores = name.indexOf("_") !== name.length - 1; // last character _ may be Google style
+        }
+        // first letter upper case
+        let methodCasing: CasingType;
+        let match = name.match("^([_|\\d|]*[A-Z]).+");
+        if (match !== null) {
+            match = name.match("^([A-Z|_|\\d]{2,})");
+            if (match !== null) {
+                methodCasing = containsUnderscores ? CasingType.SCREAMING_SNAKE : CasingType.UPPER;
+            } else {
+                methodCasing = containsUnderscores ? CasingType.uncertain : CasingType.Pascal;
+            }
+        } else {
+            methodCasing = containsUnderscores ? CasingType.snake : CasingType.camel;
+        }
+
+        if (validateFrom > 0 && methodCasing !== CasingType.uncertain) {
+            // validate after
+            switch (methodCasing) {
+                case CasingType.SCREAMING_SNAKE: {
+                    // Take the leading _ after removing the characters into consideration
+                    const testCasing = this.checkCasing(name.substr(validateFrom + 1), 0);
+                    // screaming or upper
+                    if (testCasing !== CasingType.SCREAMING_SNAKE && testCasing !== CasingType.UPPER) {
+                        methodCasing = CasingType.uncertain;
+                    }
+                    break;
+                }
+                case CasingType.snake: {
+                    // Take the leading _ after removing the characters into consideration
+                    const textCheck = name.substr(validateFrom + 1);
+                    const testCasing = this.checkCasing(textCheck, 0);
+                    // snake
+                    if (testCasing !== CasingType.snake) {
+                        if (textCheck.match("([a-z\\d]+)") === null) {
+                            methodCasing = CasingType.uncertain;
+                        }
+                    }
+                    break;
+                }
+                case CasingType.Pascal:
+                case CasingType.camel: {
+                    const testCasing = this.checkCasing(name.substr(validateFrom), 0);
+                    // pascal
+                    if (testCasing !== CasingType.Pascal) {
+                        methodCasing = CasingType.uncertain;
+                    }
+                    break;
+                }
+                case CasingType.UPPER: {
+                    const testCasing = this.checkCasing(name.substr(validateFrom), 0);
+                    // upper
+                    if (name.substr(validateFrom).match("([A-Z\\d]+)") === null) {
+                        methodCasing = CasingType.uncertain;
+                    }
+                    break;
+                }
+                default: {
+                    break; // No op
+                }
+            }
+        }
+
+        return methodCasing;
+    }
+
     protected activeEditor: TextEditor;
     protected activeSelection: Position;
     protected readonly cfg: Config;
@@ -261,17 +341,17 @@ export default class CppParser implements ICodeParser {
             const methodName = args[0].name;
 
             if (methodName.toLowerCase().startsWith("get")) {
-                this.casingType = this.checkCasing(methodName, 3);
+                this.casingType = CppParser.checkCasing(methodName, 3);
                 if (this.casingType !== CasingType.uncertain) {
                     this.specialCase = SpecialCase.getter;
                 }
             } else if (methodName.toLowerCase().startsWith("set")) {
-                this.casingType = this.checkCasing(methodName, 3);
+                this.casingType = CppParser.checkCasing(methodName, 3);
                 if (this.casingType !== CasingType.uncertain) {
                     this.specialCase = SpecialCase.setter;
                 }
             } else if (methodName.toLowerCase().startsWith("create")) {
-                this.casingType = this.checkCasing(methodName, 6);
+                this.casingType = CppParser.checkCasing(methodName, 6);
                 if (this.casingType !== CasingType.uncertain) {
                     this.specialCase = SpecialCase.factoryMethod;
                 }
@@ -706,85 +786,5 @@ export default class CppParser implements ICodeParser {
         }
 
         return args;
-    }
-
-    /**
-     * Get the casing of a specified text
-     *
-     * @private
-     * @param {string} name Text to check
-     * @param {number} validateFrom Check if only a substr is the same casing as the whole string.
-     *                              Set to 0 to disable check.
-     * @returns {CasingType} Detected type of casing
-     *
-     * @memberOf CppParser
-     */
-    private checkCasing(name: string, validateFrom: number): CasingType {
-        let containsUnderscores = name.indexOf("_") !== -1;
-        if (containsUnderscores) {
-            containsUnderscores = name.indexOf("_") !== name.length - 1; // last character _ may be Google style
-        }
-        // first letter upper case
-        let methodCasing: CasingType;
-        let match = name.match("^([_|\\d|]*[A-Z]).+");
-        if (match !== null) {
-            match = name.match("^([A-Z|_|\\d]{2,})");
-            if (match !== null) {
-                methodCasing = containsUnderscores ? CasingType.SCREAMING_SNAKE : CasingType.UPPER;
-            } else {
-                methodCasing = containsUnderscores ? CasingType.uncertain : CasingType.Pascal;
-            }
-        } else {
-            methodCasing = containsUnderscores ? CasingType.snake : CasingType.camel;
-        }
-
-        if (validateFrom > 0 && methodCasing !== CasingType.uncertain) {
-            // validate after
-            switch (methodCasing) {
-                case CasingType.SCREAMING_SNAKE: {
-                    // Take the leading _ after removing the characters into consideration
-                    const testCasing = this.checkCasing(name.substr(validateFrom + 1), 0);
-                    // screaming or upper
-                    if (testCasing !== CasingType.SCREAMING_SNAKE && testCasing !== CasingType.UPPER) {
-                        methodCasing = CasingType.uncertain;
-                    }
-                    break;
-                }
-                case CasingType.snake: {
-                    // Take the leading _ after removing the characters into consideration
-                    const textCheck = name.substr(validateFrom + 1);
-                    const testCasing = this.checkCasing(textCheck, 0);
-                    // snake
-                    if (testCasing !== CasingType.snake) {
-                        if (textCheck.match("([a-z\\d]+)") === null) {
-                            methodCasing = CasingType.uncertain;
-                        }
-                    }
-                    break;
-                }
-                case CasingType.Pascal:
-                case CasingType.camel: {
-                    const testCasing = this.checkCasing(name.substr(validateFrom), 0);
-                    // pascal
-                    if (testCasing !== CasingType.Pascal) {
-                        methodCasing = CasingType.uncertain;
-                    }
-                    break;
-                }
-                case CasingType.UPPER: {
-                    const testCasing = this.checkCasing(name.substr(validateFrom), 0);
-                    // upper
-                    if (name.substr(validateFrom).match("([A-Z\\d]+)") === null) {
-                        methodCasing = CasingType.uncertain;
-                    }
-                    break;
-                }
-                default: {
-                    break; // No op
-                }
-            }
-        }
-
-        return methodCasing;
     }
 }
