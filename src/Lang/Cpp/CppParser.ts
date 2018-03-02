@@ -708,6 +708,17 @@ export default class CppParser implements ICodeParser {
         return args;
     }
 
+    /**
+     * Get the casing of a specified text
+     *
+     * @private
+     * @param {string} name Text to check
+     * @param {number} validateFrom Check if only a substr is the same casing as the whole string.
+     *                              Set to 0 to disable check.
+     * @returns {CasingType} Detected type of casing
+     *
+     * @memberOf CppParser
+     */
     private checkCasing(name: string, validateFrom: number): CasingType {
         let containsUnderscores = name.indexOf("_") !== -1;
         if (containsUnderscores) {
