@@ -56,6 +56,21 @@
           "type": "string",
           "default": " */"
         },
+        "doxdocgen.c.setterText": {
+          "description": "Smart text snippet for setters.",
+          "type": "string",
+          "default": "Set the {name} object"
+        },
+        "doxdocgen.c.getterText": {
+          "description": "Smart text snippet for getters.",
+          "type": "string",
+          "default": "Get the {name} object"
+        },
+        "doxdocgen.c.factoryMethodText": {
+          "description": "Smart text snippet for factory methods/functions.",
+          "type": "string",
+          "default": "Create a {name} object"
+        },
         "doxdocgen.cpp.newLineAfterTParams": {
           "description": "Whether to insert a newline after the template params.",
           "type": "boolean",
@@ -143,6 +158,11 @@
         },
         "doxdocgen.generic.generateSmartText": {
           "description": "Decide if you want to get smart text for certain commands.",
+          "type": "boolean",
+          "default": true
+        },
+        "doxdocgen.generic.splitCasingSmartText": {
+          "description": "Decide if the values put into {name} should be split according to their casing.",
           "type": "boolean",
           "default": true
         }

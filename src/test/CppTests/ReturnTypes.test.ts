@@ -120,7 +120,7 @@ suite("C++ - Return type Tests", () => {
     });
 
     test("Return Type in namespace", () => {
-        const result = testSetup.SetLine("MyNamespace::Foo CreateFoo();").GetResult();
+        const result = testSetup.SetLine("MyNamespace::Foo MakeFoo();").GetResult();
         assert.equal("/**\n * @brief \n * \n * @return MyNamespace::Foo \n */", result);
     });
 

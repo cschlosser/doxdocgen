@@ -11,6 +11,9 @@ class C {
     public firstLine: string = "/**";
     public commentPrefix: string = " * ";
     public lastLine: string = " */";
+    public getterText: string = "Get the {name} object";
+    public setterText: string = "Set the {name} object";
+    public factoryMethodText: string = "Create a {name} object";
 }
 
 class Cpp {
@@ -50,6 +53,7 @@ class Generic {
     public dateTemplate: string = "@date {date}";
     public dateFormat: string = "YYYY-MM-DD";
     public generateSmartText: boolean = true;
+    public splitCasingSmartText: boolean = true;
 }
 
 export class Config {
@@ -60,6 +64,9 @@ export class Config {
         values.C.firstLine = C.getConfiguration().get<string>("firstLine", values.C.firstLine);
         values.C.commentPrefix = C.getConfiguration().get<string>("commentPrefix", values.C.commentPrefix);
         values.C.lastLine = C.getConfiguration().get<string>("lastLine", values.C.lastLine);
+        values.C.getterText = C.getConfiguration().get<string>("getterText", values.C.getterText);
+        values.C.setterText = C.getConfiguration().get<string>("setterText", values.C.setterText);
+        values.C.factoryMethodText = C.getConfiguration().get<string>("factoryMethodText", values.C.factoryMethodText);
 
         values.Cpp.newLineAfterTParams = Cpp.getConfiguration().get<boolean>("newLineAfterTParams", values.Cpp.newLineAfterTParams);
         values.Cpp.tparamTemplate = Cpp.getConfiguration().get<string>("tparamTemplate", values.Cpp.tparamTemplate);
@@ -81,6 +88,7 @@ export class Config {
         values.Generic.dateTemplate = Generic.getConfiguration().get<string>("dateTemplate", values.Generic.dateTemplate);
         values.Generic.dateFormat = Generic.getConfiguration().get<string>("dateFormat", values.Generic.dateFormat);
         values.Generic.generateSmartText = Generic.getConfiguration().get<boolean>("generateSmartText", values.Generic.generateSmartText);
+        values.Generic.splitCasingSmartText = Generic.getConfiguration().get<boolean>("splitCasingSmartText", values.Generic.splitCasingSmartText);
 
         return values;
     }

@@ -3,7 +3,7 @@ import ICodeParser from "../../Common/ICodeParser";
 import { IDocGen } from "../../Common/IDocGen";
 import { Config } from "../../Config";
 import { CppArgument } from "./CppArgument";
-import { CommentType, CppDocGen, SpecialCase } from "./CppDocGen";
+import { CasingType, CommentType, CppDocGen, SpecialCase } from "./CppDocGen";
 import { CppParseTree } from "./CppParseTree";
 import { CppToken, CppTokenType } from "./CppToken";
 
@@ -28,6 +28,8 @@ export default class CppParser implements ICodeParser {
 
     private specialCase: SpecialCase;
     private commentType: CommentType;
+
+    private casingType: CasingType;
 
     constructor(cfg: Config) {
         this.cfg = cfg;
@@ -255,6 +257,27 @@ export default class CppParser implements ICodeParser {
             }
         }
 
+        if (args[0].name !== null) {
+            const methodName = args[0].name;
+
+            if (methodName.toLowerCase().startsWith("get")) {
+                this.casingType = this.checkCasing(methodName);
+                if (this.casingType !== CasingType.uncertain) {
+                    this.specialCase = SpecialCase.getter;
+                }
+            } else if (methodName.toLowerCase().startsWith("set")) {
+                this.casingType = this.checkCasing(methodName);
+                if (this.casingType !== CasingType.uncertain) {
+                    this.specialCase = SpecialCase.setter;
+                }
+            } else if (methodName.toLowerCase().startsWith("create")) {
+                this.casingType = this.checkCasing(methodName);
+                if (this.casingType !== CasingType.uncertain) {
+                    this.specialCase = SpecialCase.factoryMethod;
+                }
+            }
+        }
+
         return new CppDocGen(
             this.activeEditor,
             this.activeSelection,
@@ -264,6 +287,7 @@ export default class CppParser implements ICodeParser {
             args[1],
             this.specialCase,
             this.commentType,
+            this.casingType,
         );
     }
 
@@ -682,5 +706,24 @@ export default class CppParser implements ICodeParser {
         }
 
         return args;
+    }
+
+    private checkCasing(name: string): CasingType {
+        let containsUnderscores = name.indexOf("_") !== -1;
+        if (containsUnderscores) {
+            containsUnderscores = name.indexOf("_") !== name.length - 1; // last character _ may be Google style
+        }
+        // first letter upper case
+        let match = name.match("^([_|\\d|]*[A-Z]).+");
+        if (match !== null) {
+            match = name.match("^([A-Z|_|\\d]{2,})");
+            if (match !== null) {
+                return containsUnderscores ? CasingType.SCREAMING_SNAKE : CasingType.UPPER;
+            } else {
+                return containsUnderscores ? CasingType.uncertain : CasingType.Pascal;
+            }
+        } else {
+            return containsUnderscores ? CasingType.snake : CasingType.camel;
+        }
     }
 }
