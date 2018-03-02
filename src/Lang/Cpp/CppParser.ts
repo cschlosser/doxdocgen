@@ -738,7 +738,7 @@ export default class CppParser implements ICodeParser {
             methodCasing = containsUnderscores ? CasingType.snake : CasingType.camel;
         }
 
-        if (validateFrom > 0) {
+        if (validateFrom > 0 && methodCasing !== CasingType.uncertain) {
             // validate after
             switch (methodCasing) {
                 case CasingType.SCREAMING_SNAKE: {
@@ -752,10 +752,13 @@ export default class CppParser implements ICodeParser {
                 }
                 case CasingType.snake: {
                     // Take the leading _ after removing the characters into consideration
-                    const testCasing = this.checkCasing(name.substr(validateFrom + 1), 0);
+                    const textCheck = name.substr(validateFrom + 1);
+                    const testCasing = this.checkCasing(textCheck, 0);
                     // snake
                     if (testCasing !== CasingType.snake) {
-                        methodCasing = CasingType.uncertain;
+                        if (textCheck.match("([a-z\\d]+)") === null) {
+                            methodCasing = CasingType.uncertain;
+                        }
                     }
                     break;
                 }
@@ -771,12 +774,11 @@ export default class CppParser implements ICodeParser {
                 case CasingType.UPPER: {
                     const testCasing = this.checkCasing(name.substr(validateFrom), 0);
                     // upper
-                    if (testCasing !== CasingType.UPPER) {
+                    if (name.substr(validateFrom).match("([A-Z\\d]+)") === null) {
                         methodCasing = CasingType.uncertain;
                     }
                     break;
                 }
-                case CasingType.uncertain:
                 default: {
                     break; // No op
                 }
