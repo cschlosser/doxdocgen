@@ -71,11 +71,6 @@
           "type": "string",
           "default": "Create a {name} object"
         },
-        "doxdocgen.cpp.newLineAfterTParams": {
-          "description": "Whether to insert a newline after the template params.",
-          "type": "boolean",
-          "default": false
-        },
         "doxdocgen.cpp.tparamTemplate": {
           "description": "The template of the template parameter DoxyGen line(s) that are generated. If empty it won't get generated at all.",
           "type": "string",
@@ -97,19 +92,9 @@
           "default": "@file {name}"
         },
         "doxdocgen.file.fileOrder": {
-          "description": "The order to use for the date. Valid values are shown in default setting.",
+          "description": "The order to use for the file comment. Values can be used multiple times. Valid values are shown in default setting.",
           "type": ["array", "string"],
-          "default": ["brief", "file", "author", "date"]
-        },
-        "doxdocgen.generic.newLineAfterBrief": {
-          "description": "Whether to insert a newline after a brief.",
-          "type": "boolean",
-          "default": true
-        },
-        "doxdocgen.generic.newLineAfterParams": {
-          "description": "Whether to insert a newline after the params.",
-          "type": "boolean",
-          "default": false
+          "default": ["brief", "empty", "file", "author", "date"]
         },
         "doxdocgen.generic.includeTypeAtReturn": {
           "description": "Whether include type information at return.",
@@ -165,6 +150,11 @@
           "description": "Decide if the values put into {name} should be split according to their casing.",
           "type": "boolean",
           "default": true
+        },
+        "doxdocgen.generic.order": {
+          "description": "The order to use for the comment generation. Values can be used multiple times. Valid values are shown in default setting.",
+          "type": ["array", "string"],
+          "default": ["brief", "empty", "tparam", "param", "return"]
         }
       }
     }

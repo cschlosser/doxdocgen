@@ -21,7 +21,6 @@ class Cpp {
         return workspace.getConfiguration("doxdocgen.cpp");
     }
 
-    public newLineAfterTParams: boolean = false;
     public tparamTemplate: string = "@tparam {param} ";
     public ctorText: string = "Construct a new {name} object";
     public dtorText: string = "Destroy the {name} object";
@@ -33,7 +32,7 @@ class File {
     }
 
     public fileTemplate: string = "@file {name}";
-    public fileOrder: string[] = ["brief", "file", "author", "date"];
+    public fileOrder: string[] = ["brief", "empty", "file", "author", "date"];
 }
 
 class Generic {
@@ -41,8 +40,6 @@ class Generic {
         return workspace.getConfiguration("doxdocgen.generic");
     }
 
-    public newLineAfterBrief: boolean = true;
-    public newLineAfterParams: boolean = false;
     public includeTypeAtReturn: boolean = true;
     public boolReturnsTrueFalse: boolean = true;
     public briefTemplate: string = "@brief ";
@@ -54,6 +51,7 @@ class Generic {
     public dateFormat: string = "YYYY-MM-DD";
     public generateSmartText: boolean = true;
     public splitCasingSmartText: boolean = true;
+    public order: string[] = ["brief", "empty", "tparam", "param", "return"];
 }
 
 export class Config {
@@ -68,7 +66,6 @@ export class Config {
         values.C.setterText = C.getConfiguration().get<string>("setterText", values.C.setterText);
         values.C.factoryMethodText = C.getConfiguration().get<string>("factoryMethodText", values.C.factoryMethodText);
 
-        values.Cpp.newLineAfterTParams = Cpp.getConfiguration().get<boolean>("newLineAfterTParams", values.Cpp.newLineAfterTParams);
         values.Cpp.tparamTemplate = Cpp.getConfiguration().get<string>("tparamTemplate", values.Cpp.tparamTemplate);
         values.Cpp.ctorText = Cpp.getConfiguration().get<string>("ctorText", values.Cpp.ctorText);
         values.Cpp.dtorText = Cpp.getConfiguration().get<string>("dtorText", values.Cpp.dtorText);
@@ -76,8 +73,6 @@ export class Config {
         values.File.fileTemplate = File.getConfiguration().get<string>("fileTemplate", values.File.fileTemplate);
         values.File.fileOrder = File.getConfiguration().get<string[]>("fileOrder", values.File.fileOrder);
 
-        values.Generic.newLineAfterBrief = Generic.getConfiguration().get<boolean>("newLineAfterBrief", values.Generic.newLineAfterBrief);
-        values.Generic.newLineAfterParams = Generic.getConfiguration().get<boolean>("newLineAfterParams", values.Generic.newLineAfterParams);
         values.Generic.includeTypeAtReturn = Generic.getConfiguration().get<boolean>("includeTypeAtReturn", values.Generic.includeTypeAtReturn);
         values.Generic.boolReturnsTrueFalse = Generic.getConfiguration().get<boolean>("boolReturnsTrueFalse", values.Generic.boolReturnsTrueFalse);
         values.Generic.briefTemplate = Generic.getConfiguration().get<string>("briefTemplate", values.Generic.briefTemplate);
@@ -89,6 +84,7 @@ export class Config {
         values.Generic.dateFormat = Generic.getConfiguration().get<string>("dateFormat", values.Generic.dateFormat);
         values.Generic.generateSmartText = Generic.getConfiguration().get<boolean>("generateSmartText", values.Generic.generateSmartText);
         values.Generic.splitCasingSmartText = Generic.getConfiguration().get<boolean>("splitCasingSmartText", values.Generic.splitCasingSmartText);
+        values.Generic.order = Generic.getConfiguration().get<string[]>("order", values.Generic.order);
 
         return values;
     }

@@ -25,6 +25,21 @@ suite("C++ - Configuration Tests", () => {
             + "@return true \n * @return false \n */", result);
     });
 
+    test("Comment order", () => {
+        testSetup.cfg = new Config();
+        testSetup.cfg.Generic.order = ["brief", "param", "tparam", "return"];
+        const result = testSetup.SetLine("template<typename T> bool foo(T a);").GetResult();
+        assert.equal("/**\n * @brief \n * @param a \n * @tparam T \n * "
+            + "@return true \n * @return false \n */", result);
+    });
+
+    test("Non existing order param", () => {
+        testSetup.cfg = new Config();
+        testSetup.cfg.Generic.order = ["breif"];
+        const result = testSetup.SetLine("template<typename T> bool foo(T a);").GetResult();
+        assert.equal("/**\n */", result);
+    });
+
     test("Modified template", () => {
         testSetup.cfg = new Config();
 
@@ -61,11 +76,10 @@ suite("C++ - Configuration Tests", () => {
 
     test("Newlines after params and tparams but not after brief", () => {
         testSetup.cfg = new Config();
-        testSetup.cfg.Generic.newLineAfterBrief = false;
-        testSetup.cfg.Generic.newLineAfterParams = true;
-        testSetup.cfg.Cpp.newLineAfterTParams = true;
+        testSetup.cfg.Generic.order = ["brief", "tparam", "empty", "param", "empty", "return"];
 
         const result = testSetup.SetLine("template<typename T> bool foo(T a);").GetResult();
+        testSetup.cfg.Generic.order = ["brief", "empty", "tparam", "param", "return"]; // reset to default
         assert.equal("/**\n * @brief \n * @tparam T \n * \n * @param a \n * \n"
             + " * @return true \n * @return false \n */", result);
     });
@@ -99,7 +113,7 @@ suite("C++ - Configuration Tests", () => {
         testSetup.firstLine = 0;
         testSetup.cfg.File.fileOrder = ["brief", "author", "date", "file"];
         const result = testSetup.SetLine("").GetResult();
-        assert.equal("/**\n * @brief \n * \n * @author your name\n" +
+        assert.equal("/**\n * @brief \n * @author your name\n" +
             " * @date " + moment().format("YYYY-MM-DD") + "\n * @file MockDocument.h\n */", result);
     });
 
