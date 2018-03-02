@@ -3,6 +3,7 @@ import { Position, Range, Selection, TextEditor, TextLine, WorkspaceEdit } from 
 import { IDocGen } from "../../Common/IDocGen";
 import { Config } from "../../Config";
 import { CppArgument } from "./CppArgument";
+import * as CppParser from "./CppParser";
 import { CppParseTree } from "./CppParseTree";
 import { CppToken, CppTokenType } from "./CppToken";
 
@@ -115,7 +116,9 @@ export class CppDocGen implements IDocGen {
                 if (this.func.name === null) {
                     return "";
                 } else {
-                    val = this.splitCasing(this.func.name.trim());
+                    const ctorText = this.func.name.trim();
+                    this.casingType = CppParser.default.checkCasing(ctorText, 0);
+                    val = this.splitCasing(ctorText).trim();
                     text = this.cfg.Cpp.ctorText;
                     break;
                 }
@@ -124,7 +127,9 @@ export class CppDocGen implements IDocGen {
                 if (this.func.name === null) {
                     return "";
                 } else {
-                    val = this.splitCasing(this.func.name.replace("~", "").trim());
+                    const dtorText = this.func.name.replace("~", "").trim();
+                    this.casingType = CppParser.default.checkCasing(dtorText, 0);
+                    val = this.splitCasing(dtorText).trim();
                     text = this.cfg.Cpp.dtorText;
                     break;
                 }
