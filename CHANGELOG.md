@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.2.1]
+
+- Hotfix. Include moment.js as runtime dependency
+
 ## [0.2.0]
 
 - Fix #51
