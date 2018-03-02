@@ -1,5 +1,40 @@
 # Change Log
 
+## [0.3.0]
+
+### Features
+
+- Custom doxygen tag order for methods (#55)
+
+- Suggest smart text (#57)
+
+  For more details see [README.md](https://github.com/christophschlosser/doxdocgen/tree/0.3.0#smart-text)
+
+- Config keys are now grouped, see [Config update](#config-update) for changes
+
+### Config update
+
+| Old value                             | New value                              | Change   |
+|---------------------------------------|----------------------------------------|:--------:|
+| doxdocgen.generic.triggerSequence     | doxdocgen.c.triggerSequence            | Category |
+| doxdocgen.generic.firstLine           | doxdocgen.c.firstLine                  | Category |
+| doxdocgen.generic.commentPrefix       | doxdocgen.c.commentPrefix              | Category |
+| doxdocgen.generic.lastLine            | doxdocgen.c.lastLine                   | Category |
+|                                       | doxdocgen.c.setterText                 | Added    |
+|                                       | doxdocgen.c.getterText                 | Added    |
+|                                       | doxdocgen.c.factoryMethodText          | Added    |
+| doxdocgen.generic.newLineAfterTParams |                                        | Removed  |
+| doxdocgen.generic.newLineAfterBrief   |                                        | Removed  |
+| doxdocgen.generic.newLineAfterParams  |                                        | Removed  |
+| doxdocgen.generic.tparamTemplate      | doxdocgen.cpp.tparamTemplate           | Category |
+|                                       | doxdocgen.cpp.ctorText                 | Added    |
+|                                       | doxdocgen.cpp.dtorText                 | Added    |
+| doxdocgen.generic.fileTemplate        | doxdocgen.file.fileTemplate            | Category |
+| doxdocgen.generic.fileOrder           | doxdocgen.file.fileOrder               | Category |
+|                                       | doxdocgen.generic.generateSmartText    | Added    |
+|                                       | doxdocgen.generic.splitCasingSmartText | Added    |
+|                                       | doxdocgen.generic.order                | Added    |
+
 ## [0.2.1]
 
 - Hotfix. Include moment.js as runtime dependency
