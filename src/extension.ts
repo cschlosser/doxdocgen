@@ -29,7 +29,7 @@ export function activate(context: vscode.ExtensionContext) {
         notificationHideThenable.then((action) => {
             if (action === ConfigChangedNotificationOptions.CHANGED) {
                 // tslint:disable-next-line:max-line-length
-                opn("https://github.com/christophschlosser/doxdocgen/commit/1c844758719d8dc7d538585bb4393565e5629e84#diff-b9cfc7f2cdf78a7f4b91a753d10865a2");
+                opn("https://github.com/christophschlosser/doxdocgen/blob/0.3.0/CHANGELOG.md#config-update");
             } else if (action === ConfigChangedNotificationOptions.HIDE) {
                 context.globalState.update(ConfigChangedNotificationOptions.GLOBAL_STORAGE_KEY, "false");
             }

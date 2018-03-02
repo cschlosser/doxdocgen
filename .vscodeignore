@@ -6,3 +6,8 @@ src/**
 .gitignore
 tsconfig.json
 vsc-extension-quickstart.md
+.travis.yml
+appveyor.yml
+coverconfig.json
+publish_coverage.sh
+.github/**

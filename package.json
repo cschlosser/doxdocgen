@@ -1,8 +1,8 @@
 {
   "name": "doxdocgen",
   "displayName": "Doxygen Documentation Generator",
-  "description": "Let it generate Doxygen documentation from your source code.",
-  "version": "0.2.1",
+  "description": "Let me generate Doxygen documentation from your source code for you.",
+  "version": "0.3.0",
   "publisher": "cschlosser",
   "engines": {
     "vscode": "^1.16.0"
@@ -173,7 +173,7 @@
     "url": "https://github.com/christophschlosser/doxdocgen.git"
   },
   "bugs": {
-    "url": "https://github.com/christophschlosser/doxdocgen/issues?q=is%3Aopen+is%3Aissue+label%3Abug+"
+    "url": "https://github.com/christophschlosser/doxdocgen/labels/bug"
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
