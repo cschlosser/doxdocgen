@@ -114,4 +114,29 @@ suite("C++ - Configuration Tests", () => {
         const result = testSetup.SetLine("~Foo();").GetResult();
         assert.equal("/**\n * @brief Test Foo\n * \n */", result);
     });
+
+    test("Custom smart text getter", () => {
+        testSetup.cfg.C.getterText = "Test {name}";
+        const result = testSetup.SetLine("int getFoo();").GetResult();
+        assert.equal("/**\n * @brief Test Foo\n * \n * @return int \n */", result);
+    });
+
+    test("Custom smart text setter", () => {
+        testSetup.cfg.C.setterText = "Test {name}";
+        const result = testSetup.SetLine("void setFoo(int foo);").GetResult();
+        assert.equal("/**\n * @brief Test Foo\n * \n * @param foo \n */", result);
+    });
+
+    test("Custom smart text factory method", () => {
+        testSetup.cfg.C.factoryMethodText = "Test {name}";
+        const result = testSetup.SetLine("int createFoo();").GetResult();
+        assert.equal("/**\n * @brief Test Foo\n * \n * @return int \n */", result);
+    });
+
+    test("Don't split casing for smart text", () => {
+        testSetup.cfg.C.factoryMethodText = "Test {name}";
+        testSetup.cfg.Generic.splitCasingSmartText = false;
+        const result = testSetup.SetLine("int createFooObject();").GetResult();
+        assert.equal("/**\n * @brief Test FooObject\n * \n * @return int \n */", result);
+    });
 });
