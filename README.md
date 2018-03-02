@@ -41,6 +41,7 @@ This VS Code Extensions provides Doxygen Documentation generation on the fly by 
 
 ![options](images/options.gif)
 ![xml options](images/opts-xml.gif)
+![order of commands](images/opt-order.gif)
 
 ### File descriptions
 
