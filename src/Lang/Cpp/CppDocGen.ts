@@ -162,7 +162,9 @@ export class CppDocGen implements IDocGen {
     }
 
     protected generateBrief(lines: string[]) {
-        lines.push(this.cfg.C.commentPrefix + this.cfg.Generic.briefTemplate + this.getSmartText());
+        lines.push(this.getTemplatedString(this.cfg.textTemplateReplace,
+                                           this.cfg.C.commentPrefix + this.cfg.Generic.briefTemplate,
+                                           this.getSmartText()));
     }
 
     protected generateFromTemplate(lines: string[], replace: string, template: string, templateWith: string[]) {
@@ -365,10 +367,8 @@ export class CppDocGen implements IDocGen {
             line = baseLine;
             character = baseCharacter;
         }
-        const start = character - this.smartTextLength - 1;
-        const from: Position = new Position(line, (start > 0 ? start : 0));
         const to: Position = new Position(line, character);
-        this.activeEditor.selection = new Selection(from, to);
+        this.activeEditor.selection = new Selection(to, to);
     }
 
     protected splitCasing(text: string): string {
