@@ -37,7 +37,7 @@
       "title": "Doxygen Documentation Generator Settings",
       "properties": {
         "doxdocgen.c.triggerSequence": {
-          "description": "Doxygen comment trigger. This character sequence triggers generation of DoxyGen comments.",
+          "description": "Doxygen comment trigger. This character sequence triggers generation of Doxygen comments.",
           "type": "string",
           "default": "/**"
         },
@@ -47,7 +47,7 @@
           "default": "/**"
         },
         "doxdocgen.c.commentPrefix": {
-          "description": "The prefix that is used for each comment line.",
+          "description": "The prefix that is used for each comment line except for first and last.",
           "type": "string",
           "default": " * "
         },
@@ -72,7 +72,7 @@
           "default": "Create a {name} object"
         },
         "doxdocgen.cpp.tparamTemplate": {
-          "description": "The template of the template parameter DoxyGen line(s) that are generated. If empty it won't get generated at all.",
+          "description": "The template of the template parameter Doxygen line(s) that are generated. If empty it won't get generated at all.",
           "type": "string",
           "default": "@tparam {param} "
         },
@@ -87,7 +87,7 @@
           "default": "Destroy the {name} object"
         },
         "doxdocgen.file.fileTemplate": {
-          "description": "The template for the file parameter in DoxyGen.",
+          "description": "The template for the file parameter in Doxygen.",
           "type": "string",
           "default": "@file {name}"
         },
@@ -107,22 +107,22 @@
           "default": true
         },
         "doxdocgen.generic.briefTemplate": {
-          "description": "The template of the brief DoxyGen line that is generated. If empty it won't get generated at all.",
+          "description": "The template of the brief Doxygen line that is generated. If empty it won't get generated at all.",
           "type": "string",
           "default": "@brief {text}"
         },
         "doxdocgen.generic.paramTemplate": {
-          "description": "The template of the param DoxyGen line(s) that are generated. If empty it won't get generated at all.",
+          "description": "The template of the param Doxygen line(s) that are generated. If empty it won't get generated at all.",
           "type": "string",
           "default": "@param {param} "
         },
         "doxdocgen.generic.returnTemplate": {
-          "description": "The template of the return DoxyGen line that is generated. If empty it won't get generated at all.",
+          "description": "The template of the return Doxygen line that is generated. If empty it won't get generated at all.",
           "type": "string",
           "default": "@return {type} "
         },
         "doxdocgen.generic.linesToGet": {
-          "description": "How many lines the plugin should look for to find the end of the declaration. Please be aware that setting this value too low may improve the speed of comment generation but the plugin also may not correctly detect all declarations or definitions anymore.",
+          "description": "How many lines the plugin should look for to find the end of the declaration. Please be aware that setting this value too low could improve the speed of comment generation by a very slim margin but the plugin also may not correctly detect all declarations or definitions anymore.",
           "type": "number",
           "default": 20
         },
@@ -132,7 +132,7 @@
           "default": "@author your name"
         },
         "doxdocgen.generic.dateTemplate": {
-          "description": "The template for the date parameter in DoxyGen.",
+          "description": "The template for the date parameter in Doxygen.",
           "type": "string",
           "default": "@date {date}"
         },
@@ -164,7 +164,7 @@
     "cpp",
     "c++",
     "c",
-    "doxygen"
+    "Doxygen"
   ],
   "license": "SEE LICENSE IN LICENSE",
   "main": "./out/extension",
