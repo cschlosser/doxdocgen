@@ -247,9 +247,6 @@ export class CppDocGen implements IDocGen {
     protected insertBrief(lines: string[]) {
         if (this.cfg.Generic.briefTemplate.trim().length !== 0) {
             this.generateBrief(lines);
-            if (this.cfg.Generic.newLineAfterBrief === true) {
-                lines.push(this.cfg.C.commentPrefix);
-            }
         }
     }
 
@@ -268,6 +265,10 @@ export class CppDocGen implements IDocGen {
             switch (element) {
                 case "brief": {
                     this.insertBrief(lines);
+                    break;
+                }
+                case "empty": {
+                    lines.push(this.cfg.C.commentPrefix);
                     break;
                 }
                 case "file": {
@@ -298,33 +299,48 @@ export class CppDocGen implements IDocGen {
 
         this.insertFirstLine(lines);
 
-        this.insertBrief(lines);
-
-        if (this.cfg.Cpp.tparamTemplate.trim().length !== 0 && this.templateParams.length > 0) {
-            this.generateFromTemplate(
-                lines,
-                this.cfg.paramTemplateReplace,
-                this.cfg.Cpp.tparamTemplate,
-                this.templateParams,
-            );
-            if (this.cfg.Cpp.newLineAfterTParams === true) {
-                lines.push(this.cfg.C.commentPrefix);
+        this.cfg.Generic.order.forEach((element) => {
+            switch (element) {
+                case "brief": {
+                    this.insertBrief(lines);
+                    break;
+                }
+                case "empty": {
+                    lines.push(this.cfg.C.commentPrefix);
+                    break;
+                }
+                case "tparam": {
+                    if (this.cfg.Cpp.tparamTemplate.trim().length !== 0 && this.templateParams.length > 0) {
+                        this.generateFromTemplate(
+                            lines,
+                            this.cfg.paramTemplateReplace,
+                            this.cfg.Cpp.tparamTemplate,
+                            this.templateParams,
+                        );
+                    }
+                    break;
+                }
+                case "param": {
+                    if (this.cfg.Generic.paramTemplate.trim().length !== 0 && this.params.length > 0) {
+                        const paramNames: string[] = this.params.map((p) => p.name);
+                        // tslint:disable-next-line:max-line-length
+                        this.generateFromTemplate(lines, this.cfg.paramTemplateReplace, this.cfg.Generic.paramTemplate, paramNames);
+                    }
+                    break;
+                }
+                case "return": {
+                    if (this.cfg.Generic.returnTemplate.trim().length !== 0 && this.func.type !== null) {
+                        const returnParams = this.generateReturnParams();
+                        // tslint:disable-next-line:max-line-length
+                        this.generateFromTemplate(lines, this.cfg.typeTemplateReplace, this.cfg.Generic.returnTemplate, returnParams);
+                    }
+                    break;
+                }
+                default: {
+                    break;
+                }
             }
-        }
-
-        if (this.cfg.Generic.paramTemplate.trim().length !== 0 && this.params.length > 0) {
-            const paramNames: string[] = this.params.map((p) => p.name);
-            this.generateFromTemplate(lines, this.cfg.paramTemplateReplace, this.cfg.Generic.paramTemplate, paramNames);
-            if (this.cfg.Generic.newLineAfterParams === true) {
-                lines.push(this.cfg.C.commentPrefix);
-            }
-        }
-
-        if (this.cfg.Generic.returnTemplate.trim().length !== 0 && this.func.type !== null) {
-            const returnParams = this.generateReturnParams();
-            // tslint:disable-next-line:max-line-length
-            this.generateFromTemplate(lines, this.cfg.typeTemplateReplace, this.cfg.Generic.returnTemplate, returnParams);
-        }
+        });
 
         this.insertLastLine(lines);
 
