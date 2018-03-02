@@ -98,87 +98,87 @@ Each of them can be configured with its own custom text and you can decide if th
 
 ```json
 // The prefix that is used for each comment line.
-  "doxdocgen.c.commentPrefix": " * ",
+"doxdocgen.c.commentPrefix": " * ",
 
-  // Smart text snippet for factory methods/functions.
-  "doxdocgen.c.factoryMethodText": "Create a {name} object",
+// Smart text snippet for factory methods/functions.
+"doxdocgen.c.factoryMethodText": "Create a {name} object",
 
-  // The first line of the comment that gets generated. If empty it won't get generated at all.
-  "doxdocgen.c.firstLine": "/**",
+// The first line of the comment that gets generated. If empty it won't get generated at all.
+"doxdocgen.c.firstLine": "/**",
 
-  // Smart text snippet for getters.
-  "doxdocgen.c.getterText": "Get the {name} object",
+// Smart text snippet for getters.
+"doxdocgen.c.getterText": "Get the {name} object",
 
-  // The last line of the comment that gets generated. If empty it won't get generated at all.
-  "doxdocgen.c.lastLine": " */",
+// The last line of the comment that gets generated. If empty it won't get generated at all.
+"doxdocgen.c.lastLine": " */",
 
-  // Smart text snippet for setters.
-  "doxdocgen.c.setterText": "Set the {name} object",
+// Smart text snippet for setters.
+"doxdocgen.c.setterText": "Set the {name} object",
 
-  // Doxygen comment trigger. This character sequence triggers generation of DoxyGen comments.
-  "doxdocgen.c.triggerSequence": "/**",
+// Doxygen comment trigger. This character sequence triggers generation of DoxyGen comments.
+"doxdocgen.c.triggerSequence": "/**",
 
-  // Smart text snippet for constructors.
-  "doxdocgen.cpp.ctorText": "Construct a new {name} object",
+// Smart text snippet for constructors.
+"doxdocgen.cpp.ctorText": "Construct a new {name} object",
 
-  // Smart text snippet for destructors.
-  "doxdocgen.cpp.dtorText": "Destroy the {name} object",
+// Smart text snippet for destructors.
+"doxdocgen.cpp.dtorText": "Destroy the {name} object",
 
-  // Whether to insert a newline after the template params.
-  "doxdocgen.cpp.newLineAfterTParams": false,
+// Whether to insert a newline after the template params.
+"doxdocgen.cpp.newLineAfterTParams": false,
 
-  // The template of the template parameter DoxyGen line(s) that are generated. If empty it won't get generated at all.
-  "doxdocgen.cpp.tparamTemplate": "@tparam {param} ",
+// The template of the template parameter DoxyGen line(s) that are generated. If empty it won't get generated at all.
+"doxdocgen.cpp.tparamTemplate": "@tparam {param} ",
 
-  // The order to use for the date. Valid values are shown in default setting.
-  "doxdocgen.file.fileOrder": [
-    "brief",
-    "file",
-    "author",
-    "date"
-  ],
+// The order to use for the date. Valid values are shown in default setting.
+"doxdocgen.file.fileOrder": [
+  "brief",
+  "file",
+  "author",
+  "date"
+],
 
-  // The template for the file parameter in DoxyGen.
-  "doxdocgen.file.fileTemplate": "@file {name}",
+// The template for the file parameter in DoxyGen.
+"doxdocgen.file.fileTemplate": "@file {name}",
 
-  // Set the style of the author tag and your name.
-  "doxdocgen.generic.authorTag": "@author your name",
+// Set the style of the author tag and your name.
+"doxdocgen.generic.authorTag": "@author your name",
 
-  // If this is enabled a bool return value will be split into true and false return param.
-  "doxdocgen.generic.boolReturnsTrueFalse": true,
+// If this is enabled a bool return value will be split into true and false return param.
+"doxdocgen.generic.boolReturnsTrueFalse": true,
 
-  // The template of the brief DoxyGen line that is generated. If empty it won't get generated at all.
-  "doxdocgen.generic.briefTemplate": "@brief ",
+// The template of the brief DoxyGen line that is generated. If empty it won't get generated at all.
+"doxdocgen.generic.briefTemplate": "@brief ",
 
-  // The format to use for the date.
-  "doxdocgen.generic.dateFormat": "YYYY-MM-DD",
+// The format to use for the date.
+"doxdocgen.generic.dateFormat": "YYYY-MM-DD",
 
-  // The template for the date parameter in DoxyGen.
-  "doxdocgen.generic.dateTemplate": "@date {date}",
+// The template for the date parameter in DoxyGen.
+"doxdocgen.generic.dateTemplate": "@date {date}",
 
-  // Decide if you want to get smart text for certain commands.
-  "doxdocgen.generic.generateSmartText": true,
+// Decide if you want to get smart text for certain commands.
+"doxdocgen.generic.generateSmartText": true,
 
-  // Whether include type information at return.
-  "doxdocgen.generic.includeTypeAtReturn": true,
+// Whether include type information at return.
+"doxdocgen.generic.includeTypeAtReturn": true,
 
-  // How many lines the plugin should look for to find the end of the declaration. Please be aware that setting this value too low may improve the speed of comment generation but the plugin also may not correctly detect all declarations or definitions anymore.
-  "doxdocgen.generic.linesToGet": 20,
+// How many lines the plugin should look for to find the end of the declaration. Please be aware that setting this value too low may improve the speed of comment generation but the plugin also may not correctly detect all declarations or definitions anymore.
+"doxdocgen.generic.linesToGet": 20,
 
-  // Whether to insert a newline after a brief.
-  "doxdocgen.generic.newLineAfterBrief": true,
+// Whether to insert a newline after a brief.
+"doxdocgen.generic.newLineAfterBrief": true,
 
-  // Whether to insert a newline after the params.
-  "doxdocgen.generic.newLineAfterParams": false,
+// Whether to insert a newline after the params.
+"doxdocgen.generic.newLineAfterParams": false,
 
-  // The template of the param DoxyGen line(s) that are generated. If empty it won't get generated at all.
-  "doxdocgen.generic.paramTemplate": "@param {param} ",
+// The template of the param DoxyGen line(s) that are generated. If empty it won't get generated at all.
+"doxdocgen.generic.paramTemplate": "@param {param} ",
 
-  // The template of the return DoxyGen line that is generated. If empty it won't get generated at all.
-  "doxdocgen.generic.returnTemplate": "@return {type} ",
+// The template of the return DoxyGen line that is generated. If empty it won't get generated at all.
+"doxdocgen.generic.returnTemplate": "@return {type} ",
 
-  // Decide if the values put into {name} should be split according to their casing.
-  "doxdocgen.generic.splitCasingSmartText": true
+// Decide if the values put into {name} should be split according to their casing.
+"doxdocgen.generic.splitCasingSmartText": true
 ```
 
 ## Contributors
