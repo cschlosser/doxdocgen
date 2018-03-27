@@ -70,9 +70,17 @@ export default class CodeParserController {
             return false;
         }
 
-        const cont: string = activeLine.text.trim();
+        // Do not trigger when there's whitespace after the trigger sequence
+        // tslint:disable-next-line:max-line-length
+        const seq = "[\\s]*(" + this.cfg.C.triggerSequence.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&") + ")$";
+        const match: RegExpMatchArray = activeLine.text.match(seq);
 
-        return this.cfg.C.triggerSequence === cont;
+        if (match !== null) {
+            const cont: string = match[1];
+            return this.cfg.C.triggerSequence === cont;
+        } else {
+            return false;
+        }
     }
 
     private onEvent(activeEditor: TextEditor, event: TextDocumentContentChangeEvent) {
