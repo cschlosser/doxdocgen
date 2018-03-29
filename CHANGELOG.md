@@ -1,5 +1,11 @@
 # Change Log
 
+## [0.3.1]
+
+### Fix
+
+- Don't create a comment while editing an existing comment. (#67)
+
 ## [0.3.0]
 
 ### Features
