@@ -70,6 +70,11 @@ export default class CodeParserController {
             return false;
         }
 
+        // Check if currently in a comment block
+        if (this.inComment(activeEditor, activeSelection.line)) {
+            return false;
+        }
+
         // Do not trigger when there's whitespace after the trigger sequence
         // tslint:disable-next-line:max-line-length
         const seq = "[\\s]*(" + this.cfg.C.triggerSequence.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&") + ")$";
@@ -80,6 +85,20 @@ export default class CodeParserController {
             return this.cfg.C.triggerSequence === cont;
         } else {
             return false;
+        }
+    }
+
+    private inComment(activeEditor: TextEditor, activeLine: number): boolean {
+        if (activeLine === 0) {
+            return false;
+        }
+
+        const txt: string = activeEditor.document.lineAt(activeLine - 1).text.trim();
+        if (!txt.startsWith("///") && !txt.startsWith("*") &&
+            !txt.startsWith("/**") && !txt.startsWith("/*!")) {
+            return false;
+        } else {
+            return true;
         }
     }
 
