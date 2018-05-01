@@ -307,6 +307,10 @@ export class CppDocGen implements IDocGen {
                     this.insertBrief(lines);
                     break;
                 }
+                case "author": {
+                    this.generateAuthorTag(lines);
+                    break;
+                }
                 case "empty": {
                     lines.push(this.cfg.C.commentPrefix);
                     break;
