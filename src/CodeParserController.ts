@@ -57,7 +57,8 @@ export default class CodeParserController {
      ***************************************************************************/
 
     private check(activeEditor: TextEditor, event: TextDocumentContentChangeEvent): boolean {
-        if (activeEditor == null || event.text == null) {
+        if (activeEditor === undefined || activeEditor == null ||
+            event === undefined || event.text == null) {
             return false;
         }
         const activeSelection: Position = activeEditor.selection.active;
