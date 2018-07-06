@@ -12,8 +12,8 @@ enum ConfigChangedNotificationOptions {
 }
 
 enum Version {
-    CURRENT = "0.3.2",
-    PREVIOUS = "0.3.1",
+    CURRENT = "0.3.3",
+    PREVIOUS = "0.3.2",
     KEY = "doxdocgen_version",
 }
 
