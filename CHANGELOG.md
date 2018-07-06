@@ -1,5 +1,11 @@
 # Change Log
 
+## [0.3.3]
+
+### Fix
+
+- Doesn't parse cpp member pointer names correctly (#78)
+
 ## [0.3.2]
 
 ### Fix
