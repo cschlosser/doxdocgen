@@ -12,8 +12,8 @@ enum ConfigChangedNotificationOptions {
 }
 
 enum Version {
-    CURRENT = "0.3.1",
-    PREVIOUS = "0.3.0",
+    CURRENT = "0.3.2",
+    PREVIOUS = "0.3.1",
     KEY = "doxdocgen_version",
 }
 
@@ -31,6 +31,7 @@ export function activate(context: vscode.ExtensionContext) {
         context.globalState.update(Version.KEY, Version.CURRENT);
     } else if (version !== Version.CURRENT) {
         change = true;
+        context.globalState.update(Version.KEY, Version.CURRENT);
     }
 
     let notificationHideThenable: Thenable<string>;

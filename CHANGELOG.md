@@ -1,5 +1,11 @@
 # Change Log
 
+## [0.3.2]
+
+### Fix
+
+- Cannot read property 'text' of undefined (#79)
+
 ## [0.3.1]
 
 ### Fix
