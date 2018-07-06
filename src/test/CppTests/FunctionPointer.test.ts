@@ -39,4 +39,9 @@ suite("C++ - Function pointer Tests", () => {
         assert.equal("/**\n * @brief \n * \n * @param puts \n * @param str "
             + "\n * @return const struct foo(*)(const char*) \n */", result);
     });
+
+    test("Memberpointer in function pointer", () => {
+        const result = testSetup.SetLine("void foo(void (SomeClass::* func)());").GetResult();
+        assert.equal("/**\n * @brief \n * \n * @param func \n */", result);
+    });
 });

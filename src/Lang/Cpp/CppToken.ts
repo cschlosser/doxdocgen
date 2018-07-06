@@ -13,6 +13,7 @@ export enum CppTokenType {
     CommentLine,
     Ellipsis,
     Attribute,
+    MemberPointer,
 }
 
 export class CppToken {

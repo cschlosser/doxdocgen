@@ -252,4 +252,9 @@ suite("C++ - Parameters Tests", () => {
         const result = testSetup.SetLine("void foo(double a1 = 0xa.bp10l_deg_test, int b);").GetResult();
         assert.equal("/**\n * @brief \n * \n * @param a1 \n * @param b \n */", result);
     });
+
+    test("Member pointer as parameter", () => {
+        const result = testSetup.SetLine("void test(int foo::* memberPointer);").GetResult();
+        assert.equal("/**\n * @brief \n * \n * @param memberPointer \n */", result);
+    });
 });

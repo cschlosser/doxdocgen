@@ -695,6 +695,17 @@ export default class CppParser implements ICodeParser {
             return this.GetArgumentFromFuncPtr(copy);
         }
 
+        // Handle member pointers
+        for (let token: number = 0; token < copy.nodes.length - 1; token++) {
+            const firstToken: CppToken = copy.nodes[token] as CppToken;
+            const secondToken: CppToken = copy.nodes[token + 1] as CppToken;
+
+            if (firstToken.type === CppTokenType.Symbol && secondToken.type === CppTokenType.Pointer &&
+                firstToken.value.endsWith("::")) {
+                    firstToken.type = CppTokenType.MemberPointer;
+            }
+        }
+
         return this.GetDefaultArgument(copy);
     }
 

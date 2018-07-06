@@ -4,3 +4,4 @@ node_modules
 *.vsix
 coverage/
 .DS_Store
+/npm-debug.log
