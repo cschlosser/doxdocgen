@@ -91,10 +91,25 @@
           "type": "string",
           "default": "@file {name}"
         },
+        "doxdocgen.file.copyrightTag": {
+          "description": "File copyright documentation tag.",
+          "type": ["array", "string"],
+          "default": ["@copyright Copyright (c) {year}"]
+        },
+        "doxdocgen.file.versionTag": {
+          "description": "Version number for the file.",
+          "type": "string",
+          "default": "@version 0.1"
+        },
+        "doxdocgen.file.customTag": {
+            "description": "Additional file documentation.",
+            "type": ["array", "string"],
+            "default": []
+        },
         "doxdocgen.file.fileOrder": {
           "description": "The order to use for the file comment. Values can be used multiple times. Valid values are shown in default setting.",
           "type": ["array", "string"],
-          "default": ["brief", "empty", "file", "author", "date"]
+          "default": ["file", "author", "brief", "version", "date", "empty", "copyright", "empty", "custom"]
         },
         "doxdocgen.generic.includeTypeAtReturn": {
           "description": "Whether include type information at return.",

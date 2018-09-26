@@ -32,6 +32,9 @@ class File {
     }
 
     public fileTemplate: string = "@file {name}";
+    public copyrightTag: string[] = ["@copyright Copyright (c) {year}"];
+    public versionTag: string = "@version 0.1";
+    public customTag: string[] = [];
     public fileOrder: string[] = ["brief", "empty", "file", "author", "date"];
 }
 
@@ -71,6 +74,9 @@ export class Config {
         values.Cpp.dtorText = Cpp.getConfiguration().get<string>("dtorText", values.Cpp.dtorText);
 
         values.File.fileTemplate = File.getConfiguration().get<string>("fileTemplate", values.File.fileTemplate);
+        values.File.versionTag = File.getConfiguration().get<string>("versionTag", values.File.versionTag);
+        values.File.copyrightTag = File.getConfiguration().get<string[]>("copyrightTag", values.File.copyrightTag);
+        values.File.customTag = File.getConfiguration().get<string[]>("customTag", values.File.customTag);
         values.File.fileOrder = File.getConfiguration().get<string[]>("fileOrder", values.File.fileOrder);
 
         values.Generic.includeTypeAtReturn = Generic.getConfiguration().get<boolean>("includeTypeAtReturn", values.Generic.includeTypeAtReturn);
@@ -93,6 +99,7 @@ export class Config {
     public readonly typeTemplateReplace: string = "{type}";
     public readonly nameTemplateReplace: string = "{name}";
     public readonly dateTemplateReplace: string = "{date}";
+    public readonly yearTemplateReplace: string = "{year}";
     public readonly textTemplateReplace: string = "{text}";
 
     public C: C;
