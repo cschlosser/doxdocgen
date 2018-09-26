@@ -228,6 +228,34 @@ export class CppDocGen implements IDocGen {
         }
     }
 
+    protected generateVersionTag(lines: string[]) {
+        if (this.cfg.File.versionTag.trim().length !== 0) {
+            lines.push(this.cfg.C.commentPrefix + this.cfg.File.versionTag);
+        }
+    }
+
+    protected generateCopyrightTag(lines: string[]) {
+        this.cfg.File.copyrightTag.forEach((element) => {
+            this.generateFromTemplate(
+                lines,
+                this.cfg.yearTemplateReplace,
+                element,
+                [moment().format("YYYY")],
+            );
+        });
+    }
+
+    protected generateCustomTag(lines: string[]) {
+        this.cfg.File.customTag.forEach((element) => {
+            this.generateFromTemplate(
+                lines,
+                this.cfg.dateTemplateReplace,
+                element,
+                [moment().format(this.cfg.Generic.dateFormat)],
+            );
+        });
+    }
+
     protected generateDateFromTemplate(lines: string[]) {
         if (this.cfg.Generic.dateTemplate.trim().length !== 0 &&
             this.cfg.Generic.dateFormat.trim().length !== 0) {
@@ -277,12 +305,24 @@ export class CppDocGen implements IDocGen {
                     this.generateFilenameFromTemplate(lines);
                     break;
                 }
+                case "version": {
+                    this.generateVersionTag(lines);
+                    break;
+                }
                 case "author": {
                     this.generateAuthorTag(lines);
                     break;
                 }
                 case "date": {
                     this.generateDateFromTemplate(lines);
+                    break;
+                }
+                case "copyright": {
+                    this.generateCopyrightTag(lines);
+                    break;
+                }
+                case "custom": {
+                    this.generateCustomTag(lines);
                     break;
                 }
                 default: {
