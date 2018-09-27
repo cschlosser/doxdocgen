@@ -141,10 +141,20 @@
           "type": "number",
           "default": 20
         },
+        "doxdocgen.generic.authorName": {
+          "description": "Set the name of the author.  Replaces {author}.",
+          "type": "string",
+          "default": "your name"
+        },
+        "doxdocgen.generic.authorEmail": {
+          "description": "Set the e-mail address of the author.  Replaces {email}.",
+          "type": "string",
+          "default": "you@domain.com"
+        },
         "doxdocgen.generic.authorTag": {
           "description": "Set the style of the author tag and your name.",
           "type": "string",
-          "default": "@author your name"
+          "default": "@author {author} ({email})"
         },
         "doxdocgen.generic.dateTemplate": {
           "description": "The template for the date parameter in Doxygen.",

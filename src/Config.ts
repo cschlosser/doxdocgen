@@ -49,7 +49,9 @@ class Generic {
     public paramTemplate: string = "@param {param} ";
     public returnTemplate: string = "@return {type} ";
     public linesToGet: number = 20;
-    public authorTag: string = "@author your name";
+    public authorName: string = "your name";
+    public authorEmail: string = "you@domain.com";
+    public authorTag: string = "@author {author} ({email})";
     public dateTemplate: string = "@date {date}";
     public dateFormat: string = "YYYY-MM-DD";
     public generateSmartText: boolean = true;
@@ -86,6 +88,8 @@ export class Config {
         values.Generic.returnTemplate = Generic.getConfiguration().get<string>("returnTemplate", values.Generic.returnTemplate);
         values.Generic.linesToGet = Generic.getConfiguration().get<number>("linesToGet", values.Generic.linesToGet);
         values.Generic.authorTag = Generic.getConfiguration().get<string>("authorTag", values.Generic.authorTag);
+        values.Generic.authorName = Generic.getConfiguration().get<string>("authorName", values.Generic.authorName);
+        values.Generic.authorEmail = Generic.getConfiguration().get<string>("authorEmail", values.Generic.authorEmail);
         values.Generic.dateTemplate = Generic.getConfiguration().get<string>("dateTemplate", values.Generic.dateTemplate);
         values.Generic.dateFormat = Generic.getConfiguration().get<string>("dateFormat", values.Generic.dateFormat);
         values.Generic.generateSmartText = Generic.getConfiguration().get<boolean>("generateSmartText", values.Generic.generateSmartText);
@@ -98,6 +102,8 @@ export class Config {
     public readonly paramTemplateReplace: string = "{param}";
     public readonly typeTemplateReplace: string = "{type}";
     public readonly nameTemplateReplace: string = "{name}";
+    public readonly authorTemplateReplace: string = "{author}";
+    public readonly emailTemplateReplace: string = "{email}";
     public readonly dateTemplateReplace: string = "{date}";
     public readonly yearTemplateReplace: string = "{year}";
     public readonly textTemplateReplace: string = "{text}";
