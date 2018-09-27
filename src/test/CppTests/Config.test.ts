@@ -113,7 +113,7 @@ suite("C++ - Configuration Tests", () => {
         testSetup.firstLine = 0;
         testSetup.cfg.File.fileOrder = ["brief", "author", "date", "file"];
         const result = testSetup.SetLine("").GetResult();
-        assert.equal("/**\n * @brief \n * @author your name\n" +
+        assert.equal("/**\n * @brief \n * @author your name (you@domain.com)\n" +
             " * @date " + moment().format("YYYY-MM-DD") + "\n * @file MockDocument.h\n */", result);
     });
 

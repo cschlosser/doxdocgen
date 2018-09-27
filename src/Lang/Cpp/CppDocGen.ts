@@ -105,6 +105,18 @@ export class CppDocGen implements IDocGen {
         return template.replace(replace, param);
     }
 
+    protected getMultiTemplatedString(replace: string[], template: string, param: string[]): string {
+        // FIXME I find this argument order a bit strange.  I would probably have template first
+        // For each replace entry, attempt to replace it with the corresponding param in the template
+        for(var i=0;i<replace.length;i++) {
+            if (i<param.length) {
+              template = template.replace(replace[i],param[i]);
+            }
+            // TODO: warn if mismatch string lengths?  Probably should use tuple of tuples
+        }
+        return template;
+    }
+
     protected getSmartText(): string {
         if (!this.cfg.Generic.generateSmartText) {
             return "";
@@ -211,9 +223,17 @@ export class CppDocGen implements IDocGen {
         return params;
     }
 
+    
     protected generateAuthorTag(lines: string[]) {
         if (this.cfg.Generic.authorTag.trim().length !== 0) {
-            lines.push(this.cfg.C.commentPrefix + this.cfg.Generic.authorTag);
+            // Allow substitution of {author} and {email} only
+            lines.push(this.cfg.C.commentPrefix + 
+                this.getMultiTemplatedString(
+                    [this.cfg.authorTemplateReplace, this.cfg.emailTemplateReplace],
+                    this.cfg.Generic.authorTag,
+                    [this.cfg.Generic.authorName,this.cfg.Generic.authorEmail]
+                )
+            );
         }
     }
 
@@ -235,6 +255,7 @@ export class CppDocGen implements IDocGen {
     }
 
     protected generateCopyrightTag(lines: string[]) {
+        // This currently only supports year substitution
         this.cfg.File.copyrightTag.forEach((element) => {
             this.generateFromTemplate(
                 lines,
@@ -246,12 +267,21 @@ export class CppDocGen implements IDocGen {
     }
 
     protected generateCustomTag(lines: string[]) {
+        let dateFormat: string = "YYYY-MM-DD"; // Default to ISO standard if not defined
+        if ( this.cfg.Generic.dateFormat.trim().length != 0) {
+            dateFormat = this.cfg.Generic.dateFormat; // Overwrite with user format
+        }
+        // For each line of the customTag
         this.cfg.File.customTag.forEach((element) => {
-            this.generateFromTemplate(
-                lines,
-                this.cfg.dateTemplateReplace,
-                element,
-                [moment().format(this.cfg.Generic.dateFormat)],
+            // Allow any of date, year, author, email to be replaced
+            lines.push(this.cfg.C.commentPrefix +
+                this.getMultiTemplatedString(
+                    [this.cfg.authorTemplateReplace, this.cfg.emailTemplateReplace,
+                        this.cfg.dateTemplateReplace, this.cfg.yearTemplateReplace],
+                    element,
+                    [this.cfg.Generic.authorName, this.cfg.Generic.authorEmail,
+                        moment().format(dateFormat), moment().format("YYYY")]
+                )
             );
         });
     }
