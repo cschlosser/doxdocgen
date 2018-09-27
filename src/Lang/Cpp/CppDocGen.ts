@@ -108,9 +108,9 @@ export class CppDocGen implements IDocGen {
     protected getMultiTemplatedString(replace: string[], template: string, param: string[]): string {
         // FIXME I find this argument order a bit strange.  I would probably have template first
         // For each replace entry, attempt to replace it with the corresponding param in the template
-        for(var i=0;i<replace.length;i++) {
-            if (i<param.length) {
-              template = template.replace(replace[i],param[i]);
+        for (let i = 0; i < replace.length; i++) {
+            if (i < param.length) {
+              template = template.replace(replace[i], param[i]);
             }
             // TODO: warn if mismatch string lengths?  Probably should use tuple of tuples
         }
@@ -223,16 +223,15 @@ export class CppDocGen implements IDocGen {
         return params;
     }
 
-    
     protected generateAuthorTag(lines: string[]) {
         if (this.cfg.Generic.authorTag.trim().length !== 0) {
             // Allow substitution of {author} and {email} only
-            lines.push(this.cfg.C.commentPrefix + 
+            lines.push(this.cfg.C.commentPrefix +
                 this.getMultiTemplatedString(
                     [this.cfg.authorTemplateReplace, this.cfg.emailTemplateReplace],
                     this.cfg.Generic.authorTag,
-                    [this.cfg.Generic.authorName,this.cfg.Generic.authorEmail]
-                )
+                    [this.cfg.Generic.authorName, this.cfg.Generic.authorEmail],
+                ),
             );
         }
     }
@@ -268,7 +267,7 @@ export class CppDocGen implements IDocGen {
 
     protected generateCustomTag(lines: string[]) {
         let dateFormat: string = "YYYY-MM-DD"; // Default to ISO standard if not defined
-        if ( this.cfg.Generic.dateFormat.trim().length != 0) {
+        if ( this.cfg.Generic.dateFormat.trim().length !== 0) {
             dateFormat = this.cfg.Generic.dateFormat; // Overwrite with user format
         }
         // For each line of the customTag
@@ -280,8 +279,8 @@ export class CppDocGen implements IDocGen {
                         this.cfg.dateTemplateReplace, this.cfg.yearTemplateReplace],
                     element,
                     [this.cfg.Generic.authorName, this.cfg.Generic.authorEmail,
-                        moment().format(dateFormat), moment().format("YYYY")]
-                )
+                        moment().format(dateFormat), moment().format("YYYY")],
+                ),
             );
         });
     }

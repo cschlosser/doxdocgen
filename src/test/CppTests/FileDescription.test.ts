@@ -58,7 +58,7 @@ suite("File Description Tests", () => {
 
     test("custom block", () => {
         testSetup.cfg.File.fileOrder = ["custom"];
-        testSetup.cfg.File.customTag = ["First Line", "{year} Year Line", "{date} Date Line", 
+        testSetup.cfg.File.customTag = ["First Line", "{year} Year Line", "{date} Date Line",
                                         "{author} Author Line", "{email} Email Line"];
         const result = testSetup.SetLine("").GetResult();
         assert.equal("/**\n * First Line\n * " + year + " Year Line\n * " + date + " Date Line\n" +
