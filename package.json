@@ -92,7 +92,7 @@
           "default": "@file {name}"
         },
         "doxdocgen.file.copyrightTag": {
-          "description": "File copyright documentation tag.",
+          "description": "File copyright documentation tag.  Array of strings will be converted to one line per element.  Can template {year}.",
           "type": ["array", "string"],
           "default": ["@copyright Copyright (c) {year}"]
         },
@@ -102,7 +102,7 @@
           "default": "@version 0.1"
         },
         "doxdocgen.file.customTag": {
-            "description": "Additional file documentation.",
+            "description": "Additional file documentation.  Array of strings will be converted to one line per element.  Can template {year}, {date}, {author}, and {email}.",
             "type": ["array", "string"],
             "default": []
         },
@@ -152,7 +152,7 @@
           "default": "you@domain.com"
         },
         "doxdocgen.generic.authorTag": {
-          "description": "Set the style of the author tag and your name.",
+          "description": "Set the style of the author tag and your name.  Can template {author} and {email}.",
           "type": "string",
           "default": "@author {author} ({email})"
         },
