@@ -106,13 +106,11 @@ export class CppDocGen implements IDocGen {
     }
 
     protected getMultiTemplatedString(replace: string[], template: string, param: string[]): string {
-        // FIXME I find this argument order a bit strange.  I would probably have template first
         // For each replace entry, attempt to replace it with the corresponding param in the template
         for (let i = 0; i < replace.length; i++) {
             if (i < param.length) {
               template = template.replace(replace[i], param[i]);
             }
-            // TODO: warn if mismatch string lengths?  Probably should use tuple of tuples
         }
         return template;
     }
