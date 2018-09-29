@@ -1,5 +1,11 @@
 # Change Log
 
+## [0.4.0]
+
+### Feature
+
+- Additional file header fields for version, copyright, and custom text (#89)
+
 ## [0.3.3]
 
 ### Fix
