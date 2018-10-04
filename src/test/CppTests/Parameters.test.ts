@@ -257,4 +257,12 @@ suite("C++ - Parameters Tests", () => {
         const result = testSetup.SetLine("void test(int foo::* memberPointer);").GetResult();
         assert.equal("/**\n * @brief \n * \n * @param memberPointer \n */", result);
     });
+
+    test("Type as variable name", () => {
+        let result = testSetup.SetLine("void MapPoint(double latitude, double longtitude) const;").GetResult();
+        assert.equal("/**\n * @brief \n * \n * @param latitude \n * @param longtitude \n */", result);
+
+        result = testSetup.SetLine("void MapPoint(double latitude, double long int floattitude) const;").GetResult();
+        assert.equal("/**\n * @brief \n * \n * @param latitude \n * @param floattitude \n */", result);
+    });
 });

@@ -260,7 +260,7 @@ export default class CppParser implements ICodeParser {
 
                 // Special case group up the fundamental types with the modifiers.
                 // tslint:disable-next-line:max-line-length
-                let reMatch: string = (x.match("^(unsigned|signed|short|long|int|char|double)(\\s+(unsigned|signed|short|long|int|char|double))+(?!a-z|A-Z|:|_|\\d)") || [])[0];
+                let reMatch: string = (x.match("^(unsigned|signed|short|long|int|char|double|float)(\\s*(unsigned|signed|short|long|int|char|double|float)\\s)+(?!a-z|A-Z|:|_|\\d)") || [])[0];
                 if (reMatch !== undefined) {
                     return reMatch.trim();
                 }
