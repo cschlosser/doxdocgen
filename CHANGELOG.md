@@ -1,5 +1,11 @@
 # Change Log
 
+## [0.4.1]
+
+### Fix
+
+- Wrong \param value generation. (#91)
+
 ## [0.4.0]
 
 ### Feature
