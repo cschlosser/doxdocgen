@@ -31,7 +31,7 @@ class Python {
         return workspace.getConfiguration("doxdocgen.python");
     }
 
-    public triggerSequence: string = '"""';
+    public triggerSequence: string = "##";
 }
 
 class File {

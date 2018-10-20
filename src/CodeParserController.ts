@@ -80,12 +80,15 @@ export default class CodeParserController {
 
         // Do not trigger when there's whitespace after the trigger sequence
         // tslint:disable-next-line:max-line-length
-        const seq = "[\\s]*(" + this.cfg.C.triggerSequence.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&") + ")$";
+        const seq = "[\\s]*([" + this.cfg.C.triggerSequence.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&") + "]|[" + this.cfg.Python.triggerSequence.replace(/\#/g, "\\$&") + "])$";
         const match: RegExpMatchArray = activeLine.text.match(seq);
 
         if (match !== null) {
             const cont: string = match[1];
-            return this.cfg.C.triggerSequence === cont;
+            return (
+                this.cfg.C.triggerSequence === cont ||
+                cont === "#" // probably python
+            );
         } else {
             return false;
         }
