@@ -114,15 +114,19 @@ export default class CodeParserController {
         }
 
         const lang: string = activeEditor.document.languageId;
+        const currentPos: Position = window.activeTextEditor.selection.active;
         let parser: CodeParser;
+        let endPos: number;
 
         switch (lang) {
             case "c":
             case "cpp":
                 parser = new CppParser(this.cfg);
+                endPos = currentPos.character - this.cfg.C.triggerSequence.length;
                 break;
             case "python":
                 parser = new PythonParser(this.cfg);
+                endPos = currentPos.character - this.cfg.Python.triggerSequence.length;
                 break;
             default:
                 // tslint:disable-next-line:no-console
@@ -130,10 +134,9 @@ export default class CodeParserController {
                 return null;
         }
 
-        const currentPos: Position = window.activeTextEditor.selection.active;
         const startReplace: Position = new Position(
             currentPos.line,
-            currentPos.character - this.cfg.C.triggerSequence.length,
+            endPos,
         );
 
         const nextLineText: string = window.activeTextEditor.document.lineAt(startReplace.line + 1).text;
