@@ -18,7 +18,7 @@ export default class CppParser implements ICodeParser {
         this.activeEditor = activeEditor;
         this.activeSelection = activeEditor.selection.active;
         const params = this.getParams(this.getLogicalLine());
-        return new PythonDocGen();
+        return new PythonDocGen(params);
     }
 
     private getLogicalLine(): string {
