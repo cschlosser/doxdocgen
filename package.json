@@ -86,6 +86,11 @@
           "type": "string",
           "default": "Destroy the {name} object"
         },
+        "doxdocgen.python.triggerSequence": {
+          "description": "Doxygen comment trigger. This character sequence triggers generation of Doxygen comments.",
+          "type": "string",
+          "default": "\"\"\""
+        },
         "doxdocgen.file.fileTemplate": {
           "description": "The template for the file parameter in Doxygen.",
           "type": "string",

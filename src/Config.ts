@@ -26,6 +26,14 @@ class Cpp {
     public dtorText: string = "Destroy the {name} object";
 }
 
+class Python {
+    public static getConfiguration() {
+        return workspace.getConfiguration("doxdocgen.python");
+    }
+
+    public triggerSequence: string = '"""';
+}
+
 class File {
     public static getConfiguration() {
         return workspace.getConfiguration("doxdocgen.file");
@@ -75,6 +83,8 @@ export class Config {
         values.Cpp.ctorText = Cpp.getConfiguration().get<string>("ctorText", values.Cpp.ctorText);
         values.Cpp.dtorText = Cpp.getConfiguration().get<string>("dtorText", values.Cpp.dtorText);
 
+        values.Python.triggerSequence = Python.getConfiguration().get<string>("triggerSequence", values.Python.triggerSequence);
+
         values.File.fileTemplate = File.getConfiguration().get<string>("fileTemplate", values.File.fileTemplate);
         values.File.versionTag = File.getConfiguration().get<string>("versionTag", values.File.versionTag);
         values.File.copyrightTag = File.getConfiguration().get<string[]>("copyrightTag", values.File.copyrightTag);
@@ -110,12 +120,14 @@ export class Config {
 
     public C: C;
     public Cpp: Cpp;
+    public Python: Python;
     public File: File;
     public Generic: Generic;
 
     constructor() {
         this.C = new C();
         this.Cpp = new Cpp();
+        this.Python = new Python();
         this.File = new File();
         this.Generic = new Generic();
     }

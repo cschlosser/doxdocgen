@@ -11,6 +11,8 @@ import {
 import CodeParser from "./Common/ICodeParser";
 import { Config } from "./Config";
 import CppParser from "./Lang/Cpp/CppParser";
+import PythonParser from "./Lang/Python/PythonParser";
+
 /**
  *
  * Checks if the event matches the specified guidelines and if a parser exists for this language
@@ -115,6 +117,9 @@ export default class CodeParserController {
             case "c":
             case "cpp":
                 parser = new CppParser(this.cfg);
+                break;
+            case "python":
+                parser = new PythonParser(this.cfg);
                 break;
             default:
                 // tslint:disable-next-line:no-console
