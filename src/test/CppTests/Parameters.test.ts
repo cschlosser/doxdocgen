@@ -65,6 +65,11 @@ suite("C++ - Parameters Tests", () => {
         assert.equal("/**\n * @brief \n * \n * @param mat \n */", result);
     });
 
+    test("Enum parameter", () => {
+        const result = testSetup.SetLine("void foo(enum foo bar);").GetResult();
+        assert.equal("/**\n * @brief \n * \n * @param bar \n */", result);
+    });
+
     test("Const parameter with const pointer to const pointer", () => {
         let result = testSetup.SetLine("void foo(const int * const * const a1);").GetResult();
         assert.equal("/**\n * @brief \n * \n * @param a1 \n */", result);
