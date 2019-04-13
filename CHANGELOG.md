@@ -1,5 +1,11 @@
 # Change Log
 
+## [0.4.2]
+
+### Fix
+
+- Invalid argument name for C enum types (#102)
+
 ## [0.4.1]
 
 ### Fix
