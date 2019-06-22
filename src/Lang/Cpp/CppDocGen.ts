@@ -101,8 +101,14 @@ export class CppDocGen implements IDocGen {
         return this.activeEditor.document.lineAt(this.activeEditor.selection.start.line).text.match("^\\s*")[0];
     }
 
-    protected getTemplatedString(replace: string, template: string, param: string): string {
-        return template.replace(replace, param);
+    protected getTemplatedString(replace: string, template: string, param: string, indent: boolean = false): string {
+        let indentWidth: string = "";
+        if (indent === true) {
+            const numSpaces = Math.max(this.cfg.Generic.indentWidth - param.length, 0);
+            indentWidth = " ".repeat(numSpaces);
+        }
+        const indentedTemplate = template.replace(replace, replace + indentWidth);
+        return indentedTemplate.replace(replace, param);
     }
 
     protected getMultiTemplatedString(replace: string[], template: string, param: string[]): string {
@@ -177,14 +183,18 @@ export class CppDocGen implements IDocGen {
                                            this.getSmartText()));
     }
 
-    protected generateFromTemplate(lines: string[], replace: string, template: string, templateWith: string[]) {
+    protected generateFromTemplate(lines: string[],
+                                   replace: string,
+                                   template: string,
+                                   templateWith: string[],
+                                   indent: boolean = false) {
         let line: string = "";
 
         templateWith.forEach((element: string) => {
             // Ignore null values
             if (element !== null) {
                 line = this.cfg.C.commentPrefix;
-                line += this.getTemplatedString(replace, template, element);
+                line += this.getTemplatedString(replace, template, element, indent);
                 lines.push(line);
             }
         });
@@ -385,6 +395,7 @@ export class CppDocGen implements IDocGen {
                             this.cfg.paramTemplateReplace,
                             this.cfg.Cpp.tparamTemplate,
                             this.templateParams,
+                            true,
                         );
                     }
                     break;
@@ -392,8 +403,13 @@ export class CppDocGen implements IDocGen {
                 case "param": {
                     if (this.cfg.Generic.paramTemplate.trim().length !== 0 && this.params.length > 0) {
                         const paramNames: string[] = this.params.map((p) => p.name);
-                        // tslint:disable-next-line:max-line-length
-                        this.generateFromTemplate(lines, this.cfg.paramTemplateReplace, this.cfg.Generic.paramTemplate, paramNames);
+                        this.generateFromTemplate(
+                            lines,
+                            this.cfg.paramTemplateReplace,
+                            this.cfg.Generic.paramTemplate,
+                            paramNames,
+                            true,
+                        );
                     }
                     break;
                 }
