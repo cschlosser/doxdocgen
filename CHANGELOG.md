@@ -4,6 +4,12 @@
 
 ### Fix
 
+- Trigger Sequence /** causes extra */ to be generated and the comment block isn't fully generated. (#111)
+
+## [0.4.2]
+
+### Fix
+
 - Invalid argument name for C enum types (#102)
 
 ## [0.4.1]
