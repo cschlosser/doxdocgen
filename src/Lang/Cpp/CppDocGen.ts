@@ -122,7 +122,8 @@ export class CppDocGen implements IDocGen {
     protected getTemplatedString(replace: string, template: string, param: string, indent: boolean = false): string {
         let indentWidth: string = "";
         if (indent === true) {
-            const numSpaces = Math.max(this.cfg.Generic.indentWidth - param.length, 0);
+            const replacedTemplate = template.replace(replace, param);
+            const numSpaces = Math.max(this.cfg.Generic.indentWidth - replacedTemplate.length, 0);
             indentWidth = " ".repeat(numSpaces);
         }
         const indentedTemplate = template.replace(replace, replace + indentWidth);
@@ -435,7 +436,8 @@ export class CppDocGen implements IDocGen {
                     if (this.cfg.Generic.returnTemplate.trim().length !== 0 && this.func.type !== null) {
                         const returnParams = this.generateReturnParams();
                         // tslint:disable-next-line:max-line-length
-                        this.generateFromTemplate(lines, this.cfg.typeTemplateReplace, this.cfg.Generic.returnTemplate, returnParams);
+                        this.generateFromTemplate(lines, this.cfg.typeTemplateReplace, this.cfg.Generic.returnTemplate, returnParams,
+                            true);
                     }
                     break;
                 }
