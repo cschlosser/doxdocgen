@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { TextEditor, Range } from "vscode";
+import { Range, TextEditor } from "vscode";
 import MockDocument from "./MockDocument";
 import MockSelection from "./MockSelection";
 import MockTextEditorEdit from "./MockTextEditorEdit";
