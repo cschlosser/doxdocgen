@@ -153,4 +153,9 @@ suite("C++ - Configuration Tests", () => {
         const result = testSetup.SetLine("int createFooObject();").GetResult();
         assert.equal("/**\n * @brief Test FooObject\n * \n * @return int \n */", result);
     });
+
+    test("Remove inserted '*/' from line", () => {
+        const result = testSetup.SetLines(["*/", "int foo();"]).GetResult();
+        assert.equal("/**\n * @brief \n * \n * @return int \n */", result);
+    });
 });

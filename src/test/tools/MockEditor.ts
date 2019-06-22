@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { TextEditor } from "vscode";
+import { Range, TextEditor } from "vscode";
 import MockDocument from "./MockDocument";
 import MockSelection from "./MockSelection";
 import MockTextEditorEdit from "./MockTextEditorEdit";
@@ -11,6 +11,7 @@ export default class MockEditor implements TextEditor {
     public options: vscode.TextEditorOptions;
     public viewColumn?: vscode.ViewColumn;
     public editBuilder: MockTextEditorEdit;
+    public readonly visibleRanges: Range[];
     public constructor(s: MockSelection, d: MockDocument) {
         this.selection = s;
         this.document = d;

@@ -1,5 +1,11 @@
 # Change Log
 
+## [0.4.3]
+
+### Fix
+
+- Trigger Sequence /** causes extra */ to be generated and the comment block isn't fully generated. (#111)
+
 ## [0.4.2]
 
 ### Fix
