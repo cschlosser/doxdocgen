@@ -181,11 +181,6 @@
           "type": "boolean",
           "default": true
         },
-        "doxdocgen.generic.indentWidth": {
-          "description": "At how many spaces the documentation should be inserted. Only Valid for param and tparam.",
-          "type": "number",
-          "default": 0
-        },
         "doxdocgen.generic.order": {
           "description": "The order to use for the comment generation. Values can be used multiple times. Valid values are shown in default setting.",
           "type": ["array", "string"],
