@@ -181,4 +181,12 @@ suite("C++ - Configuration Tests", () => {
         assert.equal("/**\n * @brief                        Short desc\n * \n * @tparam   T                   I'm a template\n * @param    bar                 Parameters everywhere\n * @param    foobar              Parameters everywhere\n * @return   int                 Returns stuff\n */", result);
     });
 
+    test("Negative alignment tests", () => {
+        testSetup.cfg.Generic.returnTemplate = "";
+
+        const result = testSetup.SetLines(["template<typename T>", "int foo(std::string bar, T foobar);"]).GetResult();
+        // tslint:disable-next-line:max-line-length
+        assert.equal("/**\n * @brief                        Short desc\n * \n * @tparam   T                   I'm a template\n * @param    bar                 Parameters everywhere\n * @param    foobar              Parameters everywhere\n */", result);
+    });
+
 });
