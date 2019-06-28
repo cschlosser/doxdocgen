@@ -158,4 +158,27 @@ suite("C++ - Configuration Tests", () => {
         const result = testSetup.SetLines(["*/", "int foo();"]).GetResult();
         assert.equal("/**\n * @brief \n * \n * @return int \n */", result);
     });
+
+    test("Single alignment", () => {
+        testSetup.cfg.Generic.paramTemplate = "@param{indent:10}{param}";
+        testSetup.cfg.Cpp.tparamTemplate = "@tparam{indent:10}{param}";
+        testSetup.cfg.Generic.returnTemplate = "@return{indent:10}{type}";
+        testSetup.cfg.Generic.briefTemplate = "@brief{indent:10}Brief";
+
+        const result = testSetup.SetLines(["template<typename T>", "int foo(std::string bar, T foobar);"]).GetResult();
+        // tslint:disable-next-line:max-line-length
+        assert.equal("/**\n * @brief    Brief\n * \n * @tparam   T\n * @param    bar\n * @param    foobar\n * @return   int\n */", result);
+    });
+
+    test("Multi alignment", () => {
+        testSetup.cfg.Generic.paramTemplate = "@param{indent:10}{param}{indent:30}Parameters everywhere";
+        testSetup.cfg.Cpp.tparamTemplate = "@tparam{indent:10}{param}{indent:30}I'm a template";
+        testSetup.cfg.Generic.returnTemplate = "@return{indent:10}{type}{indent:30}Returns stuff";
+        testSetup.cfg.Generic.briefTemplate = "@brief{indent:30}Short desc";
+
+        const result = testSetup.SetLines(["template<typename T>", "int foo(std::string bar, T foobar);"]).GetResult();
+        // tslint:disable-next-line:max-line-length
+        assert.equal("/**\n * @brief                        Short desc\n * \n * @tparam   T                   I'm a template\n * @param    bar                 Parameters everywhere\n * @param    foobar              Parameters everywhere\n * @return   int                 Returns stuff\n */", result);
+    });
+
 });

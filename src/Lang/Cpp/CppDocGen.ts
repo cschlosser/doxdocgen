@@ -216,8 +216,8 @@ export class CppDocGen implements IDocGen {
     }
 
     protected generateBrief(lines: string[]) {
-        lines.push(this.getTemplatedString(this.cfg.textTemplateReplace,
-                                           this.cfg.C.commentPrefix + this.cfg.Generic.briefTemplate,
+        lines.push(this.cfg.C.commentPrefix + this.getTemplatedString(this.cfg.textTemplateReplace,
+                                           this.cfg.Generic.briefTemplate,
                                            this.getSmartText()));
     }
 
