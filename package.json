@@ -25,6 +25,11 @@
         "url": "https://codecov.io/gh/christophschlosser/doxdocgen/branch/master/graph/badge.svg",
         "href": "https://codecov.io/gh/christophschlosser/doxdocgen",
         "description": "Code coverage"
+    },
+    {
+      "url": "https://isitmaintained.com/badge/resolution/christophschlosser/doxdocgen.svg",
+      "href": "https://isitmaintained.com/project/christophschlosser/doxdocgen",
+      "description": "Response time for issues"
     }
 ],
   "activationEvents": [

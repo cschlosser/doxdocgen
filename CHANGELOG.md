@@ -1,5 +1,46 @@
 # Change Log
 
+## [0.5.0]
+
+### Feature
+
+- Feature suggest: Indent option (#107)
+
+#### Alignment
+
+This version introduces the possibility to align text elements in config strings at a specified width.
+
+Example:
+
+```json
+"doxdocgen.generic.paramTemplate": "@param{indent:10}{param}{indent:30}My Param doc"
+```
+
+will turn into
+
+```cpp
+/**
+ * @param    foo                 My Param doc
+ * @param    barIsAlsoAnOption   My Param doc
+ */
+void bar(int foo, int barIsAlsoAnOption);
+```
+
+You can use the `{indent:<number>}` in any templated config option available. Numbers have to be bigger than 0 to have any effect.
+
+Alignment will be done from the start of the config string, like this:
+
+```json
+"doxdocgen.generic.paramTemplate": "@param {param}{indent:14}test"
+```
+
+```cpp
+/**
+ * @param        test
+ */ 
+   |<---------->| // 14
+```
+
 ## [0.4.3]
 
 ### Fix

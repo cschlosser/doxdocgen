@@ -119,8 +119,34 @@ export class CppDocGen implements IDocGen {
         return this.activeEditor.document.lineAt(this.activeEditor.selection.start.line).text.match("^\\s*")[0];
     }
 
+    protected getIndentedTemplate(replace: string): string {
+        if (replace === undefined || replace === null || replace === "") {
+            return "";
+        }
+        const snippets = replace.split(/({indent:\d+})/);
+
+        let indentedString: string = "";
+        let indentWidth: number = 0;
+
+        // tslint:disable-next-line:prefer-for-of
+        snippets.forEach((element) => {
+            if (element.match(/{indent:\d+}/)) {
+                const indents = parseInt(element.match(/{indent:(\d+)}/)[1], 10);
+                indentWidth = indents;
+                const numSpaces = Math.max(indentWidth - indentedString.length, 0);
+                indentedString += " ".repeat(numSpaces);
+            } else {
+                // just some text
+                indentedString += element;
+            }
+        });
+
+        return indentedString;
+    }
+
     protected getTemplatedString(replace: string, template: string, param: string): string {
-        return template.replace(replace, param);
+        const replacedTemplate = template.replace(replace, param);
+        return this.getIndentedTemplate(replacedTemplate);
     }
 
     protected getMultiTemplatedString(replace: string[], template: string, param: string[]): string {
@@ -190,12 +216,15 @@ export class CppDocGen implements IDocGen {
     }
 
     protected generateBrief(lines: string[]) {
-        lines.push(this.getTemplatedString(this.cfg.textTemplateReplace,
-                                           this.cfg.C.commentPrefix + this.cfg.Generic.briefTemplate,
+        lines.push(this.cfg.C.commentPrefix + this.getTemplatedString(this.cfg.textTemplateReplace,
+                                           this.cfg.Generic.briefTemplate,
                                            this.getSmartText()));
     }
 
-    protected generateFromTemplate(lines: string[], replace: string, template: string, templateWith: string[]) {
+    protected generateFromTemplate(lines: string[],
+                                   replace: string,
+                                   template: string,
+                                   templateWith: string[]) {
         let line: string = "";
 
         templateWith.forEach((element: string) => {
@@ -410,8 +439,12 @@ export class CppDocGen implements IDocGen {
                 case "param": {
                     if (this.cfg.Generic.paramTemplate.trim().length !== 0 && this.params.length > 0) {
                         const paramNames: string[] = this.params.map((p) => p.name);
-                        // tslint:disable-next-line:max-line-length
-                        this.generateFromTemplate(lines, this.cfg.paramTemplateReplace, this.cfg.Generic.paramTemplate, paramNames);
+                        this.generateFromTemplate(
+                            lines,
+                            this.cfg.paramTemplateReplace,
+                            this.cfg.Generic.paramTemplate,
+                            paramNames,
+                        );
                     }
                     break;
                 }
