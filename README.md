@@ -11,6 +11,7 @@ This VS Code Extensions provides Doxygen Documentation generation on the fly by 
 ## Table of Contents
 
 * [Features](#features)
+  * [Alignment](#alignment)
   * [Attributes](#attributes)
   * [Con- and Destructors](#con--and-destructors)
   * [Extensive customization](#extensive-customization)
