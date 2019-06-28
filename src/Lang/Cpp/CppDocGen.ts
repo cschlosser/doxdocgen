@@ -119,15 +119,34 @@ export class CppDocGen implements IDocGen {
         return this.activeEditor.document.lineAt(this.activeEditor.selection.start.line).text.match("^\\s*")[0];
     }
 
-    protected getTemplatedString(replace: string, template: string, param: string, indent: boolean = false): string {
-        let indentWidth: string = "";
-        if (indent === true) {
-            const replacedTemplate = template.replace(replace, param);
-            const numSpaces = Math.max(this.cfg.Generic.indentWidth - replacedTemplate.length, 0);
-            indentWidth = " ".repeat(numSpaces);
+    protected getIndentedTemplate(replace: string): string {
+        if (replace === undefined || replace === null || replace === "") {
+            return "";
         }
-        const indentedTemplate = template.replace(replace, replace + indentWidth);
-        return indentedTemplate.replace(replace, param);
+        const snippets = replace.split(/({indent:\d+})/);
+
+        let indentedString: string = "";
+        let indentWidth: number = 0;
+
+        // tslint:disable-next-line:prefer-for-of
+        snippets.forEach((element) => {
+            if (element.match(/{indent:\d+}/)) {
+                const indents = parseInt(element.match(/{indent:(\d+)}/)[1], 10);
+                indentWidth = indents;
+                const numSpaces = Math.max(indentWidth - indentedString.length, 0);
+                indentedString += " ".repeat(numSpaces);
+            } else {
+                // just some text
+                indentedString += element;
+            }
+        });
+
+        return indentedString;
+    }
+
+    protected getTemplatedString(replace: string, template: string, param: string): string {
+        const replacedTemplate = template.replace(replace, param);
+        return this.getIndentedTemplate(replacedTemplate);
     }
 
     protected getMultiTemplatedString(replace: string[], template: string, param: string[]): string {
@@ -205,15 +224,14 @@ export class CppDocGen implements IDocGen {
     protected generateFromTemplate(lines: string[],
                                    replace: string,
                                    template: string,
-                                   templateWith: string[],
-                                   indent: boolean = false) {
+                                   templateWith: string[]) {
         let line: string = "";
 
         templateWith.forEach((element: string) => {
             // Ignore null values
             if (element !== null) {
                 line = this.cfg.C.commentPrefix;
-                line += this.getTemplatedString(replace, template, element, indent);
+                line += this.getTemplatedString(replace, template, element);
                 lines.push(line);
             }
         });
@@ -414,7 +432,6 @@ export class CppDocGen implements IDocGen {
                             this.cfg.paramTemplateReplace,
                             this.cfg.Cpp.tparamTemplate,
                             this.templateParams,
-                            true,
                         );
                     }
                     break;
@@ -427,7 +444,6 @@ export class CppDocGen implements IDocGen {
                             this.cfg.paramTemplateReplace,
                             this.cfg.Generic.paramTemplate,
                             paramNames,
-                            true,
                         );
                     }
                     break;
@@ -436,8 +452,7 @@ export class CppDocGen implements IDocGen {
                     if (this.cfg.Generic.returnTemplate.trim().length !== 0 && this.func.type !== null) {
                         const returnParams = this.generateReturnParams();
                         // tslint:disable-next-line:max-line-length
-                        this.generateFromTemplate(lines, this.cfg.typeTemplateReplace, this.cfg.Generic.returnTemplate, returnParams,
-                            true);
+                        this.generateFromTemplate(lines, this.cfg.typeTemplateReplace, this.cfg.Generic.returnTemplate, returnParams);
                     }
                     break;
                 }
