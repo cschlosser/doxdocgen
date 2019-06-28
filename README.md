@@ -29,6 +29,12 @@ This VS Code Extensions provides Doxygen Documentation generation on the fly by 
 
 ## Features
 
+### Alignment
+
+![Alignment](images/alignment.gif)
+
+For how this works, see the [CHANGELOG.md](https://github.com/christophschlosser/doxdocgen/blob/master/CHANGELOG.md#alignment)
+
 ### Attributes
 
 ![Attribute](images/attributes.gif)
