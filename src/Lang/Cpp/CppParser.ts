@@ -386,7 +386,7 @@ export default class CppParser implements ICodeParser {
 
         let nextLineTxt: string = this.activeEditor.document.lineAt(nextLine.line).text.trim();
 
-        // VSCode may enter a * on itself, we don"t want that in our method
+        // VSCode may enter a * on itself, we don't want that in our method
         if (nextLineTxt === "*") {
             nextLineTxt = "";
         }
@@ -399,6 +399,7 @@ export default class CppParser implements ICodeParser {
         while (linesToGet-- > 0) { // Check for end of expression.
             nextLine = new Position(nextLine.line + 1, nextLine.character);
             nextLineTxt = this.activeEditor.document.lineAt(nextLine.line).text.trim();
+            let finalSlice = 0;
 
             // Check if method has finished if curly brace is opened while
             // nesting is occuring.
@@ -408,13 +409,12 @@ export default class CppParser implements ICodeParser {
                 } else if (nextLineTxt[i] === ")") {
                     currentNest--;
                 } else if (nextLineTxt[i] === "{" && currentNest === 0) {
-                    logicalLine += "\n" + nextLineTxt.slice(0, i);
+                    finalSlice = i;
                     break;
                 } else if ((nextLineTxt[i] === ";"
                     || (nextLineTxt[i] === ":" && nextLineTxt[i - 1] !== ":" && nextLineTxt[i + 1] !== ":"))
                     && currentNest === 0) {
-
-                    logicalLine += "\n" + nextLineTxt.slice(0, i);
+                    finalSlice = i;
                     break;
                 }
             }
@@ -425,12 +425,19 @@ export default class CppParser implements ICodeParser {
                 return "";
             }
 
-            if (this.isVsCodeAutoComplete(nextLineTxt)) {
-                logicalLine += "\n" + nextLineTxt;
+            if (!this.isVsCodeAutoComplete(nextLineTxt)) {
+                logicalLine += "\n";
+                if (finalSlice > 0) {
+                    logicalLine += nextLineTxt.slice(0, finalSlice);
+                } else {
+                    logicalLine += nextLineTxt;
+                }
                 logicalLine.replace(/\*\//g, "");
             }
 
-            return logicalLine.replace(/^\s+|\s+$/g, "");
+            if (finalSlice > 0) {
+                return logicalLine.replace(/^\s+|\s+$/g, "");
+            }
         }
 
         throw new Error("More than " + linesToGet + " lines were read from editor and no end of expression was found.");
