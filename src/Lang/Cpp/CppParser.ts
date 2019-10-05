@@ -409,13 +409,13 @@ export default class CppParser implements ICodeParser {
                     currentNest--;
                 } else if (nextLineTxt[i] === "{" && currentNest === 0) {
                     logicalLine += "\n" + nextLineTxt.slice(0, i);
-                    return logicalLine.replace(/^\s+|\s+$/g, "");
+                    break;
                 } else if ((nextLineTxt[i] === ";"
                     || (nextLineTxt[i] === ":" && nextLineTxt[i - 1] !== ":" && nextLineTxt[i + 1] !== ":"))
                     && currentNest === 0) {
 
                     logicalLine += "\n" + nextLineTxt.slice(0, i);
-                    return logicalLine.replace(/^\s+|\s+$/g, "");
+                    break;
                 }
             }
 
@@ -425,9 +425,12 @@ export default class CppParser implements ICodeParser {
                 return "";
             }
 
-            if (!this.isVsCodeAutoComplete(nextLineTxt)) {
+            if (this.isVsCodeAutoComplete(nextLineTxt)) {
                 logicalLine += "\n" + nextLineTxt;
+                logicalLine.replace(/\*\//g, "");
             }
+
+            return logicalLine.trim();
         }
 
         throw new Error("More than " + linesToGet + " lines were read from editor and no end of expression was found.");
