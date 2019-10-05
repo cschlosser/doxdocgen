@@ -8,6 +8,8 @@
 
 - Parameters not generated when using custom trigger (#119)
 
+- Function argument. Pointer to table is not generated. (#123)
+
 ### Other
 
 - Update dev dependencies and increase min VS Code version (#131, #132)
