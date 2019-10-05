@@ -121,6 +121,7 @@ export default class CppParser implements ICodeParser {
             "const",
             "struct",
             "enum",
+            "restrict",
         ];
 
         this.stripKeywords = [
