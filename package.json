@@ -12,26 +12,26 @@
   ],
   "badges": [
     {
-        "url": "https://travis-ci.org/christophschlosser/doxdocgen.svg?branch=master",
-        "href": "https://travis-ci.org/christophschlosser/doxdocgen",
-        "description": "Continuous Integration (Travis)"
+      "url": "https://travis-ci.org/christophschlosser/doxdocgen.svg?branch=master",
+      "href": "https://travis-ci.org/christophschlosser/doxdocgen",
+      "description": "Continuous Integration (Travis)"
     },
     {
-        "url": "https://ci.appveyor.com/api/projects/status/4h84071p9tv0y9r6?svg=true",
-        "href": "https://ci.appveyor.com/project/christophschlosser/doxdocgen",
-        "description": "Continuous Integration (AppVeyor)"
+      "url": "https://ci.appveyor.com/api/projects/status/4h84071p9tv0y9r6?svg=true",
+      "href": "https://ci.appveyor.com/project/christophschlosser/doxdocgen",
+      "description": "Continuous Integration (AppVeyor)"
     },
     {
-        "url": "https://codecov.io/gh/christophschlosser/doxdocgen/branch/master/graph/badge.svg",
-        "href": "https://codecov.io/gh/christophschlosser/doxdocgen",
-        "description": "Code coverage"
+      "url": "https://codecov.io/gh/christophschlosser/doxdocgen/branch/master/graph/badge.svg",
+      "href": "https://codecov.io/gh/christophschlosser/doxdocgen",
+      "description": "Code coverage"
     },
     {
       "url": "https://isitmaintained.com/badge/resolution/christophschlosser/doxdocgen.svg",
       "href": "https://isitmaintained.com/project/christophschlosser/doxdocgen",
       "description": "Response time for issues"
     }
-],
+  ],
   "activationEvents": [
     "onLanguage:cpp",
     "onLanguage:c"
@@ -98,8 +98,13 @@
         },
         "doxdocgen.file.copyrightTag": {
           "description": "File copyright documentation tag.  Array of strings will be converted to one line per element.  Can template {year}.",
-          "type": ["array", "string"],
-          "default": ["@copyright Copyright (c) {year}"]
+          "type": [
+            "array",
+            "string"
+          ],
+          "default": [
+            "@copyright Copyright (c) {year}"
+          ]
         },
         "doxdocgen.file.versionTag": {
           "description": "Version number for the file.",
@@ -107,14 +112,30 @@
           "default": "@version 0.1"
         },
         "doxdocgen.file.customTag": {
-            "description": "Additional file documentation.  Array of strings will be converted to one line per element.  Can template {year}, {date}, {author}, and {email}.",
-            "type": ["array", "string"],
-            "default": []
+          "description": "Additional file documentation.  Array of strings will be converted to one line per element.  Can template {year}, {date}, {author}, and {email}.",
+          "type": [
+            "array",
+            "string"
+          ],
+          "default": []
         },
         "doxdocgen.file.fileOrder": {
           "description": "The order to use for the file comment. Values can be used multiple times. Valid values are shown in default setting.",
-          "type": ["array", "string"],
-          "default": ["file", "author", "brief", "version", "date", "empty", "copyright", "empty", "custom"]
+          "type": [
+            "array",
+            "string"
+          ],
+          "default": [
+            "file",
+            "author",
+            "brief",
+            "version",
+            "date",
+            "empty",
+            "copyright",
+            "empty",
+            "custom"
+          ]
         },
         "doxdocgen.generic.includeTypeAtReturn": {
           "description": "Whether include type information at return.",
@@ -183,8 +204,17 @@
         },
         "doxdocgen.generic.order": {
           "description": "The order to use for the comment generation. Values can be used multiple times. Valid values are shown in default setting.",
-          "type": ["array", "string"],
-          "default": ["brief", "empty", "tparam", "param", "return"]
+          "type": [
+            "array",
+            "string"
+          ],
+          "default": [
+            "brief",
+            "empty",
+            "tparam",
+            "param",
+            "return"
+          ]
         }
       }
     }
