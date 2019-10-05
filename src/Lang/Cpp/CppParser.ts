@@ -563,6 +563,22 @@ export default class CppParser implements ICodeParser {
         return nodes.filter((n) => n instanceof CppParseTree).length === 2;
     }
 
+    private IsArrayPtr(nodes: Array<CppToken | CppParseTree>) {
+        if (nodes.filter((n) => n instanceof CppParseTree).length === 1) {
+            const treeIdx = nodes.findIndex((n) => n instanceof CppParseTree);
+            if (treeIdx !== -1) {
+                const nextElem = nodes[treeIdx + 1];
+                if (nextElem instanceof CppToken) {
+                    const match = nextElem.value.match(/^\[[0-9]*\]$/g);
+                    if (match !== undefined && match !== null) {
+                        return match.length > 0;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     private StripNonTypeNodes(tree: CppParseTree) {
         tree.nodes = tree.nodes
             // All strippable keywords.
@@ -625,7 +641,7 @@ export default class CppParser implements ICodeParser {
 
         let cursor: CppParseTree = tree;
 
-        while (this.IsFuncPtr(cursor.nodes) === true) {
+        while (this.IsFuncPtr(cursor.nodes) === true || this.IsArrayPtr(cursor.nodes) === true) {
             cursor = cursor.nodes.find((n) => n instanceof CppParseTree) as CppParseTree;
         }
 
@@ -710,6 +726,10 @@ export default class CppParser implements ICodeParser {
 
         // Handle function pointers
         if (this.IsFuncPtr(copy.nodes) === true) {
+            return this.GetArgumentFromFuncPtr(copy);
+        }
+
+        if (this.IsArrayPtr(copy.nodes) === true) {
             return this.GetArgumentFromFuncPtr(copy);
         }
 
