@@ -1,7 +1,6 @@
 .vscode/**
 .vscode-test/**
-out/test/**
-out/**/*.map
+out/**
 src/**
 .gitignore
 tsconfig.json
@@ -16,3 +15,6 @@ coverage/**
 images/**
 !images/icon.png
 tslint.json
+dist/**.map
+node_modules/**
+webpack.config.js
