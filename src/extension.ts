@@ -1,19 +1,12 @@
 "use strict";
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-import * as opn from "opn";
 import * as vscode from "vscode";
 import CodeParserController from "./CodeParserController";
 
-enum AlignmentNotificationOptions {
-    CHANGED = "Show me how to do that",
-    HIDE = "Don't show me again",
-    GLOBAL_STORAGE_KEY = "doxdocgen_hide_alignment_notification",
-}
-
 enum Version {
-    CURRENT = "0.5.1",
-    PREVIOUS = "0.5.0",
+    CURRENT = "0.5.2",
+    PREVIOUS = "0.5.1",
     KEY = "doxdocgen_version",
 }
 
