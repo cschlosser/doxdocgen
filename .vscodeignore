@@ -11,3 +11,8 @@ appveyor.yml
 coverconfig.json
 publish_coverage.sh
 .github/**
+.nyc_output/**
+coverage/**
+images/**
+!images/icon.png
+tslint.json
