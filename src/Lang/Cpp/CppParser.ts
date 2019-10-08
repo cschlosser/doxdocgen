@@ -401,6 +401,7 @@ export default class CppParser implements ICodeParser {
             nextLine = new Position(nextLine.line + 1, nextLine.character);
             nextLineTxt = this.activeEditor.document.lineAt(nextLine.line).text.trim();
             let finalSlice = 0;
+            let endOfDeclaration = false;
 
             // Check if method has finished if curly brace is opened while
             // nesting is occuring.
@@ -411,11 +412,13 @@ export default class CppParser implements ICodeParser {
                     currentNest--;
                 } else if (nextLineTxt[i] === "{" && currentNest === 0) {
                     finalSlice = i;
+                    endOfDeclaration = true;
                     break;
                 } else if ((nextLineTxt[i] === ";"
                     || (nextLineTxt[i] === ":" && nextLineTxt[i - 1] !== ":" && nextLineTxt[i + 1] !== ":"))
                     && currentNest === 0) {
                     finalSlice = i;
+                    endOfDeclaration = true;
                     break;
                 }
             }
@@ -428,7 +431,7 @@ export default class CppParser implements ICodeParser {
 
             if (!this.isVsCodeAutoComplete(nextLineTxt)) {
                 logicalLine += "\n";
-                if (finalSlice > 0) {
+                if (endOfDeclaration === true) {
                     logicalLine += nextLineTxt.slice(0, finalSlice);
                 } else {
                     logicalLine += nextLineTxt;
@@ -436,7 +439,7 @@ export default class CppParser implements ICodeParser {
                 logicalLine.replace(/\*\//g, "");
             }
 
-            if (finalSlice > 0) {
+            if (endOfDeclaration) {
                 return logicalLine.replace(/^\s+|\s+$/g, "");
             }
         }
