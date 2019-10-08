@@ -1,5 +1,11 @@
 # Change Log
 
+## [0.5.2]
+
+### Fix
+
+- Cannot see params & return value, for global functions (#136)
+
 ## [0.5.1]
 
 ### Fix
