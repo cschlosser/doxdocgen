@@ -344,7 +344,7 @@ export class CppDocGen implements IDocGen {
 
     protected insertFirstLine(lines: string[]) {
         if (this.cfg.C.firstLine.trim().length !== 0) {
-            lines.push(this.cfg.C.firstLine);
+            lines.unshift(this.cfg.C.firstLine);
         }
     }
 
@@ -356,14 +356,12 @@ export class CppDocGen implements IDocGen {
 
     protected insertLastLine(lines: string[]) {
         if (this.cfg.C.lastLine.trim().length !== 0) {
-            lines[lines.length - 1] += `\n${this.cfg.C.lastLine}`;
+            lines.push(this.cfg.C.lastLine);
         }
     }
 
     protected generateFileDescription(): string {
-        const lines: string[] = [];
-
-        this.insertFirstLine(lines);
+        let lines: string[] = [];
 
         this.cfg.File.fileOrder.forEach((element) => {
             switch (element) {
@@ -405,15 +403,15 @@ export class CppDocGen implements IDocGen {
             }
         });
 
+        lines = lines.map((line) => `${this.cfg.C.commentPrefix}${line}`);
+        this.insertFirstLine(lines);
         this.insertLastLine(lines);
 
-        return lines.join(`\n${this.cfg.C.commentPrefix}`);
+        return lines.join("\n");
     }
 
     protected generateComment(): string {
-        const lines: string[] = [];
-
-        this.insertFirstLine(lines);
+        let lines: string[] = [];
 
         this.cfg.Generic.order.forEach((element) => {
             switch (element) {
@@ -462,9 +460,11 @@ export class CppDocGen implements IDocGen {
             }
         });
 
+        lines = lines.map((line) => `${this.cfg.C.commentPrefix}${line}`);
+        this.insertFirstLine(lines);
         this.insertLastLine(lines);
 
-        return lines.join(`\n${this.getIndentation()}${this.cfg.C.commentPrefix}`);
+        return lines.join(`\n${this.getIndentation()}`);
     }
 
     protected moveCursurToFirstDoxyCommand(comment: string, baseLine: number, baseCharacter) {
