@@ -44,4 +44,9 @@ suite("C++ - Function pointer Tests", () => {
         const result = testSetup.SetLine("void foo(void (SomeClass::* func)());").GetResult();
         assert.equal("/**\n * @brief \n * \n * @param func \n */", result);
     });
+
+    test("Arraypointer", () => {
+        const result = testSetup.SetLine("void some_function(int (*table)[]);").GetResult();
+        assert.equal("/**\n * @brief \n * \n * @param table \n */", result);
+    });
 });

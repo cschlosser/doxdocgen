@@ -279,22 +279,22 @@ suite("C++ - Operators Tests", () => {
     });
 
     test("Implicit conversion operator", () => {
-        const result = testSetup.SetLine("operator int() const").GetResult();
+        const result = testSetup.SetLine("operator int() const;").GetResult();
         assert.equal("/**\n * @brief \n * \n * @return int \n */", result);
     });
 
     test("Explicit conversion operator", () => {
-        const result = testSetup.SetLine("explicit operator int() const").GetResult();
+        const result = testSetup.SetLine("explicit operator int() const;").GetResult();
         assert.equal("/**\n * @brief \n * \n * @return int \n */", result);
     });
 
     test("conversion operator to struct", () => {
-        const result = testSetup.SetLine("explicit operator struct foo() const").GetResult();
+        const result = testSetup.SetLine("explicit operator struct foo() const;").GetResult();
         assert.equal("/**\n * @brief \n * \n * @return struct foo \n */", result);
     });
 
     test("conversion operator to struct pointer", () => {
-        const result = testSetup.SetLine("explicit operator struct foo*() const").GetResult();
+        const result = testSetup.SetLine("explicit operator struct foo*() const;").GetResult();
         assert.equal("/**\n * @brief \n * \n * @return struct foo* \n */", result);
     });
 });

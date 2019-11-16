@@ -121,6 +121,7 @@ export default class CppParser implements ICodeParser {
             "const",
             "struct",
             "enum",
+            "restrict",
         ];
 
         this.stripKeywords = [
@@ -386,7 +387,7 @@ export default class CppParser implements ICodeParser {
 
         let nextLineTxt: string = this.activeEditor.document.lineAt(nextLine.line).text.trim();
 
-        // VSCode may enter a * on itself, we don"t want that in our method
+        // VSCode may enter a * on itself, we don't want that in our method
         if (nextLineTxt === "*") {
             nextLineTxt = "";
         }
@@ -399,6 +400,7 @@ export default class CppParser implements ICodeParser {
         while (linesToGet-- > 0) { // Check for end of expression.
             nextLine = new Position(nextLine.line + 1, nextLine.character);
             nextLineTxt = this.activeEditor.document.lineAt(nextLine.line).text.trim();
+            let finalSlice = -1;
 
             // Check if method has finished if curly brace is opened while
             // nesting is occuring.
@@ -408,14 +410,13 @@ export default class CppParser implements ICodeParser {
                 } else if (nextLineTxt[i] === ")") {
                     currentNest--;
                 } else if (nextLineTxt[i] === "{" && currentNest === 0) {
-                    logicalLine += "\n" + nextLineTxt.slice(0, i);
-                    return logicalLine.replace(/^\s+|\s+$/g, "");
+                    finalSlice = i;
+                    break;
                 } else if ((nextLineTxt[i] === ";"
                     || (nextLineTxt[i] === ":" && nextLineTxt[i - 1] !== ":" && nextLineTxt[i + 1] !== ":"))
                     && currentNest === 0) {
-
-                    logicalLine += "\n" + nextLineTxt.slice(0, i);
-                    return logicalLine.replace(/^\s+|\s+$/g, "");
+                    finalSlice = i;
+                    break;
                 }
             }
 
@@ -426,7 +427,17 @@ export default class CppParser implements ICodeParser {
             }
 
             if (!this.isVsCodeAutoComplete(nextLineTxt)) {
-                logicalLine += "\n" + nextLineTxt;
+                logicalLine += "\n";
+                if (finalSlice >= 0) {
+                    logicalLine += nextLineTxt.slice(0, finalSlice);
+                } else {
+                    logicalLine += nextLineTxt;
+                }
+                logicalLine.replace(/\*\//g, "");
+            }
+
+            if (finalSlice >= 0) {
+                return logicalLine.replace(/^\s+|\s+$/g, "");
             }
         }
 
@@ -552,6 +563,22 @@ export default class CppParser implements ICodeParser {
         return nodes.filter((n) => n instanceof CppParseTree).length === 2;
     }
 
+    private IsArrayPtr(nodes: Array<CppToken | CppParseTree>) {
+        if (nodes.filter((n) => n instanceof CppParseTree).length === 1) {
+            const treeIdx = nodes.findIndex((n) => n instanceof CppParseTree);
+            if (treeIdx !== -1) {
+                const nextElem = nodes[treeIdx + 1];
+                if (nextElem instanceof CppToken) {
+                    const match = nextElem.value.match(/^\[[0-9]*\]$/g);
+                    if (match !== undefined && match !== null) {
+                        return match.length > 0;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     private StripNonTypeNodes(tree: CppParseTree) {
         tree.nodes = tree.nodes
             // All strippable keywords.
@@ -614,7 +641,7 @@ export default class CppParser implements ICodeParser {
 
         let cursor: CppParseTree = tree;
 
-        while (this.IsFuncPtr(cursor.nodes) === true) {
+        while (this.IsFuncPtr(cursor.nodes) === true || this.IsArrayPtr(cursor.nodes) === true) {
             cursor = cursor.nodes.find((n) => n instanceof CppParseTree) as CppParseTree;
         }
 
@@ -699,6 +726,10 @@ export default class CppParser implements ICodeParser {
 
         // Handle function pointers
         if (this.IsFuncPtr(copy.nodes) === true) {
+            return this.GetArgumentFromFuncPtr(copy);
+        }
+
+        if (this.IsArrayPtr(copy.nodes) === true) {
             return this.GetArgumentFromFuncPtr(copy);
         }
 

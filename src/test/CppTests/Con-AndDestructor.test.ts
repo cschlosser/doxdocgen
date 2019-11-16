@@ -54,7 +54,7 @@ suite("C++ - Con- and Destructor Tests", () => {
     });
 
     test("Deleted Destructor", () => {
-        const result = testSetup.SetLine("virtual ~Foo() = 0").GetResult();
+        const result = testSetup.SetLine("virtual ~Foo() = 0;").GetResult();
         assert.equal("/**\n * @brief \n * \n */", result);
     });
 

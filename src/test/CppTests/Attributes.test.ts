@@ -59,4 +59,9 @@ suite("C++ - Attributes Tests", () => {
         const result = testSetup.SetLine("constexpr int foo(int a, double& b) throw(std::except);").GetResult();
         assert.equal("/**\n * @brief \n * \n * @param a \n * @param b \n * @return constexpr int \n */", result);
     });
+
+    test("Newline in function", () => {
+        const result = testSetup.SetLines(["static void ResetActionState( BOOL sendNAK )", "{"]).GetResult();
+        assert.equal("/**\n * @brief \n * \n * @param sendNAK \n */", result);
+    });
 });

@@ -263,6 +263,11 @@ suite("C++ - Parameters Tests", () => {
         assert.equal("/**\n * @brief \n * \n * @param memberPointer \n */", result);
     });
 
+    test("Restrict keyword", () => {
+        const result = testSetup.SetLine("void some_function(char *restrict buf, const size_t buflen);").GetResult();
+        assert.equal("/**\n * @brief \n * \n * @param buf \n * @param buflen \n */", result);
+    });
+
     test("Type as variable name", () => {
         let result = testSetup.SetLine("void MapPoint(double latitude, double longtitude) const;").GetResult();
         assert.equal("/**\n * @brief \n * \n * @param latitude \n * @param longtitude \n */", result);
