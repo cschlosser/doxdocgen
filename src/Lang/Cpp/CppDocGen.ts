@@ -216,23 +216,23 @@ export class CppDocGen implements IDocGen {
     }
 
     protected generateBrief(lines: string[]) {
-        lines.push(this.cfg.C.commentPrefix + this.getTemplatedString(this.cfg.textTemplateReplace,
-                                           this.cfg.Generic.briefTemplate,
-                                           this.getSmartText()));
+        lines.push(
+            ...this.getTemplatedString(
+                this.cfg.textTemplateReplace,
+                this.cfg.Generic.briefTemplate,
+                this.getSmartText(),
+            ).split("\n"),
+        );
     }
 
     protected generateFromTemplate(lines: string[],
                                    replace: string,
                                    template: string,
                                    templateWith: string[]) {
-        let line: string = "";
-
         templateWith.forEach((element: string) => {
             // Ignore null values
             if (element !== null) {
-                line = this.cfg.C.commentPrefix;
-                line += this.getTemplatedString(replace, template, element);
-                lines.push(line);
+                lines.push(...this.getTemplatedString(replace, template, element).split("\n"));
             }
         });
     }
@@ -271,12 +271,12 @@ export class CppDocGen implements IDocGen {
     protected generateAuthorTag(lines: string[]) {
         if (this.cfg.Generic.authorTag.trim().length !== 0) {
             // Allow substitution of {author} and {email} only
-            lines.push(this.cfg.C.commentPrefix +
-                this.getMultiTemplatedString(
+            lines.push(
+                ...this.getMultiTemplatedString(
                     [this.cfg.authorTemplateReplace, this.cfg.emailTemplateReplace],
                     this.cfg.Generic.authorTag,
                     [this.cfg.Generic.authorName, this.cfg.Generic.authorEmail],
-                ),
+                ).split("\n"),
             );
         }
     }
@@ -294,7 +294,7 @@ export class CppDocGen implements IDocGen {
 
     protected generateVersionTag(lines: string[]) {
         if (this.cfg.File.versionTag.trim().length !== 0) {
-            lines.push(this.cfg.C.commentPrefix + this.cfg.File.versionTag);
+            lines.push(...this.cfg.File.versionTag.split("\n"));
         }
     }
 
@@ -318,14 +318,14 @@ export class CppDocGen implements IDocGen {
         // For each line of the customTag
         this.cfg.File.customTag.forEach((element) => {
             // Allow any of date, year, author, email to be replaced
-            lines.push(this.cfg.C.commentPrefix +
-                this.getMultiTemplatedString(
+            lines.push(
+                ...this.getMultiTemplatedString(
                     [this.cfg.authorTemplateReplace, this.cfg.emailTemplateReplace,
                         this.cfg.dateTemplateReplace, this.cfg.yearTemplateReplace],
                     element,
                     [this.cfg.Generic.authorName, this.cfg.Generic.authorEmail,
                         moment().format(dateFormat), moment().format("YYYY")],
-                ),
+                ).split("\n"),
             );
         });
     }
@@ -344,7 +344,7 @@ export class CppDocGen implements IDocGen {
 
     protected insertFirstLine(lines: string[]) {
         if (this.cfg.C.firstLine.trim().length !== 0) {
-            lines.push(this.cfg.C.firstLine);
+            lines.unshift(this.cfg.C.firstLine);
         }
     }
 
@@ -361,9 +361,7 @@ export class CppDocGen implements IDocGen {
     }
 
     protected generateFileDescription(): string {
-        const lines: string[] = [];
-
-        this.insertFirstLine(lines);
+        let lines: string[] = [];
 
         this.cfg.File.fileOrder.forEach((element) => {
             switch (element) {
@@ -372,7 +370,7 @@ export class CppDocGen implements IDocGen {
                     break;
                 }
                 case "empty": {
-                    lines.push(this.cfg.C.commentPrefix);
+                    lines.push("");
                     break;
                 }
                 case "file": {
@@ -405,15 +403,15 @@ export class CppDocGen implements IDocGen {
             }
         });
 
+        lines = lines.map((line) => `${this.cfg.C.commentPrefix}${line}`);
+        this.insertFirstLine(lines);
         this.insertLastLine(lines);
 
         return lines.join("\n");
     }
 
     protected generateComment(): string {
-        const lines: string[] = [];
-
-        this.insertFirstLine(lines);
+        let lines: string[] = [];
 
         this.cfg.Generic.order.forEach((element) => {
             switch (element) {
@@ -422,7 +420,7 @@ export class CppDocGen implements IDocGen {
                     break;
                 }
                 case "empty": {
-                    lines.push(this.cfg.C.commentPrefix);
+                    lines.push("");
                     break;
                 }
                 case "tparam": {
@@ -462,10 +460,11 @@ export class CppDocGen implements IDocGen {
             }
         });
 
+        lines = lines.map((line) => `${this.cfg.C.commentPrefix}${line}`);
+        this.insertFirstLine(lines);
         this.insertLastLine(lines);
 
-        const comment: string = lines.join("\n" + this.getIndentation());
-        return comment;
+        return lines.join(`\n${this.getIndentation()}`);
     }
 
     protected moveCursurToFirstDoxyCommand(comment: string, baseLine: number, baseCharacter) {

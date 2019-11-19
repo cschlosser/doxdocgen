@@ -189,4 +189,26 @@ suite("C++ - Configuration Tests", () => {
         assert.equal("/**\n * @brief                        Short desc\n * \n * @tparam   T                   I'm a template\n * @param    bar                 Parameters everywhere\n * @param    foobar              Parameters everywhere\n */", result);
     });
 
+    test("Multiline template", () => {
+        testSetup.cfg.C.commentPrefix = "/// ";
+        testSetup.cfg.C.firstLine = "";
+        testSetup.cfg.C.lastLine = "";
+        testSetup.cfg.Generic.briefTemplate = "<summary>\n{text}\n</summary>";
+        testSetup.cfg.Generic.paramTemplate = "<param name=\"{param}\">\n</param>";
+        testSetup.cfg.Generic.returnTemplate = "<returns>\n</returns>";
+        const result = testSetup.SetLine("    int foo(bool a);").GetResult();
+        // tslint:disable:no-trailing-whitespace
+        assert.equal(
+            result, `/// <summary>
+    /// 
+    /// </summary>
+    /// 
+    /// <param name="a">
+    /// </param>
+    /// <returns>
+    /// </returns>`,
+        );
+        // tslint:enable:no-trailing-whitespace
+    });
+
 });
