@@ -227,7 +227,7 @@
     "Doxygen"
   ],
   "license": "SEE LICENSE IN LICENSE",
-  "main": "./out/extension",
+  "main": "./dist/extension",
   "repository": {
     "type": "git",
     "url": "https://github.com/christophschlosser/doxdocgen.git"
@@ -236,11 +236,13 @@
     "url": "https://github.com/christophschlosser/doxdocgen/labels/bug"
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile",
+    "vscode:prepublish": "webpack --mode production",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "postinstall": "node ./node_modules/vscode/bin/install",
-    "test": "npm run compile && node ./node_modules/vscode/bin/test"
+    "test": "npm run compile && node ./node_modules/vscode/bin/test",
+    "webpack": "webpack --mode development",
+    "webpack-dev": "webpack --mode development --watch"
   },
   "dependencies": {
     "moment": "^2.20.1",
@@ -250,12 +252,15 @@
     "@types/mocha": "^5.2.7",
     "@types/node": "^12.7.1",
     "decache": "^4.5.1",
+    "handlebars": "^4.4.0",
     "istanbul": "^0.4.5",
     "mocha": "^6.2.1",
     "remap-istanbul": "^0.13.0",
+    "ts-loader": "^6.2.0",
     "tslint": "^5.20.0",
-    "vscode": "^1.1.36",
     "typescript": "^2.7.2",
-    "handlebars": "^4.4.0"
+    "vscode": "^1.1.36",
+    "webpack": "^4.41.0",
+    "webpack-cli": "^3.3.9"
   }
 }
