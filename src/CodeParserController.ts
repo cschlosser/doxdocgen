@@ -114,6 +114,7 @@ export default class CodeParserController {
         switch (lang) {
             case "c":
             case "cpp":
+            case "cuda":
                 parser = new CppParser(this.cfg);
                 break;
             default:
