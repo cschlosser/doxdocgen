@@ -1,27 +1,13 @@
-sudo: false
-
 branches:
   only:
     - master
     - /^\d\.\d\.\d$/
 
-os:
-  - linux
-  - osx
+os: osx
 
 language: node_js
 node_js:
   - "6"
-
-matrix:
-  include:
-    - os: linux
-      dist: trusty
-      sudo: false
-    - os: osx
-      osx_image: xcode9.1
-  allow_failures:
-    - os: linux # Currently linux tests seem broken
 
 stages:
   - lint
@@ -40,15 +26,25 @@ install:
   - npm install
 
 jobs:
+  allow_failures:
+    - os: linux
   include:
+    - os: linux
+      dist: xenial
     - stage: lint
       script: tslint -c tslint.json 'src/**/*.ts'
+      os: linux
     - stage: build
       script: npm run vscode:prepublish
+      os: linux
+    - stage: test
+      script: npm run test
+      os: osx
     - stage: release
       script:
         - npm install vsce
         - vsce package
+      os: linux
       deploy:
         - provider: releases
           api_key: $GITHUB_OAUTH_TOKEN
