@@ -3,10 +3,6 @@ branches:
     - master
     - /^\d\.\d\.\d$/
 
-os:
-  - linux
-  - osx
-
 dist: xenial
 
 language: node_js
