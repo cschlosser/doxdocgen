@@ -39,6 +39,7 @@ jobs:
       os: linux
     - stage: test
       script: npm run test
+      os: osx
     - stage: release
       script:
         - npm install vsce
