@@ -45,6 +45,8 @@ jobs:
       script: tslint -c tslint.json 'src/**/*.ts'
     - stage: build
       script: npm run vscode:prepublish
+    - stage: test
+      script: npm run test
     - stage: release
       script:
         - npm install vsce
