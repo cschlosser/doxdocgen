@@ -31,8 +31,6 @@ jobs:
   include:
     - os: linux
       dist: xenial
-    - os: osx
-      osx_image: xcode11.3
     - stage: lint
       script: tslint -c tslint.json 'src/**/*.ts'
       os: linux
