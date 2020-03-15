@@ -1,5 +1,21 @@
 # Change Log
 
+## [0.6.0]
+
+### Feature
+
+- Add support for multiline template #140 (#127)
+  
+  Thanks to @eternalphane
+
+- Enable CUDA language support #148 (#128)
+  
+  Thanks to @trxcllnt
+
+### Other
+
+- Update dev dependencies
+
 ## [0.5.2]
 
 ### Fix
