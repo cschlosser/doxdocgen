@@ -42,6 +42,21 @@ suite("C++ - Parameters Tests", () => {
         assert.equal("/**\n * @brief \n * \n * @param a \n */", result);
     });
 
+    test("Reference parameter with unsigned interger qualifier", () => {
+        const result = testSetup.SetLine("void foo(unsigned int& a);").GetResult();
+        assert.equal("/**\n * @brief \n * \n * @param a \n */", result);
+    });
+
+    test("Reference parameter with const qualifier", () => {
+        const result = testSetup.SetLine("void foo(const int& a);").GetResult();
+        assert.equal("/**\n * @brief \n * \n * @param a \n */", result);
+    });
+
+    test("Reference parameter with const and interger qualifier", () => {
+        const result = testSetup.SetLine("void foo(const unsigned int& a);").GetResult();
+        assert.equal("/**\n * @brief \n * \n * @param a \n */", result);
+    });
+
     test("Pointer parameter", () => {
         const result = testSetup.SetLine("void foo(int* a);").GetResult();
         assert.equal("/**\n * @brief \n * \n * @param a \n */", result);

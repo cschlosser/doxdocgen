@@ -686,7 +686,7 @@ export default class CppParser implements ICodeParser {
             if (node.type === CppTokenType.Symbol
                 && this.keywords.find((k) => k === node.value) === undefined
             ) {
-                if (symbolCount === 1 && argument.name === null) {
+                if (symbolCount === 1) {
                     argument.name = node.value;
                     continue;
                 } else if (symbolCount > 1) {
