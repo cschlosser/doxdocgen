@@ -26,7 +26,7 @@ suite("C++ - Preprocessor Tests", () => {
         const result = testSetup.SetLines([
             "#define MY_MACRO 1",
             "/**",
-            " */"
+            " */",
         ]).GetResult();
         assert.equal("/**\n * @brief \n * \n */", result);
     });
