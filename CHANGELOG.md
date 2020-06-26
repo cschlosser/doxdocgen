@@ -1,5 +1,19 @@
 # Change Log
 
+## [0.7.0]
+
+### Feature
+
+- Add option to filter keywords (like custom defines) from input line #159 (#152)
+
+### Fix
+
+- Argument type would be placed as the param instead of the argument name #154
+
+  Thanks to @DaanHuinink
+
+- Bug when commenting macros #158 (#142)
+
 ## [0.6.0]
 
 ### Feature
