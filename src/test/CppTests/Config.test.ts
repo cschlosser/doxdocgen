@@ -211,4 +211,12 @@ suite("C++ - Configuration Tests", () => {
         // tslint:enable:no-trailing-whitespace
     });
 
+    test("Macro define in funtion", () => {
+        testSetup.cfg = new Config();
+        testSetup.cfg.Generic.filteredKeywords = ["MOCKABLE"];
+        // tslint:disable-next-line:max-line-length
+        const result = testSetup.SetLine("MOCKABLE void processNetworkStatusReset( const common_n::NetworkCommands_s *networkstatus );").GetResult();
+        assert.equal("/**\n * @brief \n * \n * @param networkstatus \n */", result);
+    });
+
 });

@@ -145,6 +145,8 @@ export default class CppParser implements ICodeParser {
 
         // Non type keywords will be stripped from the final return type.
         this.keywords = this.typeKeywords.concat(this.stripKeywords);
+        // Remove keywords that should be filtered
+        this.keywords = this.keywords.concat(this.cfg.Generic.filteredKeywords);
 
         this.lexerVocabulary = {
             ArraySubscript: (x: string): string => (x.match("^\\[[^\\[]*?\\]") || [])[0],

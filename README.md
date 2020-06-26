@@ -106,7 +106,7 @@ Each of them can be configured with its own custom text and you can decide if th
 ## Config options
 
 ```json
-// The prefix that is used for each comment line except for first and last.
+  // The prefix that is used for each comment line except for first and last.
   "doxdocgen.c.commentPrefix": " * ",
 
   // Smart text snippet for factory methods/functions.
@@ -209,7 +209,10 @@ Each of them can be configured with its own custom text and you can decide if th
   "doxdocgen.generic.returnTemplate": "@return {type} ",
 
   // Decide if the values put into {name} should be split according to their casing.
-  "doxdocgen.generic.splitCasingSmartText": true
+  "doxdocgen.generic.splitCasingSmartText": true,
+
+  // Array of keywords that should be removed from the input prior to parsing.
+  "doxdocgen.generic.filteredKeywords": []
 ```
 
 ## Contributors
