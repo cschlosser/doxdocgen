@@ -216,6 +216,11 @@
             "param",
             "return"
           ]
+        },
+        "doxdocgen.generic.filteredKeywords": {
+          "description": "Array of keywords that should be removed from the input prior to parsing.",
+          "type": "array",
+          "default" : []
         }
       }
     }
