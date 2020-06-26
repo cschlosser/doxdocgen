@@ -425,7 +425,7 @@ export default class CppParser implements ICodeParser {
                 this.commentType = CommentType.file;
                 return "";
             } else if (nextLineTxt.startsWith("#")) { // preprocessor stuff
-                this,this.commentType = CommentType.method;
+                this.commentType = CommentType.method;
                 return "";
             }
 
