@@ -30,4 +30,23 @@ suite("C++ - Preprocessor Tests", () => {
         ]).GetResult();
         assert.equal("/**\n * @brief \n * \n */", result);
     });
+
+    // These two tests don't seem to belong here but the behavior they're testing only is reproducable
+    // for macros otherwise
+    test("detect auto generated closing */", () => {
+        const result = testSetup.SetLines([
+            "*/", // simulate an auto generated closing block comment
+            "void foo(int bar);",
+        ]).GetResult();
+        assert.equal("/**\n * @brief \n * \n * @param bar \n */", result);
+    });
+
+    test("don't detect closing */", () => {
+        const result = testSetup.SetLines([
+            "/*",
+            " */",
+            "void foo(int bar);",
+        ]).GetResult();
+        assert.equal("/**\n * @brief \n * \n */", result);
+    });
 });
