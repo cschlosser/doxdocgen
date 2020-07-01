@@ -26,6 +26,12 @@ suite("File Description Tests", () => {
             " * @date " + date + "\n */", result);
     });
 
+    test("#pragma on next line", () => {
+        const result = testSetup.SetLine("#pragma Foo").GetResult();
+        assert.equal("/**\n * @brief \n * \n * @file MockDocument.h\n * @author your name (you@domain.com)\n" +
+            " * @date " + date + "\n */", result);
+    });
+
     test("On first line of document", () => {
         const result = testSetup.SetLine("").GetResult();
         assert.equal("/**\n * @brief \n * \n * @file MockDocument.h\n * @author your name (you@domain.com)\n" +
