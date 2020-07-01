@@ -1,5 +1,11 @@
 # Change Log
 
+## [0.7.2]
+
+### Fix
+
+- Could not generate correct file header annotation (again) #164 (#161)
+
 ## [0.7.1]
 
 ### Fix
