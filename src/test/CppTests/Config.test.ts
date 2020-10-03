@@ -219,4 +219,12 @@ suite("C++ - Configuration Tests", () => {
         assert.equal("/**\n * @brief \n * \n * @param networkstatus \n */", result);
     });
 
+    test("Custom tag", () => {
+        testSetup.cfg = new Config();
+        testSetup.cfg.Generic.order = ["custom"];
+        testSetup.cfg.Generic.customTags = ["@note"];
+        const result = testSetup.SetLine("void foo();").GetResult();
+        assert.equal("/**\n * @note\n */", result);
+    });
+
 });

@@ -1,5 +1,11 @@
 # Change Log
 
+## [UNRELEASED]
+
+### Feature
+
+- Support for arbitrary tags (#169)
+
 ## [0.7.2]
 
 ### Fix
