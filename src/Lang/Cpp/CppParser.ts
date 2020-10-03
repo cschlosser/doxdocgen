@@ -809,7 +809,7 @@ export default class CppParser implements ICodeParser {
         template = template.slice(template.indexOf("<") + 1, template.lastIndexOf(">")).replace(/^\s+|\s+$/g, "") + ",";
 
         // Remove = and everything to the right until a , comes up
-        template = template.replace(/(\W*=\W*\S*\,)/gm, ",")
+        template = template.replace(/(\W*=\W*\S*\,)/gm, ",");
 
         const nestedCounts: { [key: string]: number; } = {
             "(": 0,
