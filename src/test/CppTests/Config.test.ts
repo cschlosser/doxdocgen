@@ -227,4 +227,24 @@ suite("C++ - Configuration Tests", () => {
         assert.equal("/**\n * @note\n */", result);
     });
 
+    test("Env variable", () => {
+        testSetup.cfg = new Config();
+        testSetup.cfg.Generic.order = ["custom"];
+        if (process.platform === "win32") {
+            testSetup.cfg.Generic.customTags = ["@author ${env:USERNAME}"];
+            const res = testSetup.SetLine("void foo();").GetResult();
+            // USERNAME env var is different for everybody
+            assert.notEqual("/**\n * @author USERNAME\n */", res);
+        } else {
+            testSetup.cfg.Generic.customTags = ["@author ${env:USER}"];
+            const res = testSetup.SetLine("void foo();").GetResult();
+            // USER env var is different for everybody
+            assert.notEqual("/**\n * @author USER\n */", res);
+        }
+
+        testSetup.cfg.Generic.customTags = ["@author ${env:MY_VARIABLE}"];
+        const result = testSetup.SetLine("void foo();").GetResult();
+        assert.equal("/**\n * @author MY_VARIABLE\n */", result);
+    });
+
 });
