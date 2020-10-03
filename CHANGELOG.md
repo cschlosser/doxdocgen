@@ -1,6 +1,6 @@
 # Change Log
 
-## [UNRELEASED]
+## [0.8.0]
 
 ### Feature
 
