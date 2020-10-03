@@ -1,5 +1,11 @@
 # Change Log
 
+## [UNRELEASED]
+
+### Fix
+
+- Incorrect parameter name of template (#170)
+
 ## [0.7.2]
 
 ### Fix

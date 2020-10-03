@@ -48,4 +48,11 @@ suite("C++ - Template tests", () => {
         assert.equal("/**\n * @brief \n * \n * @tparam T \n * @tparam Args \n *"
             + " @param first \n * @param args \n * @return T \n */", result);
     });
+
+    test("Default template param value", () => {
+        const result = testSetup.SetLine("template <bool is_foo=false, bool is_bar =true, bool is_nothrow = true>"
+            + "\nstruct Foo;").GetResult();
+        assert.equal("/**\n * @brief \n * \n * @tparam is_foo \n * @tparam is_bar \n *"
+            + " @tparam is_nothrow \n */", result);
+    });
 });
