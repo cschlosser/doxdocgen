@@ -214,7 +214,17 @@
             "empty",
             "tparam",
             "param",
-            "return"
+            "return",
+            "custom"
+          ]
+        },
+        "doxdocgen.generic.customTags": {
+          "description": "Custom tags to be added to the generic order. One tag per line will be added. You have to specify the prefix yourself.",
+          "type": [
+            "array",
+            "string"
+          ],
+          "default": [
           ]
         },
         "doxdocgen.generic.filteredKeywords": {

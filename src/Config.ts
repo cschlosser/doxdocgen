@@ -57,6 +57,7 @@ class Generic {
     public generateSmartText: boolean = true;
     public splitCasingSmartText: boolean = true;
     public order: string[] = ["brief", "empty", "tparam", "param", "return"];
+    public customTags: string[] = [];
     public filteredKeywords: string[] = [];
 }
 
@@ -96,6 +97,7 @@ export class Config {
         values.Generic.generateSmartText = Generic.getConfiguration().get<boolean>("generateSmartText", values.Generic.generateSmartText);
         values.Generic.splitCasingSmartText = Generic.getConfiguration().get<boolean>("splitCasingSmartText", values.Generic.splitCasingSmartText);
         values.Generic.order = Generic.getConfiguration().get<string[]>("order", values.Generic.order);
+        values.Generic.customTags = Generic.getConfiguration().get<string[]>("customTags", values.Generic.customTags);
         values.Generic.filteredKeywords = Generic.getConfiguration().get<string[]>("filteredKeywords", values.Generic.filteredKeywords);
 
         return values;

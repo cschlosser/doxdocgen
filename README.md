@@ -199,8 +199,12 @@ Each of them can be configured with its own custom text and you can decide if th
     "empty",
     "tparam",
     "param",
-    "return"
+    "return",
+    "custom"
   ],
+
+  // Custom tags to be added to the generic order. One tag per line will be added. You have to specify the prefix yourself.
+  "doxdocgen.generic.customTags": [],
 
   // The template of the param Doxygen line(s) that are generated. If empty it won't get generated at all.
   "doxdocgen.generic.paramTemplate": "@param {param} ",

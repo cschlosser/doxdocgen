@@ -2,6 +2,10 @@
 
 ## [UNRELEASED]
 
+### Feature
+
+- Support for arbitrary tags (#169)
+
 ### Fix
 
 - Incorrect parameter name of template (#170)

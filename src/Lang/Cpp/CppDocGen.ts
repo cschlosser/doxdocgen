@@ -449,9 +449,17 @@ export class CppDocGen implements IDocGen {
                 case "return": {
                     if (this.cfg.Generic.returnTemplate.trim().length !== 0 && this.func.type !== null) {
                         const returnParams = this.generateReturnParams();
-                        // tslint:disable-next-line:max-line-length
-                        this.generateFromTemplate(lines, this.cfg.typeTemplateReplace, this.cfg.Generic.returnTemplate, returnParams);
+                        this.generateFromTemplate(
+                            lines,
+                            this.cfg.typeTemplateReplace,
+                            this.cfg.Generic.returnTemplate,
+                            returnParams
+                        );
                     }
+                    break;
+                }
+                case "custom": {
+                    lines.push(...this.cfg.Generic.customTags);
                     break;
                 }
                 default: {
