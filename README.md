@@ -2,11 +2,10 @@
 
 This VS Code Extensions provides Doxygen Documentation generation on the fly by starting a Doxygen comment block and pressing enter.
 
-[![Build Status](https://travis-ci.org/christophschlosser/doxdocgen.svg?branch=master)](https://travis-ci.org/christophschlosser/doxdocgen)
-[![Build status](https://ci.appveyor.com/api/projects/status/4h84071p9tv0y9r6?svg=true)](https://ci.appveyor.com/project/christophschlosser/doxdocgen)
-[![codecov](https://codecov.io/gh/christophschlosser/doxdocgen/branch/master/graph/badge.svg)](https://codecov.io/gh/christophschlosser/doxdocgen)
+[![Build Status](https://travis-ci.org/cschlosser/doxdocgen.svg?branch=master)](https://travis-ci.org/cschlosser/doxdocgen)
+[![Build status](https://ci.appveyor.com/api/projects/status/sg55990fbxtsfnvk/branch/master?svg=true)](https://ci.appveyor.com/project/cschlosser/doxdocgen)
+[![codecov](https://codecov.io/gh/cschlosser/doxdocgen/branch/master/graph/badge.svg)](https://codecov.io/gh/cschlosser/doxdocgen)
 [![Gitter chat](https://badges.gitter.im/doxdocgen.png)](https://gitter.im/doxdocgen)
-[![Average time to resolve an issue](https://isitmaintained.com/badge/resolution/christophschlosser/doxdocgen.svg)](https://isitmaintained.com/project/christophschlosser/doxdocgen "Average time to resolve an issue")
 
 ## Table of Contents
 
@@ -34,7 +33,7 @@ This VS Code Extensions provides Doxygen Documentation generation on the fly by 
 
 ![Alignment](images/alignment.gif)
 
-For how this works, see the [CHANGELOG.md](https://github.com/christophschlosser/doxdocgen/blob/master/CHANGELOG.md#alignment)
+For how this works, see the [CHANGELOG.md](https://github.com/cschlosser/doxdocgen/blob/master/CHANGELOG.md#alignment)
 
 ### Attributes
 
@@ -221,14 +220,14 @@ Each of them can be configured with its own custom text and you can decide if th
 
 ## Contributors
 
-[Christoph Schlosser](https://github.com/christophschlosser)
+[Christoph Schlosser](https://github.com/cschlosser)
 
 [Rowan Goemans](https://github.com/rowanG077)
 
 ## Known Issues
 
-[See open bugs](https://github.com/christophschlosser/doxdocgen/labels/bug)
+[See open bugs](https://github.com/cschlosser/doxdocgen/labels/bug)
 
 ## What's to come
 
-[See open features](https://github.com/christophschlosser/doxdocgen/labels/enhancement)
+[See open features](https://github.com/cschlosser/doxdocgen/labels/enhancement)
