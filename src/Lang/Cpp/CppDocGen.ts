@@ -1,4 +1,4 @@
-import * as env from 'env-var';
+import * as env from "env-var";
 import * as moment from "moment";
 import { Position, Range, Selection, TextEditor } from "vscode";
 import { IDocGen } from "../../Common/IDocGen";
@@ -480,7 +480,7 @@ export class CppDocGen implements IDocGen {
                     break;
                 }
                 case "custom": {
-                    this.cfg.Generic.customTags.forEach(element => {
+                    this.cfg.Generic.customTags.forEach((element) => {
                         lines.push(this.getEnvVars(element));
                     });
                     break;
