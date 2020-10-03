@@ -224,8 +224,7 @@
             "array",
             "string"
           ],
-          "default": [
-          ]
+          "default": []
         },
         "doxdocgen.generic.filteredKeywords": {
           "description": "Array of keywords that should be removed from the input prior to parsing.",
@@ -259,6 +258,7 @@
     "test": "npm run compile && node ./node_modules/vscode/bin/test"
   },
   "dependencies": {
+    "env-var": "^4.1.0",
     "moment": "^2.20.1",
     "opn": "^5.2.0"
   },

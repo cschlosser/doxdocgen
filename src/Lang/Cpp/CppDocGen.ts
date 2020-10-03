@@ -1,10 +1,10 @@
+import * as env from 'env-var';
 import * as moment from "moment";
-import { Position, Range, Selection, TextEditor, TextLine, WorkspaceEdit } from "vscode";
+import { Position, Range, Selection, TextEditor } from "vscode";
 import { IDocGen } from "../../Common/IDocGen";
 import { Config } from "../../Config";
 import { CppArgument } from "./CppArgument";
 import * as CppParser from "./CppParser";
-import { CppParseTree } from "./CppParseTree";
 import { CppToken, CppTokenType } from "./CppToken";
 
 export enum SpecialCase {
@@ -144,9 +144,30 @@ export class CppDocGen implements IDocGen {
         return indentedString;
     }
 
+    protected getEnvVars(replace: string): string {
+        let replacement = replace;
+        const regex = /\$\{env\:([\w|\d|_]+)\}/m;
+        let match: RegExpExecArray;
+        
+        while ((match = regex.exec(replacement)) !== null) {
+            if (match.index === regex.lastIndex) {
+                regex.lastIndex++;
+            }
+
+            const m = match[1];
+
+            const envVar: string = env.get(m, m).asString();
+
+            replacement = replacement.replace("${env:" + m + "}", envVar);
+        }
+
+        return replacement;
+    }
+
     protected getTemplatedString(replace: string, template: string, param: string): string {
         const replacedTemplate = template.replace(replace, param);
-        return this.getIndentedTemplate(replacedTemplate);
+        const replacedWithEnv = this.getEnvVars(replacedTemplate);
+        return this.getIndentedTemplate(replacedWithEnv);
     }
 
     protected getMultiTemplatedString(replace: string[], template: string, param: string[]): string {
@@ -156,7 +177,7 @@ export class CppDocGen implements IDocGen {
               template = template.replace(replace[i], param[i]);
             }
         }
-        return template;
+        return this.getEnvVars(template);
     }
 
     protected getSmartText(): string {
@@ -459,7 +480,9 @@ export class CppDocGen implements IDocGen {
                     break;
                 }
                 case "custom": {
-                    lines.push(...this.cfg.Generic.customTags);
+                    this.cfg.Generic.customTags.forEach(element => {
+                        lines.push(this.getEnvVars(element));
+                    });
                     break;
                 }
                 default: {
