@@ -148,7 +148,8 @@ export class CppDocGen implements IDocGen {
         let replacement = replace;
         const regex = /\$\{env\:([\w|\d|_]+)\}/m;
         let match: RegExpExecArray;
-        
+
+        // tslint:disable-next-line:no-conditional-assignment
         while ((match = regex.exec(replacement)) !== null) {
             if (match.index === regex.lastIndex) {
                 regex.lastIndex++;
@@ -474,14 +475,14 @@ export class CppDocGen implements IDocGen {
                             lines,
                             this.cfg.typeTemplateReplace,
                             this.cfg.Generic.returnTemplate,
-                            returnParams
+                            returnParams,
                         );
                     }
                     break;
                 }
                 case "custom": {
-                    this.cfg.Generic.customTags.forEach((element) => {
-                        lines.push(this.getEnvVars(element));
+                    this.cfg.Generic.customTags.forEach((elem) => {
+                        lines.push(this.getEnvVars(elem));
                     });
                     break;
                 }

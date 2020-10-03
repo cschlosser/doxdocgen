@@ -232,14 +232,14 @@ suite("C++ - Configuration Tests", () => {
         testSetup.cfg.Generic.order = ["custom"];
         if (process.platform === "win32") {
             testSetup.cfg.Generic.customTags = ["@author ${env:USERNAME}"];
-            let result = testSetup.SetLine("void foo();").GetResult();
+            const res = testSetup.SetLine("void foo();").GetResult();
             // USERNAME env var is different for everybody
-            assert.notEqual("/**\n * @author USERNAME\n */", result);
+            assert.notEqual("/**\n * @author USERNAME\n */", res);
         } else {
             testSetup.cfg.Generic.customTags = ["@author ${env:USER}"];
-            let result = testSetup.SetLine("void foo();").GetResult();
+            const res = testSetup.SetLine("void foo();").GetResult();
             // USER env var is different for everybody
-            assert.notEqual("/**\n * @author USER\n */", result);
+            assert.notEqual("/**\n * @author USER\n */", res);
         }
 
         testSetup.cfg.Generic.customTags = ["@author ${env:MY_VARIABLE}"];
