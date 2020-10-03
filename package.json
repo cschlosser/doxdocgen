@@ -12,24 +12,19 @@
   ],
   "badges": [
     {
-      "url": "https://travis-ci.org/christophschlosser/doxdocgen.svg?branch=master",
-      "href": "https://travis-ci.org/christophschlosser/doxdocgen",
+      "url": "https://travis-ci.org/cschlosser/doxdocgen.svg?branch=master",
+      "href": "https://travis-ci.org/cschlosser/doxdocgen",
       "description": "Continuous Integration (Travis)"
     },
     {
-      "url": "https://ci.appveyor.com/api/projects/status/4h84071p9tv0y9r6?svg=true",
-      "href": "https://ci.appveyor.com/project/christophschlosser/doxdocgen",
+      "url": "https://ci.appveyor.com/api/projects/status/sg55990fbxtsfnvk/branch/master?svg=true",
+      "href": "https://ci.appveyor.com/project/cschlosser/doxdocgen",
       "description": "Continuous Integration (AppVeyor)"
     },
     {
-      "url": "https://codecov.io/gh/christophschlosser/doxdocgen/branch/master/graph/badge.svg",
-      "href": "https://codecov.io/gh/christophschlosser/doxdocgen",
+      "url": "https://codecov.io/gh/cschlosser/doxdocgen/branch/master/graph/badge.svg",
+      "href": "https://codecov.io/gh/cschlosser/doxdocgen",
       "description": "Code coverage"
-    },
-    {
-      "url": "https://isitmaintained.com/badge/resolution/christophschlosser/doxdocgen.svg",
-      "href": "https://isitmaintained.com/project/christophschlosser/doxdocgen",
-      "description": "Response time for issues"
     }
   ],
   "activationEvents": [
@@ -224,8 +219,7 @@
             "array",
             "string"
           ],
-          "default": [
-          ]
+          "default": []
         },
         "doxdocgen.generic.filteredKeywords": {
           "description": "Array of keywords that should be removed from the input prior to parsing.",
@@ -246,10 +240,10 @@
   "main": "./out/extension",
   "repository": {
     "type": "git",
-    "url": "https://github.com/christophschlosser/doxdocgen.git"
+    "url": "https://github.com/cschlosser/doxdocgen.git"
   },
   "bugs": {
-    "url": "https://github.com/christophschlosser/doxdocgen/labels/bug"
+    "url": "https://github.com/cschlosser/doxdocgen/labels/bug"
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
@@ -273,6 +267,7 @@
     "remap-istanbul": "^0.13.0",
     "tslint": "^5.20.0",
     "typescript": "^2.7.2",
-    "vscode": "^1.1.36"
+    "vscode": "^1.1.36",
+    "yargs-parser": ">=13.1.2"
   }
 }
