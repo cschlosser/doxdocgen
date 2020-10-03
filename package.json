@@ -219,8 +219,7 @@
             "array",
             "string"
           ],
-          "default": [
-          ]
+          "default": []
         },
         "doxdocgen.generic.filteredKeywords": {
           "description": "Array of keywords that should be removed from the input prior to parsing.",
@@ -268,6 +267,7 @@
     "remap-istanbul": "^0.13.0",
     "tslint": "^5.20.0",
     "typescript": "^2.7.2",
-    "vscode": "^1.1.36"
+    "vscode": "^1.1.36",
+    "yargs-parser": ">=13.1.2"
   }
 }
