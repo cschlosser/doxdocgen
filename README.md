@@ -6,7 +6,6 @@ This VS Code Extensions provides Doxygen Documentation generation on the fly by 
 [![Build status](https://ci.appveyor.com/api/projects/status/sg55990fbxtsfnvk/branch/master?svg=true)](https://ci.appveyor.com/project/cschlosser/doxdocgen)
 [![codecov](https://codecov.io/gh/cschlosser/doxdocgen/branch/master/graph/badge.svg)](https://codecov.io/gh/cschlosser/doxdocgen)
 [![Gitter chat](https://badges.gitter.im/doxdocgen.png)](https://gitter.im/doxdocgen)
-[![Average time to resolve an issue](https://isitmaintained.com/badge/resolution/cschlosserc/doxdocgen.svg)](https://isitmaintained.com/project/cschlosser/doxdocgen "Average time to resolve an issue")
 
 ## Table of Contents
 
