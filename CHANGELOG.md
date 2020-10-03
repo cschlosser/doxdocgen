@@ -6,6 +6,10 @@
 
 - Support for arbitrary tags (#169)
 
+### Fix
+
+- Incorrect parameter name of template (#170)
+
 ## [0.7.2]
 
 ### Fix
