@@ -44,6 +44,7 @@ jobs:
       script:
         - npm install vsce
         - vsce package --no-yarn
+        - ls -alh
       os: linux
       deploy:
         - provider: releases
