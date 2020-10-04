@@ -1,10 +1,18 @@
 # Change Log
 
+## [0.8.1]
+
+### Revert
+
+- Replace environment variables in templated strings. If no environment variable can be found the name of the variable will be inserted (#110)
+
 ## [0.8.0]
 
 ### Feature
 
 - Support for arbitrary tags (#169)
+
+- Replace environment variables in templated strings. If no environment variable can be found the name of the variable will be inserted (#110)
 
 ### Fix
 
