@@ -42,7 +42,7 @@ jobs:
       os: osx
     - stage: release
       script:
-        - npm install vsce
+        - npm install vsce@1.31.0
         - vsce package
       os: linux
       deploy:
