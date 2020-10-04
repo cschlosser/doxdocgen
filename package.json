@@ -2,7 +2,7 @@
   "name": "doxdocgen",
   "displayName": "Doxygen Documentation Generator",
   "description": "Let me generate Doxygen documentation from your source code for you.",
-  "version": "0.8.2",
+  "version": "1.0.0",
   "publisher": "cschlosser",
   "engines": {
     "vscode": "^1.37.0"
@@ -253,6 +253,7 @@
     "test": "npm run compile && node ./node_modules/vscode/bin/test"
   },
   "dependencies": {
+    "env-var": "^4.1.0",
     "moment": "^2.20.1",
     "opn": "^5.2.0"
   },
