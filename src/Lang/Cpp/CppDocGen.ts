@@ -1,10 +1,10 @@
-import * as env from "env-var";
 import * as moment from "moment";
-import { Position, Range, Selection, TextEditor } from "vscode";
+import { Position, Range, Selection, TextEditor, TextLine, WorkspaceEdit } from "vscode";
 import { IDocGen } from "../../Common/IDocGen";
 import { Config } from "../../Config";
 import { CppArgument } from "./CppArgument";
 import * as CppParser from "./CppParser";
+import { CppParseTree } from "./CppParseTree";
 import { CppToken, CppTokenType } from "./CppToken";
 
 export enum SpecialCase {
@@ -144,31 +144,9 @@ export class CppDocGen implements IDocGen {
         return indentedString;
     }
 
-    protected getEnvVars(replace: string): string {
-        let replacement = replace;
-        const regex = /\$\{env\:([\w|\d|_]+)\}/m;
-        let match: RegExpExecArray;
-
-        // tslint:disable-next-line:no-conditional-assignment
-        while ((match = regex.exec(replacement)) !== null) {
-            if (match.index === regex.lastIndex) {
-                regex.lastIndex++;
-            }
-
-            const m = match[1];
-
-            const envVar: string = env.get(m, m).asString();
-
-            replacement = replacement.replace("${env:" + m + "}", envVar);
-        }
-
-        return replacement;
-    }
-
     protected getTemplatedString(replace: string, template: string, param: string): string {
         const replacedTemplate = template.replace(replace, param);
-        const replacedWithEnv = this.getEnvVars(replacedTemplate);
-        return this.getIndentedTemplate(replacedWithEnv);
+        return this.getIndentedTemplate(replacedTemplate);
     }
 
     protected getMultiTemplatedString(replace: string[], template: string, param: string[]): string {
@@ -178,7 +156,7 @@ export class CppDocGen implements IDocGen {
               template = template.replace(replace[i], param[i]);
             }
         }
-        return this.getEnvVars(template);
+        return template;
     }
 
     protected getSmartText(): string {
@@ -475,15 +453,13 @@ export class CppDocGen implements IDocGen {
                             lines,
                             this.cfg.typeTemplateReplace,
                             this.cfg.Generic.returnTemplate,
-                            returnParams,
+                            returnParams
                         );
                     }
                     break;
                 }
                 case "custom": {
-                    this.cfg.Generic.customTags.forEach((elem) => {
-                        lines.push(this.getEnvVars(elem));
-                    });
+                    lines.push(...this.cfg.Generic.customTags);
                     break;
                 }
                 default: {
