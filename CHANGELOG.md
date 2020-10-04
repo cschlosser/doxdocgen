@@ -1,5 +1,15 @@
 # Change Log
 
+## [1.0.0]
+
+### Revert
+
+- Revert reverting Replace environment variables in templated strings. If no environment variable can be found the name of the variable will be inserted (#110)
+
+### Other
+
+- vsce packaging is forcing yarn even if no yarn config exists. Override this behavior now to use npm.
+
 ## [0.8.2]
 
 ### Other

@@ -42,8 +42,8 @@ jobs:
       os: osx
     - stage: release
       script:
-        - npm install vsce@1.31.0
-        - vsce package
+        - npm install vsce
+        - vsce package --no-yarn
       os: linux
       deploy:
         - provider: releases
@@ -53,7 +53,7 @@ jobs:
           on:
             tags: true
         - provider: script
-          script: vsce publish -p $VSMARKETPLACE_ACCESS_TOKEN
+          script: vsce publish --no-yarn -p $VSMARKETPLACE_ACCESS_TOKEN
           skip_cleanup: true
           on:
             tags: true
