@@ -1,5 +1,11 @@
 # Change Log
 
+## [0.8.2]
+
+### Other
+
+- Package with older version of vsce
+
 ## [0.8.1]
 
 ### Revert

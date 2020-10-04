@@ -5,8 +5,8 @@ import * as vscode from "vscode";
 import CodeParserController from "./CodeParserController";
 
 enum Version {
-    CURRENT = "0.8.1",
-    PREVIOUS = "0.8.0",
+    CURRENT = "0.8.2",
+    PREVIOUS = "0.8.1",
     KEY = "doxdocgen_version",
 }
 
