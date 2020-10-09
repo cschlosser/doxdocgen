@@ -38,6 +38,19 @@ suite("File Description Tests", () => {
             " * @date " + date + "\n */", result);
     });
 
+    test("File description in first line", () => {
+        const result = testSetup.SetLines([
+            "/**",
+            "",
+            "",
+            "struct T {",
+            "   int i;",
+            "};",
+            ], false).GetResult();
+        assert.equal("/**\n * @brief \n * \n * @file MockDocument.h\n * @author your name (you@domain.com)\n" +
+            " * @date " + date + "\n */", result);
+    });
+
     test("Don't generate non existing commands", () => {
         testSetup.cfg.File.fileOrder = ["dates"];
         const result = testSetup.SetLine("").GetResult();
