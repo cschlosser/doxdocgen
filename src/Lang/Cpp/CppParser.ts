@@ -430,8 +430,10 @@ export default class CppParser implements ICodeParser {
                 return "";
             } else if (nextLine.line === 2) { // Check if there where two empty lines trailing the file
                 if (this.activeEditor.document.lineAt(0).text === this.cfg.C.firstLine
-                    && this.activeEditor.document.lineAt(1).text === this.cfg.C.commentPrefix
-                    && this.activeEditor.document.lineAt(2).text === "") {
+                    && (
+                        this.activeEditor.document.lineAt(1).text === this.cfg.C.commentPrefix
+                        || this.activeEditor.document.lineAt(1).text.trim() === ""
+                     ) && this.activeEditor.document.lineAt(2).text.trim() === "") {
                         this.commentType = CommentType.file;
                         return "";
                 }
