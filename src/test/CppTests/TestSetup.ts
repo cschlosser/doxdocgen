@@ -26,17 +26,22 @@ export default class TestSetup {
         return this.SetLines([method]);
     }
 
-    public SetLines(lines: string[]): TestSetup {
+    public SetLines(lines: string[], addIndent = true): TestSetup {
         let mockLines: MockLine[];
 
         // Add two empty lines with just the indentation
         // since one is for the triggersequence line.
         // And the other is if the next empty line.
         if (lines.length > 0) {
-            const indent: string = lines[0].match("^\\s*")[0];
+            if (addIndent === true) {
+                const indent: string = lines[0].match("^\\s*")[0];
 
-            mockLines = [indent, indent].concat(lines)
-                .map((l) => new MockLine(l));
+                mockLines = [indent, indent].concat(lines)
+                    .map((l) => new MockLine(l));
+            } else {
+                mockLines = lines
+                    .map((l) => new MockLine(l));
+            }
         }
 
         const selection: MockSelection =  new MockSelection(new MockPosition(this.firstLine, 0));
