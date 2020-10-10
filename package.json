@@ -2,7 +2,7 @@
   "name": "doxdocgen",
   "displayName": "Doxygen Documentation Generator",
   "description": "Let me generate Doxygen documentation from your source code for you.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "publisher": "cschlosser",
   "engines": {
     "vscode": "^1.37.0"

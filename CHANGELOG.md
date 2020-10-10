@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.0.1]
+
+### Fix
+
+- Files without includes don't trigger the autocomplete for file description (#141) (#183)
+  Thanks to @to-s
+
 ## [1.0.0]
 
 ### Revert
