@@ -215,7 +215,13 @@ Each of them can be configured with its own custom text and you can decide if th
   "doxdocgen.generic.splitCasingSmartText": true,
 
   // Array of keywords that should be removed from the input prior to parsing.
-  "doxdocgen.generic.filteredKeywords": []
+  "doxdocgen.generic.filteredKeywords": [],
+
+  // Substitute {author} with git config --get user.name.
+  "doxdocgen.generic.useGitUserName": false,
+
+  // Substitute {email} with git config --get user.email.
+  "doxdocgen.generic.useGitUserEmail": false
 ```
 
 ## Contributors
