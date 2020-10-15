@@ -1,4 +1,5 @@
 import { workspace } from "vscode";
+import GitConfig from "./GitConfig";
 // tslint:disable:max-classes-per-file
 // tslint:disable:max-line-length
 
@@ -59,10 +60,12 @@ class Generic {
     public order: string[] = ["brief", "empty", "tparam", "param", "return"];
     public customTags: string[] = [];
     public filteredKeywords: string[] = [];
+    public useGitUserName: boolean = false;
+    public useGitUserEmail: boolean = false;
 }
 
 export class Config {
-    public static ImportFromSettings(): Config {
+    public static ImportFromSettings(gitConfig: GitConfig): Config {
         const values: Config = new Config();
 
         values.C.triggerSequence = C.getConfiguration().get<string>("triggerSequence", values.C.triggerSequence);
@@ -99,6 +102,18 @@ export class Config {
         values.Generic.order = Generic.getConfiguration().get<string[]>("order", values.Generic.order);
         values.Generic.customTags = Generic.getConfiguration().get<string[]>("customTags", values.Generic.customTags);
         values.Generic.filteredKeywords = Generic.getConfiguration().get<string[]>("filteredKeywords", values.Generic.filteredKeywords);
+        values.Generic.useGitUserName = Generic.getConfiguration().get<boolean>("useGitUserName", values.Generic.useGitUserName);
+        values.Generic.useGitUserEmail = Generic.getConfiguration().get<boolean>("useGitUserEmail", values.Generic.useGitUserEmail);
+
+        // Check if set to use the git username
+        if (values.Generic.useGitUserName === true) {
+            values.Generic.authorName = gitConfig.UserName.toString();
+        }
+
+        // Check if set to use the git email
+        if (values.Generic.useGitUserEmail === true) {
+            values.Generic.authorEmail = gitConfig.UserEmail.toString();
+        }
 
         return values;
     }

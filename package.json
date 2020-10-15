@@ -225,6 +225,16 @@
           "description": "Array of keywords that should be removed from the input prior to parsing.",
           "type": "array",
           "default": []
+        },
+        "doxdocgen.generic.useGitUserName": {
+          "description": "Substitute {author} with git config --get user.name.",
+          "type": "boolean",
+          "default": false
+        },
+        "doxdocgen.generic.useGitUserEmail": {
+          "description": "Substitute {email} with git config --get user.email.",
+          "type": "boolean",
+          "default": false
         }
       }
     }
@@ -253,6 +263,7 @@
     "test": "npm run compile && node ./node_modules/vscode/bin/test"
   },
   "dependencies": {
+    "simple-git": "^2.20.1",    
     "env-var": "^4.1.0",
     "moment": "^2.20.1",
     "opn": "^5.2.0"

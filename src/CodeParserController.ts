@@ -10,6 +10,7 @@ import {
 } from "vscode";
 import CodeParser from "./Common/ICodeParser";
 import { Config } from "./Config";
+import GitConfig from "./GitConfig";
 import CppParser from "./Lang/Cpp/CppParser";
 /**
  *
@@ -21,6 +22,7 @@ import CppParser from "./Lang/Cpp/CppParser";
 export default class CodeParserController {
     private disposable: Disposable;
     private cfg: Config;
+    private gitConfig: GitConfig;
 
     /**
      * Creates an instance of CodeParserController
@@ -29,12 +31,13 @@ export default class CodeParserController {
      */
     public constructor() {
         const subscriptions: Disposable[] = [];
+        this.gitConfig = new GitConfig();
 
         // Hand off the event to the parser if a valid parser is found
         workspace.onDidChangeTextDocument((event) => {
             const activeEditor: TextEditor = window.activeTextEditor;
             if (activeEditor && event.document === activeEditor.document) {
-                this.cfg = Config.ImportFromSettings();
+                this.cfg = Config.ImportFromSettings(this.gitConfig);
                 this.onEvent(activeEditor, event.contentChanges[0]);
             }
         }, this, subscriptions);
