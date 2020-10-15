@@ -37,7 +37,7 @@ export default class CodeParserController {
         workspace.onDidChangeTextDocument((event) => {
             const activeEditor: TextEditor = window.activeTextEditor;
             if (activeEditor && event.document === activeEditor.document) {
-                this.cfg = Config.ImportFromSettings(this.gitConfig);
+                this.cfg = Config.ImportFromSettings();
                 this.onEvent(activeEditor, event.contentChanges[0]);
             }
         }, this, subscriptions);
@@ -135,6 +135,6 @@ export default class CodeParserController {
         const nextLineText: string = window.activeTextEditor.document.lineAt(startReplace.line + 1).text;
         const endReplace = new Position(currentPos.line + 1, nextLineText.length);
 
-        parser.Parse(activeEditor).GenerateDoc(new Range(startReplace, endReplace));
+        parser.Parse(activeEditor).GenerateDoc(new Range(startReplace, endReplace), this.gitConfig);
     }
 }
