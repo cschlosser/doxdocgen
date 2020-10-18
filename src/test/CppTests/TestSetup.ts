@@ -15,8 +15,8 @@ import MockSelection from "../tools/MockSelection";
 export default class TestSetup {
     public cfg: Config;
     public firstLine: number;
+    public gitConfig: GitConfig;
     private editor: MockEditor;
-    private gitConfig: GitConfig;
 
     constructor(method: string) {
         this.gitConfig = new GitConfig();
