@@ -12,11 +12,19 @@ export default class GitConfig {
 
     /** git config --get user.name */
     get UserName() {
-        return this.gitConfig["user.name"];
+        if (this.gitConfig) {
+            return this.gitConfig["user.name"];
+        } else {
+            return "";
+        }
     }
 
     /** git config --get user.email */
     get UserEmail() {
-        return this.gitConfig["user.email"];
+        if (this.gitConfig) {
+            return this.gitConfig["user.email"];
+        } else {
+            return "";
+        }
     }
 }
