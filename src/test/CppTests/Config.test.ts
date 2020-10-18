@@ -252,7 +252,7 @@ suite("C++ - Configuration Tests", () => {
         testSetup.cfg.Generic.useGitUserName = true;
         const result = testSetup.SetLine("").GetResult();
         assert.strictEqual("/**\n * @brief \n * \n * @file MockDocument.h\n * @author " +
-            testSetup.gitConfig.UserName.toString() +
+            testSetup.gitConfig.UserName +
             " (you@domain.com)\n * @date " + moment().format("YYYY-MM-DD") + "\n */", result);
     });
 
@@ -261,7 +261,7 @@ suite("C++ - Configuration Tests", () => {
         testSetup.cfg.Generic.useGitUserEmail = true;
         const result = testSetup.SetLine("").GetResult();
         assert.strictEqual("/**\n * @brief \n * \n * @file MockDocument.h\n * @author your name (" +
-            testSetup.gitConfig.UserEmail.toString() +
+            testSetup.gitConfig.UserEmail +
             ")\n * @date " + moment().format("YYYY-MM-DD") + "\n */", result);
     });
 
@@ -271,7 +271,7 @@ suite("C++ - Configuration Tests", () => {
         testSetup.cfg.Generic.useGitUserEmail = true;
         const result = testSetup.SetLine("").GetResult();
         assert.strictEqual("/**\n * @brief \n * \n * @file MockDocument.h\n * @author " +
-            testSetup.gitConfig.UserName.toString() + " (" + testSetup.gitConfig.UserEmail.toString() +
+            testSetup.gitConfig.UserName + " (" + testSetup.gitConfig.UserEmail+
             ")\n * @date " + moment().format("YYYY-MM-DD") + "\n */", result);
     });
 

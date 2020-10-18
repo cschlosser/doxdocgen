@@ -300,12 +300,12 @@ export class CppDocGen implements IDocGen {
 
         // Check if set to use the git username
         if (this.cfg.Generic.useGitUserName === true) {
-            authorName = this.gitConfig.UserName.toString();
+            authorName = this.gitConfig.UserName;
         }
 
         // Check if set to use the git email
         if (this.cfg.Generic.useGitUserEmail === true) {
-            authorEmail = this.gitConfig.UserEmail.toString();
+            authorEmail = this.gitConfig.UserEmail;
         }
 
         if (this.cfg.Generic.authorTag.trim().length !== 0) {
