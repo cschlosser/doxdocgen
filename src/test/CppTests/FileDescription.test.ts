@@ -22,19 +22,19 @@ suite("File Description Tests", () => {
     // Tests
     test("#include on next line", () => {
         const result = testSetup.SetLine("#include <iostream>").GetResult();
-        assert.equal("/**\n * @brief \n * \n * @file MockDocument.h\n * @author your name (you@domain.com)\n" +
+        assert.strictEqual("/**\n * @brief \n * \n * @file MockDocument.h\n * @author your name (you@domain.com)\n" +
             " * @date " + date + "\n */", result);
     });
 
     test("#pragma on next line", () => {
         const result = testSetup.SetLine("#pragma Foo").GetResult();
-        assert.equal("/**\n * @brief \n * \n * @file MockDocument.h\n * @author your name (you@domain.com)\n" +
+        assert.strictEqual("/**\n * @brief \n * \n * @file MockDocument.h\n * @author your name (you@domain.com)\n" +
             " * @date " + date + "\n */", result);
     });
 
     test("On first line of document", () => {
         const result = testSetup.SetLine("").GetResult();
-        assert.equal("/**\n * @brief \n * \n * @file MockDocument.h\n * @author your name (you@domain.com)\n" +
+        assert.strictEqual("/**\n * @brief \n * \n * @file MockDocument.h\n * @author your name (you@domain.com)\n" +
             " * @date " + date + "\n */", result);
     });
 
@@ -47,32 +47,32 @@ suite("File Description Tests", () => {
             "   int i;",
             "};",
             ], false).GetResult();
-        assert.equal("/**\n * @brief \n * \n * @file MockDocument.h\n * @author your name (you@domain.com)\n" +
+        assert.strictEqual("/**\n * @brief \n * \n * @file MockDocument.h\n * @author your name (you@domain.com)\n" +
             " * @date " + date + "\n */", result);
     });
 
     test("Don't generate non existing commands", () => {
         testSetup.cfg.File.fileOrder = ["dates"];
         const result = testSetup.SetLine("").GetResult();
-        assert.equal("/**\n */", result);
+        assert.strictEqual("/**\n */", result);
     });
 
     test("version block", () => {
         testSetup.cfg.File.fileOrder = ["version"];
         const result = testSetup.SetLine("").GetResult();
-        assert.equal("/**\n * @version 0.1\n */", result);
+        assert.strictEqual("/**\n * @version 0.1\n */", result);
     });
 
     test("Copyright block", () => {
         testSetup.cfg.File.fileOrder = ["copyright"];
         const result = testSetup.SetLine("").GetResult();
-        assert.equal("/**\n * @copyright Copyright (c) " + year + "\n */", result);
+        assert.strictEqual("/**\n * @copyright Copyright (c) " + year + "\n */", result);
     });
 
     test("version block", () => {
         testSetup.cfg.File.fileOrder = ["version"];
         const result = testSetup.SetLine("").GetResult();
-        assert.equal("/**\n * @version 0.1\n */", result);
+        assert.strictEqual("/**\n * @version 0.1\n */", result);
     });
 
     test("custom block", () => {
@@ -80,7 +80,7 @@ suite("File Description Tests", () => {
         testSetup.cfg.File.customTag = ["First Line", "{year} Year Line", "{date} Date Line",
                                         "{author} Author Line", "{email} Email Line"];
         const result = testSetup.SetLine("").GetResult();
-        assert.equal("/**\n * First Line\n * " + year + " Year Line\n * " + date + " Date Line\n" +
+        assert.strictEqual("/**\n * First Line\n * " + year + " Year Line\n * " + date + " Date Line\n" +
             " * your name Author Line\n * you@domain.com Email Line\n */", result);
     });
 });
