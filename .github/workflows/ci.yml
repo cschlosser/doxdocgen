@@ -43,3 +43,20 @@ jobs:
 
       - name: Compile
         run: npm run compile
+  
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '6.x'
+      - run: npm install
+
+      - name: Test
+        run: npm run test
