@@ -18,50 +18,50 @@ suite("C++ - Attributes Tests", () => {
     // Tests
     test("Attributes on parameter", () => {
         const result = testSetup.SetLine("int foo([[maybe_unused]] int a, [[maybe_unused]]double& b);").GetResult();
-        assert.equal("/**\n * @brief \n * \n * @param a \n * @param b \n * @return int \n */", result);
+        assert.strictEqual("/**\n * @brief \n * \n * @param a \n * @param b \n * @return int \n */", result);
     });
 
     test("Attributes on function", () => {
         const result = testSetup.SetLine("[[nodiscard]] int foo(int a, double& b);").GetResult();
-        assert.equal("/**\n * @brief \n * \n * @param a \n * @param b \n * @return int \n */", result);
+        assert.strictEqual("/**\n * @brief \n * \n * @param a \n * @param b \n * @return int \n */", result);
     });
 
     test("Multiple attributes on parameter", () => {
         const result = testSetup.SetLine("int foo([[maybe_unused]] [[carries_dependency]]"
             + " int a, double& b);").GetResult();
-        assert.equal("/**\n * @brief \n * \n * @param a \n * @param b \n * @return int \n */", result);
+        assert.strictEqual("/**\n * @brief \n * \n * @param a \n * @param b \n * @return int \n */", result);
     });
 
     test("Multiple attributes on function", () => {
         const result = testSetup.SetLine("[[nodiscard]][[deprecated(\"old\")]] int foo(int a, double& b);").GetResult();
-        assert.equal("/**\n * @brief \n * \n * @param a \n * @param b \n * @return int \n */", result);
+        assert.strictEqual("/**\n * @brief \n * \n * @param a \n * @param b \n * @return int \n */", result);
     });
 
     test("Specifier and attribute on class", () => {
         const result = testSetup.SetLine("class [[nodiscard]] alignas(8) Matrix {").GetResult();
-        assert.equal("/**\n * @brief \n * \n */", result);
+        assert.strictEqual("/**\n * @brief \n * \n */", result);
     });
 
     test("Specifier and attribute on struct", () => {
         const result = testSetup.SetLine("struct [[nodiscard]] alignas(8) Matrix {").GetResult();
-        assert.equal("/**\n * @brief \n * \n */", result);
+        assert.strictEqual("/**\n * @brief \n * \n */", result);
     });
 
     test("Noexcept on function", () => {
         let result = testSetup.SetLine("constexpr int foo(int a, double& b) noexcept(true);").GetResult();
-        assert.equal("/**\n * @brief \n * \n * @param a \n * @param b \n * @return constexpr int \n */", result);
+        assert.strictEqual("/**\n * @brief \n * \n * @param a \n * @param b \n * @return constexpr int \n */", result);
 
         result = testSetup.SetLine("constexpr int foo(int a, double& b) noexcept;").GetResult();
-        assert.equal("/**\n * @brief \n * \n * @param a \n * @param b \n * @return constexpr int \n */", result);
+        assert.strictEqual("/**\n * @brief \n * \n * @param a \n * @param b \n * @return constexpr int \n */", result);
     });
 
     test("Throw on function", () => {
         const result = testSetup.SetLine("constexpr int foo(int a, double& b) throw(std::except);").GetResult();
-        assert.equal("/**\n * @brief \n * \n * @param a \n * @param b \n * @return constexpr int \n */", result);
+        assert.strictEqual("/**\n * @brief \n * \n * @param a \n * @param b \n * @return constexpr int \n */", result);
     });
 
     test("Newline in function", () => {
         const result = testSetup.SetLines(["static void ResetActionState( BOOL sendNAK )", "{"]).GetResult();
-        assert.equal("/**\n * @brief \n * \n * @param sendNAK \n */", result);
+        assert.strictEqual("/**\n * @brief \n * \n * @param sendNAK \n */", result);
     });
 });
