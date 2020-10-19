@@ -48,7 +48,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        # disable ubuntu-latest until https://github.com/microsoft/vscode/issues/106569 is fixed
+        os: [macos-latest, windows-latest]
     steps:
       - uses: actions/checkout@v2
       
