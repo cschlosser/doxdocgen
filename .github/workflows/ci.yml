@@ -24,6 +24,7 @@ jobs:
           node-version: '6.x'
       - run: npm install
 
-      # Runs a single command using the runners shell
-      - name: Lint typescript files
-        run: tslint -c tslint.json 'src/**/*.ts'
+      uses: mooyoul/tslint-actions@v1.1.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          pattern: 'src/**/*.ts'
