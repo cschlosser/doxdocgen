@@ -61,3 +61,7 @@ jobs:
 
       - name: Test
         run: npm run test
+      
+      - name: Publish coverage
+        run: ./publish_coverage.sh
+        if: matrix.os == 'macOS-latest'
