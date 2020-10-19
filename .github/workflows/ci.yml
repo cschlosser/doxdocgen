@@ -41,5 +41,5 @@ jobs:
           node-version: '6.x'
       - run: npm install
 
-      - name: Lint
+      - name: Compile
         run: npm run compile
