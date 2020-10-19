@@ -23,6 +23,7 @@ suite("C++ - Trailing returns tests", () => {
 
     test("Trailing return with decltype", () => {
         const result = testSetup.SetLine("auto foo(int a, double b) -> decltype(a + b);").GetResult();
+        // tslint:disable-next-line: max-line-length
         assert.strictEqual("/**\n * @brief \n * \n * @param a \n * @param b \n * @return decltype(a + b) \n */", result);
     });
 

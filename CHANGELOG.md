@@ -1,5 +1,16 @@
 # Change Log
 
+## [1.1.0]
+
+### Feature
+
+- Substitute author and email by git config (#186) (#182)
+  Thanks to @to-s
+
+### Other
+
+- Update to Typescript 3.8.3
+
 ## [1.0.1]
 
 ### Fix
