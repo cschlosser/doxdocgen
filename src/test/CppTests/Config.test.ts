@@ -247,4 +247,32 @@ suite("C++ - Configuration Tests", () => {
         assert.strictEqual("/**\n * @author MY_VARIABLE\n */", result);
     });
 
+    test("Use git user.name as author", () => {
+        testSetup.cfg = new Config();
+        testSetup.cfg.Generic.useGitUserName = true;
+        const result = testSetup.SetLine("").GetResult();
+        assert.strictEqual("/**\n * @brief \n * \n * @file MockDocument.h\n * @author " +
+            testSetup.gitConfig.UserName +
+            " (you@domain.com)\n * @date " + moment().format("YYYY-MM-DD") + "\n */", result);
+    });
+
+    test("Use git user.email as email", () => {
+        testSetup.cfg = new Config();
+        testSetup.cfg.Generic.useGitUserEmail = true;
+        const result = testSetup.SetLine("").GetResult();
+        assert.strictEqual("/**\n * @brief \n * \n * @file MockDocument.h\n * @author your name (" +
+            testSetup.gitConfig.UserEmail +
+            ")\n * @date " + moment().format("YYYY-MM-DD") + "\n */", result);
+    });
+
+    test("Substitute author and email by git config", () => {
+        testSetup.cfg = new Config();
+        testSetup.cfg.Generic.useGitUserName = true;
+        testSetup.cfg.Generic.useGitUserEmail = true;
+        const result = testSetup.SetLine("").GetResult();
+        assert.strictEqual("/**\n * @brief \n * \n * @file MockDocument.h\n * @author " +
+            testSetup.gitConfig.UserName + " (" + testSetup.gitConfig.UserEmail+
+            ")\n * @date " + moment().format("YYYY-MM-DD") + "\n */", result);
+    });
+
 });

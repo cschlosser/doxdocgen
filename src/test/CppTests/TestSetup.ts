@@ -4,6 +4,7 @@ import CodeParser from "../../Common/ICodeParser";
 import { IDocGen } from "../../Common/IDocGen";
 import { Config } from "../../Config";
 import * as myExtension from "../../extension";
+import GitConfig from "../../GitConfig";
 import CppParser from "../../Lang/Cpp/CppParser";
 import MockDocument from "../tools/MockDocument";
 import MockEditor from "../tools/MockEditor";
@@ -14,9 +15,11 @@ import MockSelection from "../tools/MockSelection";
 export default class TestSetup {
     public cfg: Config;
     public firstLine: number;
+    public gitConfig: GitConfig;
     private editor: MockEditor;
 
     constructor(method: string) {
+        this.gitConfig = new GitConfig();
         this.cfg = new Config();
         this.firstLine = 0;
         this.SetLine(method);
@@ -58,7 +61,7 @@ export default class TestSetup {
 
         const gen: IDocGen = parser.Parse(this.editor);
         // tslint:disable-next-line:max-line-length
-        gen.GenerateDoc(new vscode.Range(new vscode.Position(this.firstLine, 0), new vscode.Position(this.firstLine, 0)));
+        gen.GenerateDoc(new vscode.Range(new vscode.Position(this.firstLine, 0), new vscode.Position(this.firstLine, 0)), this.gitConfig);
 
         return this.editor.editBuilder.text;
     }
