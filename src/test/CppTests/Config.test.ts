@@ -271,7 +271,7 @@ suite("C++ - Configuration Tests", () => {
         testSetup.cfg.Generic.useGitUserEmail = true;
         const result = testSetup.SetLine("").GetResult();
         assert.strictEqual("/**\n * @brief \n * \n * @file MockDocument.h\n * @author " +
-            testSetup.gitConfig.UserName + " (" + testSetup.gitConfig.UserEmail+
+            testSetup.gitConfig.UserName + " (" + testSetup.gitConfig.UserEmail +
             ")\n * @date " + moment().format("YYYY-MM-DD") + "\n */", result);
     });
 
