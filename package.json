@@ -280,7 +280,6 @@
     "minimist": ">=1.2.2",
     "mocha": "^6.2.1",
     "nyc": "^15.1.0",
-    "remap-istanbul": "^0.13.0",
     "source-map-support": "^0.5.19",
     "ts-node": "^9.0.0",
     "tslint": "^5.20.0",
