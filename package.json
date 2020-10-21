@@ -260,6 +260,7 @@
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "test": "npm run compile && node ./out/test/runTests.js",
+    "coverage": "npm run compile && COVERAGE=true nyc node ./out/test/runTests.js",
     "lint": "tslint -c tslint.json 'src/**/*.ts'"
   },
   "dependencies": {
@@ -269,15 +270,19 @@
     "opn": "^5.2.0"
   },
   "devDependencies": {
+    "@istanbuljs/nyc-config-typescript": "^1.0.1",
     "@types/mocha": "^5.2.7",
     "@types/node": "12.7.1",
     "@types/vscode": "1.37",
     "decache": "^4.5.1",
+    "glob": "^7.1.6",
     "handlebars": "^4.7.3",
-    "istanbul": "^0.4.5",
     "minimist": ">=1.2.2",
     "mocha": "^6.2.1",
+    "nyc": "^15.1.0",
     "remap-istanbul": "^0.13.0",
+    "source-map-support": "^0.5.19",
+    "ts-node": "^9.0.0",
     "tslint": "^5.20.0",
     "typescript": "^3.8.3",
     "vscode-test": "^1.3.0",
