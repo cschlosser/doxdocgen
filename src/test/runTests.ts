@@ -6,13 +6,14 @@ function setupCoverage() {
   const nyc = new NYC({
     all: true,
     cwd: path.join(__dirname, "..", "..", ".."),
-    exclude: ["src/test/**", ".vscode-test/**", "**/node_modules/**"],
+    exclude: ["**"],
     hookRequire: true,
     hookRunInContext: true,
     hookRunInThisContext: true,
+    include: ["**/Lang/**"],
     instrument: true,
     reportDir: path.join(__dirname, "..", "..", "coverage"),
-    reporter: ["json", "html", "lcov"],
+    reporter: ["html", "lcov"],
   });
 
   nyc.reset();
