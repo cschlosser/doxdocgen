@@ -67,5 +67,9 @@ jobs:
         if: matrix.os == 'macOS-latest'
 
       - name: Publish Coverage
-        run: ./publish_coverage.sh
+        uses: codecov/codecov-action@v1
         if: matrix.os == 'macOS-latest'
+        with:
+          directory: ./coverage
+          fail_ci_if_error: true # optional (default = false)
+          verbose: true # optional (default = false)
