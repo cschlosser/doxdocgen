@@ -72,9 +72,8 @@ jobs:
         if: matrix.os == 'macOS-latest'
 
       - name: Publish Coverage
-        uses: codecov/codecov-action@v1
-        if: matrix.os == 'macOS-latest'
+        uses: coverallsapp/github-action@v1.1.2
         with:
-          directory: ./coverage
-          fail_ci_if_error: true # optional (default = false)
-          verbose: false # optional (default = false)
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: ./coverage/lcov.info
+        if: matrix.os == 'macOS-latest'
