@@ -72,7 +72,8 @@ jobs:
         if: matrix.os == 'macOS-latest'
 
       - name: Publish Coverage
-        uses: paambaati/codeclimate-action@v2.7.4
-        env:
-          CC_TEST_REPORTER_ID: 9f2f3f3528671c8579b36f518539a09d94e9b6f560911d6dab94b0b5aa90e9fd
+        uses: codacy/codacy-coverage-reporter-action@0.2.0
+        with:
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          coverage-reports: ./coverage/cobertura-coverage.xml
         if: matrix.os == 'macOS-latest'
