@@ -13,7 +13,7 @@ function setupCoverage() {
     include: ["**/Lang/**"],
     instrument: true,
     reportDir: path.join(__dirname, "..", "..", "coverage"),
-    reporter: ["html", "cobertura", "json", "lcovonly"],
+    reporter: ["cobertura", "json"],
   });
 
   nyc.reset();
