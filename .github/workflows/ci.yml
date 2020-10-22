@@ -72,7 +72,7 @@ jobs:
         if: matrix.os == 'macOS-latest'
 
       - name: Publish Coverage
-        uses: coverallsapp/github-action@v1.1.2
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+        uses: paambaati/codeclimate-action@v2.2.4
+        env:
+          CC_TEST_REPORTER_ID: 9f2f3f3528671c8579b36f518539a09d94e9b6f560911d6dab94b0b5aa90e9fd
         if: matrix.os == 'macOS-latest'
