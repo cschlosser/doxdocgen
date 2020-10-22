@@ -71,9 +71,22 @@ jobs:
         run: npm run coverage
         if: matrix.os == 'macOS-latest'
 
+      - name: Upload coverage
+        uses: actions/upload-artifact@v2
+        with:
+          name: cov
+          path: coverage
+
+  coverage:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download coverage
+        uses: actions/download-artifact@v2
+        with:
+          name: cov
       - name: Publish Coverage
         uses: codacy/codacy-coverage-reporter-action@0.2.0
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
           coverage-reports: ./coverage/cobertura-coverage.xml
-        if: matrix.os == 'macOS-latest'
