@@ -86,9 +86,8 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: cov
-      - run: ls -al
       - name: Publish Coverage
         uses: codacy/codacy-coverage-reporter-action@0.2.0
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          coverage-reports: ./coverage/cobertura-coverage.xml
+          coverage-reports: ./cobertura-coverage.xml
