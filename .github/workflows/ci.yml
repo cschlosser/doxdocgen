@@ -76,6 +76,7 @@ jobs:
         with:
           name: cov
           path: coverage
+        if: matrix.os == 'macOS-latest'
 
   coverage:
     needs: test
@@ -85,6 +86,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: cov
+      - run: ls -al
       - name: Publish Coverage
         uses: codacy/codacy-coverage-reporter-action@0.2.0
         with:
