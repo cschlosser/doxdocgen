@@ -2,7 +2,7 @@
   "name": "doxdocgen",
   "displayName": "Doxygen Documentation Generator",
   "description": "Let me generate Doxygen documentation from your source code for you.",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "publisher": "cschlosser",
   "engines": {
     "vscode": "^1.37.0"
@@ -93,7 +93,7 @@
           "default": "@file {name}"
         },
         "doxdocgen.file.copyrightTag": {
-          "description": "File copyright documentation tag.  Array of strings will be converted to one line per element.  Can template {year}.",
+          "markdownDescription": "File copyright documentation tag.  Array of strings will be converted to one line per element. Can template `{year}`.",
           "type": [
             "array",
             "string"
@@ -108,7 +108,7 @@
           "default": "@version 0.1"
         },
         "doxdocgen.file.customTag": {
-          "description": "Additional file documentation.  Array of strings will be converted to one line per element.  Can template {year}, {date}, {author}, and {email}.",
+          "markdownDescription": "Additional file documentation.  Array of strings will be converted to one line per element.  Can template `{year}`, `{date}`, `{author}` and `{email}`.",
           "type": [
             "array",
             "string"
@@ -116,7 +116,7 @@
           "default": []
         },
         "doxdocgen.file.fileOrder": {
-          "description": "The order to use for the file comment. Values can be used multiple times. Valid values are shown in default setting.",
+          "markdownDescription": "The order to use for the file comment. Values can be used multiple times. Valid values are `file`, `author`, `brief`, `version`, `date`, `empty`, `copyright` and `custom`.",
           "type": [
             "array",
             "string"
@@ -139,7 +139,7 @@
           "default": true
         },
         "doxdocgen.generic.boolReturnsTrueFalse": {
-          "description": "If this is enabled a bool return value will be split into true and false return param.",
+          "markdownDescription": "If this is enabled, the documentation for a `bool` return value will be split into `true` and `false` entries.",
           "type": "boolean",
           "default": true
         },
@@ -164,17 +164,17 @@
           "default": 20
         },
         "doxdocgen.generic.authorName": {
-          "description": "Set the name of the author.  Replaces {author}.",
+          "markdownDescription": "Set the name of the author.  Replaces `{author}`.",
           "type": "string",
           "default": "your name"
         },
         "doxdocgen.generic.authorEmail": {
-          "description": "Set the e-mail address of the author.  Replaces {email}.",
+          "markdownDescription": "Set the e-mail address of the author.  Replaces `{email}`.",
           "type": "string",
           "default": "you@domain.com"
         },
         "doxdocgen.generic.authorTag": {
-          "description": "Set the style of the author tag and your name.  Can template {author} and {email}.",
+          "markdownDescription": "Set the style of the author tag and your name.  Can template `{author}` and `{email}`.",
           "type": "string",
           "default": "@author {author} ({email})"
         },
@@ -194,12 +194,12 @@
           "default": true
         },
         "doxdocgen.generic.splitCasingSmartText": {
-          "description": "Decide if the values put into {name} should be split according to their casing.",
+          "markdownDescription": "Decide if the values put into `{name}` should be split according to their casing.",
           "type": "boolean",
           "default": true
         },
         "doxdocgen.generic.order": {
-          "description": "The order to use for the comment generation. Values can be used multiple times. Valid values are shown in default setting.",
+          "markdownDescription": "The order to use for the comment generation. Values can be used multiple times. Valid values are `brief`, `empty`, `tparam`, `param`, `return` and `custom`.",
           "type": [
             "array",
             "string"
@@ -227,12 +227,12 @@
           "default": []
         },
         "doxdocgen.generic.useGitUserName": {
-          "description": "Substitute {author} with git config --get user.name.",
+          "markdownDescription": "Substitute `{author}` with `git config --get user.name`.",
           "type": "boolean",
           "default": false
         },
         "doxdocgen.generic.useGitUserEmail": {
-          "description": "Substitute {email} with git config --get user.email.",
+          "markdownDescription": "Substitute `{email}` with `git config --get user.email`.",
           "type": "boolean",
           "default": false
         }
