@@ -3,6 +3,7 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
 import CodeParserController from "./CodeParserController";
+import DoxygenCompletionItemProvider from "./DoxygenCompletionItemProvider";
 
 enum Version {
     CURRENT = "1.1.0",
@@ -12,7 +13,9 @@ enum Version {
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
+export function activate(context: vscode.ExtensionContext)
+{
+    
     const parser = new CodeParserController();
 
     context.subscriptions.push(parser);
@@ -23,4 +26,14 @@ export function activate(context: vscode.ExtensionContext) {
     } else if (version !== Version.CURRENT) {
         context.globalState.update(Version.KEY, Version.CURRENT);
     }
+
+    /*register doxygen commands intellisense */
+    if (vscode.workspace.getConfiguration("doxdocgen.generic").get<boolean>("commandSuggestion"))
+        vscode.languages.registerCompletionItemProvider({ language: "cpp", scheme: "file" }, new DoxygenCompletionItemProvider(), "@", "\\");
+    
+    vscode.workspace.onDidChangeConfiguration((event) =>
+    {
+        if (event.affectsConfiguration("doxdocgen.generic.commandSuggestion"))
+            vscode.window.showWarningMessage("Please restart vscode to apply the changes!");
+    });
 }
