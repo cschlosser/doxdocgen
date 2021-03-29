@@ -235,6 +235,11 @@
           "markdownDescription": "Substitute `{email}` with `git config --get user.email`.",
           "type": "boolean",
           "default": false
+        },
+        "doxdocgen.generic.commandSuggestion":{
+          "description": "Provide intellisense and snippet for doxygen commands",
+          "type": "boolean",
+          "default": true
         }
       }
     }
