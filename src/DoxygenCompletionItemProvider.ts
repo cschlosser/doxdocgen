@@ -2,6 +2,9 @@ import * as vscode from "vscode";
 /*https://github.com/cschlosser/doxdocgen/issues/30 */
 export default class DoxygenCompletionItemProvider implements vscode.CompletionItemProvider
 {
+    /**
+     * commands are a tuple of <command, snippet, documentation>
+     */
     static readonly commands: [string, string, string][] = [
         /*Special commands */
         ["a", "${1:word}", "Display <word> in italics"],
@@ -108,19 +111,6 @@ export default class DoxygenCompletionItemProvider implements vscode.CompletionI
         ["docbookinclude", "${1:file-name}", "This command includes the contents of the file <file-name> as is in the DocBook documentation and tagged with <docbookonly> in the generated XML output. The command is equivalent to pasting the contents of the file in the documentation and placing @docbookonly and @enddocbookonly commands around it."],
         ["xmlinclude", "${1:file-name}", "This command includes contents of the the file <file-name> as is in the XML documentation. The command is equivalent to pasting the contents of the file in the documentation and placing @xmlonly and @endxmlonly commands around it."]
     ];
-
-    // static adjustDoxygenCommandSymbol(document: vscode.TextDocument, position: vscode.Position, trigger: string)
-    // {
-    //     if (trigger === "@")
-    //     {
-            
-    //     }
-    // }
-
-    // static adjustIndentation(document: vscode.TextDocument, position: vscode.Position)
-    // {
-
-    // }
     static completionItems = (() =>
     {
         let items: vscode.CompletionItem[] = [];
