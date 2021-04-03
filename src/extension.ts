@@ -31,7 +31,10 @@ export function activate(context: vscode.ExtensionContext)
     if (vscode.workspace.getConfiguration("doxdocgen.generic").get<boolean>("commandSuggestion"))
         vscode.languages.registerCompletionItemProvider({ language: "cpp", scheme: "file" }, new DoxygenCompletionItemProvider(), "@", "\\");
     
-    vscode.workspace.onDidChangeConfiguration((event) =>
+    //After the CompletionItemProvider is registered, it cannot be unregistered
+    //Check the settings everytime when it is triggered would be inefficient
+    //So just prompt the user to restart to take effect
+    vscode.workspace.onDidChangeConfiguration(event =>
     {
         if (event.affectsConfiguration("doxdocgen.generic.commandSuggestion"))
             vscode.window.showWarningMessage("Please restart vscode to apply the changes!");

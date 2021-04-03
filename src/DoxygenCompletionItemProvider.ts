@@ -132,17 +132,22 @@ export default class DoxygenCompletionItemProvider implements vscode.CompletionI
         this.trigger = context.triggerCharacter;
         this.indentSpace = position.character;
         //TODO: check if current position is comment
+        console.log(`indent space = ${this.indentSpace}`);
         return DoxygenCompletionItemProvider.completionItems;
     }
 
     resolveCompletionItem(item: vscode.CompletionItem, token: vscode.CancellationToken)
     {
-        if (this.trigger === "@")
-            return item;
-        
         let insertion = (item.insertText as vscode.SnippetString).value;
-        insertion = insertion.replace("@", "\\");
-    
+        if (this.trigger === "\\")
+            insertion = insertion.replace("@", "\\");
+        const indentPrefix = "\n".concat("* ");
+        insertion = insertion.replace(/\n/g, indentPrefix);
+        
+        /*insert an empty line if the snippet is multi-line, so * can be auto-completed */
+        if (insertion.includes("\n"))
+            insertion = insertion.concat(indentPrefix);
+
         let newItem = new vscode.CompletionItem(item.label, item.kind);
         newItem.documentation = item.documentation;
         newItem.insertText = new vscode.SnippetString(insertion);
