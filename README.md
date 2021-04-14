@@ -9,23 +9,26 @@ This VS Code Extensions provides Doxygen Documentation generation on the fly by 
 
 ## Table of Contents
 
-* [Features](#features)
-  * [Alignment](#alignment)
-  * [Attributes](#attributes)
-  * [Con- and Destructors](#con--and-destructors)
-  * [Extensive customization](#extensive-customization)
-  * [File descriptions](#file-descriptions)
-  * [Function pointers](#function-pointers)
-  * [Operators](#operators)
-  * [Parameters](#parameters)
-  * [Return types](#return-types)
-    * [Trailing](#trailing)
-  * [Smart text](#smart-text)
-  * [Templates](#templates)
-* [Config options](#config-options)
-* [Contributors](#contributors)
-* [Known Issues](#known-issues)
-* [What's to come](#whats-to-come)
+- [Generate Doxygen Comments in VS Code](#generate-doxygen-comments-in-vs-code)
+  - [Table of Contents](#table-of-contents)
+  - [Features](#features)
+    - [Alignment](#alignment)
+    - [Attributes](#attributes)
+    - [Con- and Destructors](#con--and-destructors)
+    - [Extensive customization](#extensive-customization)
+    - [File descriptions](#file-descriptions)
+    - [Function pointers](#function-pointers)
+    - [Operators](#operators)
+    - [Parameters](#parameters)
+    - [Return types](#return-types)
+    - [Smart text](#smart-text)
+      - [Trailing](#trailing)
+    - [Templates](#templates)
+    - [Auto-complete doxygen commands](#auto-complete-doxygen-commands)
+  - [Config options](#config-options)
+  - [Contributors](#contributors)
+  - [Known Issues](#known-issues)
+  - [What's to come](#whats-to-come)
 
 ## Features
 
@@ -101,6 +104,11 @@ Each of them can be configured with its own custom text and you can decide if th
 
 ![Template method](images/template.gif)
 ![Template class](images/template-class.gif)
+
+### Auto-complete doxygen commands
+
+![Auto complete doxygen](images/doxygen-auto-complete.gif)
+
 
 ## Config options
 
