@@ -1,5 +1,17 @@
 # Change Log
 
+## [1.2.0]
+
+### Feature
+
+- Doxygen command intellisense support (#211)
+  Thanks to @HO-COOH
+
+### Other
+
+- Nicer setting descriptions (#209)
+  Thanks to @HO-COOH
+
 ## [1.1.0]
 
 ### Feature

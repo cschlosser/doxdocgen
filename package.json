@@ -2,7 +2,7 @@
   "name": "doxdocgen",
   "displayName": "Doxygen Documentation Generator",
   "description": "Let me generate Doxygen documentation from your source code for you.",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "publisher": "cschlosser",
   "engines": {
     "vscode": "^1.37.0"
@@ -236,7 +236,7 @@
           "type": "boolean",
           "default": false
         },
-        "doxdocgen.generic.commandSuggestion":{
+        "doxdocgen.generic.commandSuggestion": {
           "description": "Provide intellisense and snippet for doxygen commands",
           "type": "boolean",
           "default": true
@@ -268,14 +268,15 @@
     "test": "npm run compile && node ./node_modules/vscode/bin/test"
   },
   "dependencies": {
-    "simple-git": "^2.20.1",
     "env-var": "^4.1.0",
     "moment": "^2.20.1",
-    "opn": "^5.2.0"
+    "opn": "^5.2.0",
+    "simple-git": "^2.20.1"
   },
   "devDependencies": {
     "@types/mocha": "^5.2.7",
     "@types/node": "12.7.1",
+    "@types/vscode": "^1.1.37",
     "decache": "^4.5.1",
     "handlebars": "^4.7.3",
     "istanbul": "^0.4.5",
@@ -284,7 +285,7 @@
     "remap-istanbul": "^0.13.0",
     "tslint": "^5.20.0",
     "typescript": "^3.8.3",
-    "vscode": "^1.1.36",
+    "vscode-test": "^1.1.37",
     "yargs-parser": ">=13.1.2"
   }
 }
