@@ -23,7 +23,7 @@ before_install:
     fi
 
 install:
-  - npm install
+  - yarn
 
 jobs:
   allow_failures:
@@ -42,7 +42,7 @@ jobs:
       os: osx
     - stage: release
       script:
-        - npm install vsce
+        - yarn add vsce -D
         - vsce package --no-yarn
         - ls -alh
       os: linux

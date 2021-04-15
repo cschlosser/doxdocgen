@@ -16,6 +16,8 @@ async function main() {
     await runTests({ extensionDevelopmentPath, extensionTestsPath });
   } catch (err) {
     // tslint:disable-next-line: no-console
+    console.error("Got error:");
+    // tslint:disable-next-line: no-console
     console.error(err);
     // tslint:disable-next-line: no-console
     console.error("Failed to run tests");
