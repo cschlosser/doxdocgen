@@ -38,7 +38,7 @@ jobs:
       script: npm run vscode:prepublish
       os: linux
     - stage: test
-      script: npm run test
+      script: yarn cov
       os: osx
     - stage: release
       script:
