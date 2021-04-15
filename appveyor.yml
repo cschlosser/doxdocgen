@@ -16,7 +16,7 @@ build_script:
   - npm run vscode:prepublish
 
 test_script:
-  - npm run test
+  - npm run cov
 
 notifications:
   - provider: Webhook
