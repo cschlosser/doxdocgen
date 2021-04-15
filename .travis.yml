@@ -43,7 +43,7 @@ jobs:
     - stage: release
       script:
         - yarn add vsce -D
-        - vsce package --no-yarn
+        - vsce package
         - ls -alh
       os: linux
       deploy:
@@ -54,7 +54,7 @@ jobs:
           on:
             tags: true
         - provider: script
-          script: vsce publish --no-yarn -p $VSMARKETPLACE_ACCESS_TOKEN
+          script: vsce publish -p $VSMARKETPLACE_ACCESS_TOKEN
           skip_cleanup: true
           on:
             tags: true
