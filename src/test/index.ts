@@ -19,9 +19,10 @@ function setupNyc() {
         hookRunInContext: true,
         hookRunInThisContext: true,
         instrument: true,
-        reporter: ["text", "html", "cobertura"],
+        reporter: ["text", "lcov", "cobertura"],
         require: [
             "ts-node/register",
+            "source-map-support/register",
         ],
         sourceMap: true,
     });
