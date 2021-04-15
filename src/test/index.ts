@@ -2,12 +2,41 @@ import * as path from 'path';
 import * as Mocha from 'mocha';
 import * as glob from 'glob';
 
+function setupNyc() {
+	const NYC = require("nyc");
+	// create an nyc instance, config here is the same as your package.json
+	const nyc = new NYC({
+		cache: false,
+		cwd: path.join(__dirname, "..", ".."),
+		exclude: [
+			"**/**.test.js",
+		],
+		extension: [
+			".ts",
+			".tsx",
+		],
+		hookRequire: true,
+		hookRunInContext: true,
+		hookRunInThisContext: true,
+		instrument: true,
+		reporter: ["text", "html", "cobertura"],
+		require: [
+			"ts-node/register",
+		],
+		sourceMap: true,
+	});
+	nyc.reset();
+	nyc.wrap();
+	return nyc;
+}
+
 export function run(): Promise<void> {
   // Create the mocha test
   const mocha = new Mocha({
     ui: 'tdd'
   });
 
+        const nyc = setupNyc();
   const testsRoot = path.resolve(__dirname, '.');
 
   return new Promise((c, e) => {
@@ -30,6 +59,9 @@ export function run(): Promise<void> {
         });
       } catch (err) {
         e(err);
+      } finally {
+        nyc.writeCoverageFile();
+		nyc.report();
       }
     });
   });
