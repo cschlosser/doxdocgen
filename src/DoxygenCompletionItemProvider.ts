@@ -1,17 +1,19 @@
 import * as vscode from "vscode";
+
+// tslint:disable:max-line-length
+
 /*https://github.com/cschlosser/doxdocgen/issues/30 */
-export default class DoxygenCompletionItemProvider implements vscode.CompletionItemProvider
-{
+export default class DoxygenCompletionItemProvider implements vscode.CompletionItemProvider {
     /**
      * commands are a tuple of <command, snippet, documentation>
      */
-    static readonly commands: [string, string, string][] = [
+    public static readonly commands: Array<[string, string, string]> = [
         /*Special commands */
         ["a", "${1:word}", "Display `<word>` in italics"],
         ["arg", "${1:item-description}", "Generate a simple, non-nested list of arguments"],
         ["b", "${1:word}", "Display `<word>` in bold"],
         ["c", "${1:word}", "Dispaly `<word>` using a typewriter font"],
-        ["code", ".${1:language-id}\n${2:code}\n@endcode", "Starts a block of code"], //TODO: match end block symbol with trigger character
+        ["code", ".${1:language-id}\n${2:code}\n@endcode", "Starts a block of code"], // TODO: match end block symbol with trigger character
         ["copydoc", "${1:link-object}", "Copy a documentation block from the object specified by `<link-object>` and paste it at the location of the command. The link object can point to a member (of a class, file or group), a class, a namespace, a group, a page, or a file. If the memeber if overloaded, you should specify the argument types explicitly"],
         ["copybrief", "${1:link-object}", "Work in a similar way as `@copydoc` but will only copy the brief description, not the detailed documentation"],
         ["copydetails", "${1:link-object}", "Work in a similar way as `@copydoc` but will only copy the detailed documentation, not the brief description"],
@@ -100,7 +102,7 @@ export default class DoxygenCompletionItemProvider implements vscode.CompletionI
         ["include", "{${1|lineno,doc|}} ${2:file-name}", "This command can be used to include a source file as a block of code. Using the `@include` command is equivalent to inserting the file into the documentation block and surrounding it with `@code` and `@endcode` commands."],
         ["line", "${1:pattern}", "This command searches line by line through the example that was last included using `@include` or `@dontinclude` until it finds a non-blank line. If that line contains the specified pattern, it is written to the output."],
         ["skip", "${1:pattern}", "This command searches line by line through the example that was last included using `@include` or `@dontinclude` until it finds a line that contains the specified pattern."],
-        ["skipline", "${1:pattern}", "This command searches line by line through the example that was last included using `@include` or `@dontinclude` until it finds a line that contains the specified pattern. It then writes the line to the output.",],
+        ["skipline", "${1:pattern}", "This command searches line by line through the example that was last included using `@include` or `@dontinclude` until it finds a line that contains the specified pattern. It then writes the line to the output."],
         ["snippet", "{${1|lineno,doc|}} ${2:file-name} ${3:block_id}", "Where the `@include` command can be used to include a complete file as source code, this command can be used to quote only a fragment of a source file. In case this is used as `<file-name>` the current file is taken as file to take the snippet from."],
         ["until", "${1:pattern}", "This command writes all lines of the example that was last included using `@include` or `@dontinclude` to the output, until it finds a line containing the specified pattern. The line containing the pattern will be written as well."],
         ["verbinclude", "${1:file-name}", "This command includes the contents of the file `<file-name>` verbatim in the documentation. The command is equivalent to pasting the contents of the file in the documentation and placing `@verbatim` and `@endverbatim` commands around it."],
@@ -109,14 +111,12 @@ export default class DoxygenCompletionItemProvider implements vscode.CompletionI
         ["rtfinclude", "${1:file-name}", "This command includes the contents of the file `<file-name>` as is in the RTF documentation and tagged with `<rtfonly>` in the generated XML output. The command is equivalent to pasting the contents of the file in the documentation and placing `@rtfonly` and `@endrtfonly` commands around it."],
         ["maninclude", "${1:file-name}", "This command includes the contents of the file `<file-name>` as is in the MAN documentation and tagged with `<manonly>` in the generated XML output. The command is equivalent to pasting the contents of the file in the documentation and placing `@manonly` and `@endmanonly` commands around it."],
         ["docbookinclude", "${1:file-name}", "This command includes the contents of the file `<file-name>` as is in the DocBook documentation and tagged with `<docbookonly>` in the generated XML output. The command is equivalent to pasting the contents of the file in the documentation and placing `@docbookonly` and `@enddocbookonly` commands around it."],
-        ["xmlinclude", "${1:file-name}", "This command includes contents of the the file `<file-name>` as is in the XML documentation. The command is equivalent to pasting the contents of the file in the documentation and placing `@xmlonly` and `@endxmlonly` commands around it."]
+        ["xmlinclude", "${1:file-name}", "This command includes contents of the the file `<file-name>` as is in the XML documentation. The command is equivalent to pasting the contents of the file in the documentation and placing `@xmlonly` and `@endxmlonly` commands around it."],
     ];
-    static completionItems = (() =>
-    {
-        let items: vscode.CompletionItem[] = [];
-        for (const item of DoxygenCompletionItemProvider.commands)
-        {
-            let newItem = new vscode.CompletionItem(item[0]);
+    public static completionItems = (() => {
+        const items: vscode.CompletionItem[] = [];
+        for (const item of DoxygenCompletionItemProvider.commands) {
+            const newItem = new vscode.CompletionItem(item[0]);
             newItem.documentation = new vscode.MarkdownString(item[2]);
             newItem.insertText = new vscode.SnippetString(`${item[0]} ${item[1]}`);
             newItem.kind = vscode.CompletionItemKind.Snippet;
@@ -125,29 +125,29 @@ export default class DoxygenCompletionItemProvider implements vscode.CompletionI
         return items;
     })();
 
-    trigger: string = "";
-    indentSpace: number;
-    provideCompletionItems(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken, context: vscode.CompletionContext)
-    {
+    public trigger: string = "";
+    public indentSpace: number;
+    public provideCompletionItems(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken, context: vscode.CompletionContext) {
         this.trigger = context.triggerCharacter;
         this.indentSpace = position.character;
-        //TODO: check if current position is comment
+        // TODO: check if current position is comment
         return DoxygenCompletionItemProvider.completionItems;
     }
 
-    resolveCompletionItem(item: vscode.CompletionItem, token: vscode.CancellationToken)
-    {
+    public resolveCompletionItem(item: vscode.CompletionItem, token: vscode.CancellationToken) {
         let insertion = (item.insertText as vscode.SnippetString).value;
-        if (this.trigger === "\\")
+        if (this.trigger === "\\") {
             insertion = insertion.replace("@", "\\");
+        }
         const indentPrefix = "\n".concat("* ");
         insertion = insertion.replace(/\n/g, indentPrefix);
-        
-        /*insert an empty line if the snippet is multi-line, so * can be auto-completed */
-        if (insertion.includes("\n"))
-            insertion = insertion.concat(indentPrefix);
 
-        let newItem = new vscode.CompletionItem(item.label, item.kind);
+        /*insert an empty line if the snippet is multi-line, so * can be auto-completed */
+        if (insertion.includes("\n")) {
+            insertion = insertion.concat(indentPrefix);
+        }
+
+        const newItem = new vscode.CompletionItem(item.label, item.kind);
         newItem.documentation = item.documentation;
         newItem.insertText = new vscode.SnippetString(insertion);
         return newItem;
