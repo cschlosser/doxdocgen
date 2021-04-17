@@ -9,7 +9,7 @@ image: Visual Studio 2019
 
 install:
   - ps: Install-Product node $env:nodejs_version
-  - npm install
+  - yarn
   - set path=%programfiles(x86)%\\Microsoft SDKs\TypeScript\4.2;%path%
 
 build_script:

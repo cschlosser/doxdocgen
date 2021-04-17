@@ -280,7 +280,6 @@
     "@types/vscode": "^1.55.0",
     "decache": "^4.5.1",
     "handlebars": "^4.7.3",
-    "istanbul": "^0.4.5",
     "minimist": ">=1.2.2",
     "mocha": "^8.3.2",
     "nyc": "13.1.0",
