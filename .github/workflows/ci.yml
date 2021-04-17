@@ -90,5 +90,6 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: cov
-      - name: Publish Coverage
-        uses: codecov/codecov-action@v1
+        uses: coverallsapp/github-action@master
+          with:
+            github-token: ${{ secrets.COVERALLS_TOKEN }}
