@@ -261,10 +261,10 @@
     "url": "https://github.com/cschlosser/doxdocgen/labels/bug"
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile",
+    "vscode:prepublish": "yarn compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "test": "npm run compile && node ./out/test/runTests.js",
+    "test": "yarn compile && node ./out/test/runTests.js",
     "cov": "rm -rf coverage .nyc_output && nyc yarn test"
   },
   "dependencies": {

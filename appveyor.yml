@@ -13,10 +13,10 @@ install:
   - set path=%programfiles(x86)%\\Microsoft SDKs\TypeScript\4.2;%path%
 
 build_script:
-  - npm run vscode:prepublish
+  - yarn vscode:prepublish
 
 test_script:
-  - npm run cov
+  - yarn test
 
 notifications:
   - provider: Webhook
