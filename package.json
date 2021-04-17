@@ -2,10 +2,10 @@
   "name": "doxdocgen",
   "displayName": "Doxygen Documentation Generator",
   "description": "Let me generate Doxygen documentation from your source code for you.",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "publisher": "cschlosser",
   "engines": {
-    "vscode": "^1.37.0"
+    "vscode": "^1.55.0"
   },
   "categories": [
     "Other"
@@ -93,7 +93,7 @@
           "default": "@file {name}"
         },
         "doxdocgen.file.copyrightTag": {
-          "description": "File copyright documentation tag.  Array of strings will be converted to one line per element.  Can template {year}.",
+          "markdownDescription": "File copyright documentation tag.  Array of strings will be converted to one line per element. Can template `{year}`.",
           "type": [
             "array",
             "string"
@@ -108,7 +108,7 @@
           "default": "@version 0.1"
         },
         "doxdocgen.file.customTag": {
-          "description": "Additional file documentation.  Array of strings will be converted to one line per element.  Can template {year}, {date}, {author}, and {email}.",
+          "markdownDescription": "Additional file documentation.  Array of strings will be converted to one line per element.  Can template `{year}`, `{date}`, `{author}` and `{email}`.",
           "type": [
             "array",
             "string"
@@ -116,7 +116,7 @@
           "default": []
         },
         "doxdocgen.file.fileOrder": {
-          "description": "The order to use for the file comment. Values can be used multiple times. Valid values are shown in default setting.",
+          "markdownDescription": "The order to use for the file comment. Values can be used multiple times. Valid values are `file`, `author`, `brief`, `version`, `date`, `empty`, `copyright` and `custom`.",
           "type": [
             "array",
             "string"
@@ -139,7 +139,7 @@
           "default": true
         },
         "doxdocgen.generic.boolReturnsTrueFalse": {
-          "description": "If this is enabled a bool return value will be split into true and false return param.",
+          "markdownDescription": "If this is enabled, the documentation for a `bool` return value will be split into `true` and `false` entries.",
           "type": "boolean",
           "default": true
         },
@@ -164,17 +164,17 @@
           "default": 20
         },
         "doxdocgen.generic.authorName": {
-          "description": "Set the name of the author.  Replaces {author}.",
+          "markdownDescription": "Set the name of the author.  Replaces `{author}`.",
           "type": "string",
           "default": "your name"
         },
         "doxdocgen.generic.authorEmail": {
-          "description": "Set the e-mail address of the author.  Replaces {email}.",
+          "markdownDescription": "Set the e-mail address of the author.  Replaces `{email}`.",
           "type": "string",
           "default": "you@domain.com"
         },
         "doxdocgen.generic.authorTag": {
-          "description": "Set the style of the author tag and your name.  Can template {author} and {email}.",
+          "markdownDescription": "Set the style of the author tag and your name.  Can template `{author}` and `{email}`.",
           "type": "string",
           "default": "@author {author} ({email})"
         },
@@ -194,12 +194,12 @@
           "default": true
         },
         "doxdocgen.generic.splitCasingSmartText": {
-          "description": "Decide if the values put into {name} should be split according to their casing.",
+          "markdownDescription": "Decide if the values put into `{name}` should be split according to their casing.",
           "type": "boolean",
           "default": true
         },
         "doxdocgen.generic.order": {
-          "description": "The order to use for the comment generation. Values can be used multiple times. Valid values are shown in default setting.",
+          "markdownDescription": "The order to use for the comment generation. Values can be used multiple times. Valid values are `brief`, `empty`, `tparam`, `param`, `return` and `custom`.",
           "type": [
             "array",
             "string"
@@ -227,14 +227,19 @@
           "default": []
         },
         "doxdocgen.generic.useGitUserName": {
-          "description": "Substitute {author} with git config --get user.name.",
+          "markdownDescription": "Substitute `{author}` with `git config --get user.name`.",
           "type": "boolean",
           "default": false
         },
         "doxdocgen.generic.useGitUserEmail": {
-          "description": "Substitute {email} with git config --get user.email.",
+          "markdownDescription": "Substitute `{email}` with `git config --get user.email`.",
           "type": "boolean",
           "default": false
+        },
+        "doxdocgen.generic.commandSuggestion": {
+          "description": "Provide intellisense and snippet for doxygen commands",
+          "type": "boolean",
+          "default": true
         }
       }
     }
@@ -256,35 +261,35 @@
     "url": "https://github.com/cschlosser/doxdocgen/labels/bug"
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile",
+    "vscode:prepublish": "yarn compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "test": "npm run compile && node ./out/test/runTests.js",
-    "coverage": "npm run compile && COVERAGE=true nyc node ./out/test/runTests.js",
-    "lint": "tslint -c tslint.json 'src/**/*.ts'"
+    "test": "yarn compile && node ./out/test/runTests.js",
+    "cov": "rm -rf coverage .nyc_output && nyc yarn test"
   },
   "dependencies": {
-    "simple-git": "^2.20.1",
     "env-var": "^4.1.0",
     "moment": "^2.20.1",
-    "opn": "^5.2.0"
+    "opn": "^5.2.0",
+    "simple-git": "^2.38.0"
   },
   "devDependencies": {
-    "@istanbuljs/nyc-config-typescript": "^1.0.1",
+    "@istanbuljs/nyc-config-typescript": "1.0.0",
     "@types/mocha": "^5.2.7",
     "@types/node": "12.7.1",
-    "@types/vscode": "1.37",
+    "@types/vscode": "^1.55.0",
     "decache": "^4.5.1",
     "glob": "^7.1.6",
     "handlebars": "^4.7.3",
     "minimist": ">=1.2.2",
-    "mocha": "^6.2.1",
-    "nyc": "^15.1.0",
+    "mocha": "^8.3.2",
+    "nyc": "13.1.0",
+    "remap-istanbul": "^0.13.0",
     "source-map-support": "^0.5.19",
-    "ts-node": "^9.0.0",
+    "ts-node": "^9.1.1",
     "tslint": "^5.20.0",
-    "typescript": "^3.8.3",
-    "vscode-test": "^1.3.0",
+    "typescript": "^4.2.4",
+    "vscode-test": "^1.5.2",
     "yargs-parser": ">=13.1.2"
   }
 }

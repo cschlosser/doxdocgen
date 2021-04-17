@@ -2,14 +2,43 @@ import * as glob from "glob";
 import * as Mocha from "mocha";
 import * as path from "path";
 
+function setupNyc() {
+    const NYC = require("nyc");
+    // create an nyc instance, config here is the same as your package.json
+    const nyc = new NYC({
+        cache: false,
+        cwd: path.join(__dirname, "..", ".."),
+        exclude: [
+            "**/**.test.js",
+        ],
+        extension: [
+            ".ts",
+            ".tsx",
+        ],
+        hookRequire: true,
+        hookRunInContext: true,
+        hookRunInThisContext: true,
+        instrument: true,
+        reporter: ["text", "lcov", "cobertura"],
+        require: [
+            "ts-node/register",
+            "source-map-support/register",
+        ],
+        sourceMap: true,
+    });
+    nyc.reset();
+    nyc.wrap();
+    return nyc;
+}
+
 export function run(): Promise<void> {
   // Create the mocha test
   const mocha = new Mocha({
     ui: "tdd",
   });
-  mocha.useColors(true);
 
-  const testsRoot = path.resolve(__dirname, "..");
+  const nyc = setupNyc();
+  const testsRoot = path.resolve(__dirname, ".");
 
   return new Promise((c, e) => {
     glob("**/**.test.js", { cwd: testsRoot }, (err, files) => {
@@ -31,6 +60,9 @@ export function run(): Promise<void> {
         });
       } catch (err) {
         e(err);
+      } finally {
+        nyc.writeCoverageFile();
+        nyc.report();
       }
     });
   });
