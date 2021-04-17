@@ -1,22 +1,22 @@
 environment:
-  nodejs_version: "6"
+  nodejs_version: "15"
 
 branches:
   only:
     - master
 
-image: Visual Studio 2015
+image: Visual Studio 2019
 
 install:
   - ps: Install-Product node $env:nodejs_version
-  - npm install
-  - set path=%programfiles(x86)%\\Microsoft SDKs\TypeScript\2.4;%path%
+  - yarn
+  - set path=%programfiles(x86)%\\Microsoft SDKs\TypeScript\4.2;%path%
 
 build_script:
-  - npm run vscode:prepublish
+  - yarn vscode:prepublish
 
 test_script:
-  - npm run test
+  - yarn test
 
 notifications:
   - provider: Webhook

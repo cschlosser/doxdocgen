@@ -7,7 +7,7 @@ os: osx
 
 language: node_js
 node_js:
-  - "6"
+  - "15"
 
 stages:
   - lint
@@ -23,7 +23,7 @@ before_install:
     fi
 
 install:
-  - npm install
+  - yarn
 
 jobs:
   allow_failures:
@@ -38,12 +38,12 @@ jobs:
       script: npm run vscode:prepublish
       os: linux
     - stage: test
-      script: npm run test
+      script: yarn cov
       os: osx
     - stage: release
       script:
-        - npm install vsce
-        - vsce package --no-yarn
+        - yarn add vsce -D
+        - vsce package
         - ls -alh
       os: linux
       deploy:
@@ -54,7 +54,7 @@ jobs:
           on:
             tags: true
         - provider: script
-          script: vsce publish --no-yarn -p $VSMARKETPLACE_ACCESS_TOKEN
+          script: vsce publish -p $VSMARKETPLACE_ACCESS_TOKEN
           skip_cleanup: true
           on:
             tags: true
