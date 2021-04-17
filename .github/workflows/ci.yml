@@ -91,6 +91,6 @@ jobs:
         with:
           name: cov
       - name: Publish coverage
-        uses: coverallsapp/github-action@master
-          with:
-            github-token: ${{ secrets.COVERALLS_TOKEN }}
+        uses: coverallsapp/github-action@1.1.2
+        with:
+          github-token: ${{ secrets.COVERALLS_TOKEN }}
