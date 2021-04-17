@@ -89,7 +89,4 @@ jobs:
         with:
           name: cov
       - name: Publish Coverage
-        uses: codacy/codacy-coverage-reporter-action@1.0.0
-        with:
-          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          coverage-reports: ./lcov.info
+        uses: codecov/codecov-action@v1
