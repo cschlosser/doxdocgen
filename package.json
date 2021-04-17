@@ -274,7 +274,7 @@
     "simple-git": "^2.38.0"
   },
   "devDependencies": {
-    "@istanbuljs/nyc-config-typescript": "^1.0.1",
+    "@istanbuljs/nyc-config-typescript": "1.0.0",
     "@types/mocha": "^5.2.7",
     "@types/node": "12.7.1",
     "@types/vscode": "^1.55.0",
