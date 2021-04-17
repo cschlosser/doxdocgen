@@ -92,4 +92,4 @@ jobs:
         uses: codacy/codacy-coverage-reporter-action@1.0.0
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          #coverage-reports: ./cobertura-coverage.xml
+          coverage-reports: ./lcov.info
