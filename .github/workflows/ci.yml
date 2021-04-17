@@ -1,4 +1,4 @@
-name: Pull Request
+name: CI
 
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
@@ -84,6 +84,8 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Download coverage
         uses: actions/download-artifact@v2
         with:
