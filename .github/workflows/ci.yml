@@ -1,4 +1,4 @@
-name: CI
+name: Pull Request
 
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
@@ -89,7 +89,7 @@ jobs:
         with:
           name: cov
       - name: Publish Coverage
-        uses: codacy/codacy-coverage-reporter-action@0.2.0
+        uses: codacy/codacy-coverage-reporter-action@1.0.0
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          coverage-reports: ./cobertura-coverage.xml
+          #coverage-reports: ./cobertura-coverage.xml
