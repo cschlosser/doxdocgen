@@ -265,7 +265,8 @@
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "test": "yarn compile && node ./out/test/runTests.js",
-    "cov": "rm -rf coverage .nyc_output && nyc yarn test"
+    "cov": "rm -rf coverage .nyc_output && nyc yarn test",
+    "lint": "tslint -c tslint.json 'src/**/*.ts'"
   },
   "dependencies": {
     "env-var": "^4.1.0",

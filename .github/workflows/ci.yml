@@ -22,11 +22,11 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: '11.8.0'
-      - run: npm install
+          node-version: '15.11.0'
+      - run: yarn
 
       - name: Lint
-        run: npm run lint
+        run: yarn lint
   
   build:
     #needs: lint
@@ -41,11 +41,11 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: '11.8.0'
-      - run: npm install
+          node-version: '15.11.0'
+      - run: yarn
 
       - name: Compile
-        run: npm run compile
+        run: yarn compile
   
   test:
     #needs: build
@@ -61,16 +61,16 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: '11.8.0'
-      - run: npm install
+          node-version: '15.11.0'
+      - run: yarn
 
       - name: Test
-        run: npm run test
+        run: yarn test
         # Run tests only on non-coverage job
         if: matrix.os != 'macOS-latest'
       
       - name: Generate Coverage
-        run: npm run coverage
+        run: yarn cov
         if: matrix.os == 'macOS-latest'
 
       - name: Upload coverage
