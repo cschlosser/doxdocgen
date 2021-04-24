@@ -264,9 +264,9 @@ export class CppDocGen implements IDocGen {
     }
 
     protected generateReturnParams(): string[] {
-        if (this.cfg.Generic.includeTypeAtReturn === false) {
-            return [""];
-        }
+        // if (this.cfg.Generic.includeTypeAtReturn === false) {
+        //     return [""];
+        // }
 
         const params: string[] = [];
 
@@ -289,6 +289,13 @@ export class CppDocGen implements IDocGen {
             params.push(this.cfg.Generic.includeTypeAtReturn === true ? this.func.type.Yield() : "");
         } else if (voidReturnIndex === -1 && this.func.type.nodes.length > 0) {
             params.push(this.cfg.Generic.includeTypeAtReturn === true ? this.func.type.Yield() : "");
+        } else {
+            if (this.cfg.Generic.includeTypeAtReturn === false) {
+                return [];
+            }
+        }
+        if (this.cfg.Generic.includeTypeAtReturn === false) {
+            return [""];
         }
 
         return params;
