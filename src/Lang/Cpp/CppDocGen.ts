@@ -264,9 +264,6 @@ export class CppDocGen implements IDocGen {
     }
 
     protected generateReturnParams(): string[] {
-        // if (this.cfg.Generic.includeTypeAtReturn === false) {
-        //     return [""];
-        // }
 
         const params: string[] = [];
 
