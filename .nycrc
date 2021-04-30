@@ -13,7 +13,7 @@
     "hookRunInContext": true,
     "hookRunInThisContext": true,
     "instrument": true,
-    "reporter": ["lcov", "text"],
+    "reporter": ["json", "text"],
     "recursive": true,
     "require": [
         "ts-node/register",
