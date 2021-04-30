@@ -1,5 +1,25 @@
 {
     "extends": "@istanbuljs/nyc-config-typescript",
+    "cache": false,
+    "cwd": "./",
+    "exclude": [
+        "**/**.test.js"
+    ],
+    "extension": [
+        ".ts",
+        ".tsx"
+    ],
+    "hookRequire": true,
+    "hookRunInContext": true,
+    "hookRunInThisContext": true,
+    "instrument": true,
+    "reporter": ["json", "text"],
+    "recursive": true,
+    "require": [
+        "ts-node/register",
+        "source-map-support/register"
+    ],
+    "sourceMap": true,
     "all": true,
     "include": [ "src/Lang" ]
 }
