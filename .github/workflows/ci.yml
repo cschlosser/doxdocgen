@@ -1,7 +1,5 @@
 name: CI
 
-# Controls when the action will run. Triggers the workflow on push or pull request
-# events but only for the master branch
 on:
   push:
     branches: [ master ]
@@ -10,12 +8,9 @@ on:
 
 jobs:
   lint:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout
         uses: actions/checkout@v2
 
@@ -29,7 +24,7 @@ jobs:
         run: yarn lint
   
   build:
-    #needs: lint
+    needs: lint
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -48,7 +43,7 @@ jobs:
         run: yarn compile
   
   test:
-    #needs: build
+    needs: build
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -86,18 +81,3 @@ jobs:
           path: coverage
         if: matrix.os == 'macOS-latest'
 
-        #coverage:
-        #  needs: test
-        #  runs-on: ubuntu-latest
-        #  steps:
-        #    - name: Checkout
-        #      uses: actions/checkout@v2
-        #    - name: Download coverage
-        #      uses: actions/download-artifact@v2
-        #      with:
-        #        name: cov
-        #    - name: Publish coverage
-        #      uses: coverallsapp/github-action@master
-        #      with:
-        #        github-token: ${{ secrets.GITHUB_TOKEN }}
-        #        path-to-lcov: ./lcov.info

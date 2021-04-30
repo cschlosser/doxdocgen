@@ -1,0 +1,37 @@
+name: CD
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+      - master
+  release:
+    types: # This configuration does not affect the page_build event above
+      - created
+
+jobs:
+    release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '15.11.0'
+      - run: yarn
+
+      - name: Install VSCE
+        run: yarn add vsce -D
+
+      - name: Build vsix
+        run: vsce package
+        if: contains(github.ref, "refs/tags/")
+
+        #- uses: lannonbr/vsce-action@master
+        #  with:
+        #    args: "publish -p $VSCE_TOKEN"
+        #  env:
+        #    VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
