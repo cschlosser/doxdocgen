@@ -65,13 +65,21 @@ suite("C++ - Configuration Tests", () => {
             + " * @return bool \n */", result);
     });
 
-    test("Disable including return type.", () => {
+    test("Disable including return type on function", () => {
         testSetup.cfg = new Config();
         testSetup.cfg.Generic.includeTypeAtReturn = false;
 
         const result = testSetup.SetLine("template<typename T> bool foo(T a);").GetResult();
         assert.strictEqual("/**\n * @brief \n * \n * @tparam T \n * @param a \n"
             + " * @return  \n */", result);
+    });
+
+    test("Disable including return type on non-function", () => {
+        testSetup.cfg = new Config();
+        testSetup.cfg.Generic.includeTypeAtReturn = false;
+
+        const result = testSetup.SetLine("bool b;").GetResult();
+        assert.strictEqual("/**\n * @brief \n * \n */", result);
     });
 
     test("Newlines after params and tparams but not after brief", () => {
