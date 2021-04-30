@@ -1,0 +1,51 @@
+name: CD
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  release:
+    types:
+      - created
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '15.11.0'
+      - run: yarn
+
+      - name: Install VSCE
+        run: yarn add vsce -D
+
+      - name: Update $PATH
+        run: echo "$PWD/node_modules/.bin/" >> $GITHUB_PATH
+
+      - name: Build vsix
+        run: vsce package && ls -alh
+
+      - name: Deploy to Marketplace
+        run: vsce publish -p ${VSCE_TOKEN}
+        env:
+          VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
+        if: contains(github.ref, 'refs/tags/')
+
+      - name: Upload vsix to GitHub release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: doxdocgen-*.vsix
+          tag: ${{ github.ref }}
+          overwrite: true
+          file_glob: true
+        if: contains(github.ref, 'refs/tags/')
+

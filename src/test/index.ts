@@ -6,25 +6,6 @@ function setupNyc() {
     const NYC = require("nyc");
     // create an nyc instance, config here is the same as your package.json
     const nyc = new NYC({
-        cache: false,
-        cwd: path.join(__dirname, "..", ".."),
-        exclude: [
-            "**/**.test.js",
-        ],
-        extension: [
-            ".ts",
-            ".tsx",
-        ],
-        hookRequire: true,
-        hookRunInContext: true,
-        hookRunInThisContext: true,
-        instrument: true,
-        reporter: ["text", "lcov", "cobertura"],
-        require: [
-            "ts-node/register",
-            "source-map-support/register",
-        ],
-        sourceMap: true,
     });
     nyc.reset();
     nyc.wrap();

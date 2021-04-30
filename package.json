@@ -2,7 +2,7 @@
   "name": "doxdocgen",
   "displayName": "Doxygen Documentation Generator",
   "description": "Let me generate Doxygen documentation from your source code for you.",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "publisher": "cschlosser",
   "engines": {
     "vscode": "^1.55.0"
@@ -265,7 +265,9 @@
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "test": "yarn compile && node ./out/test/runTests.js",
-    "cov": "rm -rf coverage .nyc_output && nyc yarn test"
+    "cov": "yarn clean && nyc yarn test",
+    "lint": "tslint -c tslint.json 'src/**/*.ts'",
+    "clean": "rm -rf coverage .nyc_output out"
   },
   "dependencies": {
     "env-var": "^4.1.0",
@@ -274,15 +276,16 @@
     "simple-git": "^2.38.0"
   },
   "devDependencies": {
-    "@istanbuljs/nyc-config-typescript": "1.0.0",
+    "@istanbuljs/nyc-config-typescript": "0.1.3",
     "@types/mocha": "^5.2.7",
     "@types/node": "12.7.1",
     "@types/vscode": "^1.55.0",
     "decache": "^4.5.1",
+    "glob": "^7.1.6",
     "handlebars": "^4.7.3",
     "minimist": ">=1.2.2",
     "mocha": "^8.3.2",
-    "nyc": "13.1.0",
+    "nyc": "12.0.1",
     "remap-istanbul": "^0.13.0",
     "source-map-support": "^0.5.19",
     "ts-node": "^9.1.1",
