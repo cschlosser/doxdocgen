@@ -29,7 +29,7 @@ jobs:
 
       - name: Build vsix
         run: vsce package
-        if: contains(github.ref, "refs/tags/")
+        if: contains(github.ref, 'refs/tags/')
 
         #- uses: lannonbr/vsce-action@master
         #  with:
