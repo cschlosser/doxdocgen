@@ -507,6 +507,22 @@ export class CppDocGen implements IDocGen {
                     });
                     break;
                 }
+                case "version": {
+                    this.generateVersionTag(lines);
+                    break;
+                }
+                case "author": {
+                    this.generateAuthorTag(lines);
+                    break;
+                }
+                case "date": {
+                    this.generateDateFromTemplate(lines);
+                    break;
+                }
+                case "copyright": {
+                    this.generateCopyrightTag(lines);
+                    break;
+                }
                 default: {
                     break;
                 }
