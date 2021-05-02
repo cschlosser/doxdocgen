@@ -353,23 +353,61 @@ export class CppDocGen implements IDocGen {
         });
     }
 
-    protected generateCustomTag(lines: string[]) {
+    /**
+     * Generate those tags shared between File comment and function comment
+     */
+    protected generateCommonTag(lines: string[], tags: string) {
+        switch (tags) {
+            case "brief": {
+                this.insertBrief(lines);
+                break;
+            }
+            case "empty": {
+                lines.push("");
+                break;
+            }
+            case "version": {
+                this.generateVersionTag(lines);
+                break;
+            }
+            case "author": {
+                this.generateAuthorTag(lines);
+                break;
+            }
+            case "date": {
+                this.generateDateFromTemplate(lines);
+                break;
+            }
+            case "copyright": {
+                this.generateCopyrightTag(lines);
+                break;
+            }
+            default: {
+                break;
+            }
+        }
+    }
+
+    protected generateCustomTag(lines: string[], target = CommentType.file) {
         let dateFormat: string = "YYYY-MM-DD"; // Default to ISO standard if not defined
         if ( this.cfg.Generic.dateFormat.trim().length !== 0) {
             dateFormat = this.cfg.Generic.dateFormat; // Overwrite with user format
         }
+        const targetTagArray = target === CommentType.file ? this.cfg.File.customTag : this.cfg.Generic.customTags;
         // For each line of the customTag
-        this.cfg.File.customTag.forEach((element) => {
-            // Allow any of date, year, author, email to be replaced
-            lines.push(
-                ...this.getMultiTemplatedString(
-                    [this.cfg.authorTemplateReplace, this.cfg.emailTemplateReplace,
-                        this.cfg.dateTemplateReplace, this.cfg.yearTemplateReplace],
-                    element,
-                    [this.cfg.Generic.authorName, this.cfg.Generic.authorEmail,
-                        moment().format(dateFormat), moment().format("YYYY")],
-                ).split("\n"),
-            );
+        targetTagArray.forEach((element) => {
+            if(element !== "custom") { // Prevent recursive expansion
+                // Allow any of date, year, author, email to be replaced
+                lines.push(
+                    ...this.getMultiTemplatedString(
+                        [this.cfg.authorTemplateReplace, this.cfg.emailTemplateReplace,
+                            this.cfg.dateTemplateReplace, this.cfg.yearTemplateReplace],
+                        element,
+                        [this.cfg.Generic.authorName, this.cfg.Generic.authorEmail,
+                            moment().format(dateFormat), moment().format("YYYY")],
+                    ).split("\n"),
+                ); // TODO: clean up this
+            }
         });
     }
 
@@ -408,40 +446,16 @@ export class CppDocGen implements IDocGen {
 
         this.cfg.File.fileOrder.forEach((element) => {
             switch (element) {
-                case "brief": {
-                    this.insertBrief(lines);
-                    break;
-                }
-                case "empty": {
-                    lines.push("");
-                    break;
-                }
                 case "file": {
                     this.generateFilenameFromTemplate(lines);
                     break;
                 }
-                case "version": {
-                    this.generateVersionTag(lines);
-                    break;
-                }
-                case "author": {
-                    this.generateAuthorTag(lines);
-                    break;
-                }
-                case "date": {
-                    this.generateDateFromTemplate(lines);
-                    break;
-                }
-                case "copyright": {
-                    this.generateCopyrightTag(lines);
-                    break;
-                }
                 case "custom": {
-                    this.generateCustomTag(lines);
+                    this.generateCustomTag(lines,CommentType.file);
                     break;
                 }
                 default: {
-                    break;
+                    this.generateCommonTag(lines, element);
                 }
             }
         });
@@ -458,14 +472,6 @@ export class CppDocGen implements IDocGen {
 
         this.cfg.Generic.order.forEach((element) => {
             switch (element) {
-                case "brief": {
-                    this.insertBrief(lines);
-                    break;
-                }
-                case "empty": {
-                    lines.push("");
-                    break;
-                }
                 case "tparam": {
                     if (this.cfg.Cpp.tparamTemplate.trim().length !== 0 && this.templateParams.length > 0) {
                         this.generateFromTemplate(
@@ -502,29 +508,11 @@ export class CppDocGen implements IDocGen {
                     break;
                 }
                 case "custom": {
-                    this.cfg.Generic.customTags.forEach((elem) => {
-                        lines.push(this.getEnvVars(elem));
-                    });
-                    break;
-                }
-                case "version": {
-                    this.generateVersionTag(lines);
-                    break;
-                }
-                case "author": {
-                    this.generateAuthorTag(lines);
-                    break;
-                }
-                case "date": {
-                    this.generateDateFromTemplate(lines);
-                    break;
-                }
-                case "copyright": {
-                    this.generateCopyrightTag(lines);
+                    this.generateCustomTag(lines, CommentType.method);
                     break;
                 }
                 default: {
-                    break;
+                    this.generateCommonTag(lines, element);
                 }
             }
         });
