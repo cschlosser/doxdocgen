@@ -396,7 +396,7 @@ export class CppDocGen implements IDocGen {
         const targetTagArray = target === CommentType.file ? this.cfg.File.customTag : this.cfg.Generic.customTags;
         // For each line of the customTag
         targetTagArray.forEach((element) => {
-            if(element !== "custom") { // Prevent recursive expansion
+            if (element !== "custom") { // Prevent recursive expansion
                 // Allow any of date, year, author, email to be replaced
                 lines.push(
                     ...this.getMultiTemplatedString(
@@ -451,7 +451,7 @@ export class CppDocGen implements IDocGen {
                     break;
                 }
                 case "custom": {
-                    this.generateCustomTag(lines,CommentType.file);
+                    this.generateCustomTag(lines, CommentType.file);
                     break;
                 }
                 default: {
