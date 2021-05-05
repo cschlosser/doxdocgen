@@ -298,27 +298,7 @@ export class CppDocGen implements IDocGen {
         return params;
     }
 
-    /**
-     * Get author info, possibly using info from git config
-     */
-    private getAuthorInfo() {
-        let authorName: string = this.cfg.Generic.authorName;
-        let authorEmail: string = this.cfg.Generic.authorEmail;
 
-        // Check if set to use the git username
-        if (this.cfg.Generic.useGitUserName === true) {
-            authorName = this.gitConfig.UserName;
-        }
-
-        // Check if set to use the git email
-        if (this.cfg.Generic.useGitUserEmail === true) {
-            authorEmail = this.gitConfig.UserEmail;
-        }
-        return {
-            authorName,
-            authorEmail
-        };
-    }
 
     protected generateAuthorTag(lines: string[]) {
         if (this.cfg.Generic.authorTag.trim().length !== 0) {
@@ -398,15 +378,14 @@ export class CppDocGen implements IDocGen {
         }
     }
 
-
-
     protected generateCustomTag(lines: string[], target = CommentType.file) {
         let dateFormat: string = "YYYY-MM-DD"; // Default to ISO standard if not defined
         if ( this.cfg.Generic.dateFormat.trim().length !== 0) {
             dateFormat = this.cfg.Generic.dateFormat; // Overwrite with user format
         }
 
-        // Have to check this setting, otherwise {author} and {email} will get incorrect result if useGitUserName and useGitUserEmail is used
+        // Have to check this setting, otherwise {author} and {email} will get incorrect result 
+        // if useGitUserName and useGitUserEmail is used
         const authorInfo = this.getAuthorInfo();
 
         const targetTagArray = target === CommentType.file ? this.cfg.File.customTag : this.cfg.Generic.customTags;
@@ -593,5 +572,27 @@ export class CppDocGen implements IDocGen {
         }
 
         return vals.join(" ");
+    }
+
+    /**
+     * Get author info, possibly using info from git config
+     */
+    private getAuthorInfo() {
+        let authorName: string = this.cfg.Generic.authorName;
+        let authorEmail: string = this.cfg.Generic.authorEmail;
+
+        // Check if set to use the git username
+        if (this.cfg.Generic.useGitUserName === true) {
+            authorName = this.gitConfig.UserName;
+        }
+
+        // Check if set to use the git email
+        if (this.cfg.Generic.useGitUserEmail === true) {
+            authorEmail = this.gitConfig.UserEmail;
+        }
+        return {
+            authorEmail,
+            authorName,
+        };
     }
 }

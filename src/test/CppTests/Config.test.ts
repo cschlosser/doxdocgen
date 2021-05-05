@@ -241,13 +241,13 @@ suite("C++ - Configuration Tests", () => {
         testSetup.cfg.Generic.customTags = [
             "@author {author}",
             "@date {date}",
-            "@note {email}"
+            "@note {email}",
         ];
         testSetup.cfg.Generic.useGitUserName = true;
         testSetup.cfg.Generic.useGitUserEmail = true;
         const result = testSetup.SetLine("void foo();").GetResult();
         assert.notStrictEqual("/**\n * @author {author}\n * @date {date}\n * @note {email}\n */", result);
-    })
+    });
 
     test("Env variable", () => {
         testSetup.cfg = new Config();
