@@ -298,8 +298,6 @@ export class CppDocGen implements IDocGen {
         return params;
     }
 
-
-
     protected generateAuthorTag(lines: string[]) {
         if (this.cfg.Generic.authorTag.trim().length !== 0) {
             const authorInfo = this.getAuthorInfo();
@@ -384,7 +382,7 @@ export class CppDocGen implements IDocGen {
             dateFormat = this.cfg.Generic.dateFormat; // Overwrite with user format
         }
 
-        // Have to check this setting, otherwise {author} and {email} will get incorrect result 
+        // Have to check this setting, otherwise {author} and {email} will get incorrect result
         // if useGitUserName and useGitUserEmail is used
         const authorInfo = this.getAuthorInfo();
 
