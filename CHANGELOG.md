@@ -4,6 +4,13 @@
 
 ### Fix
 
+- Fix tags in generic order not expanded (#204) (#217)
+  Thanks to @HO-COOH
+
+## [1.2.1]
+
+### Fix
+
 - Fix unexpected return tag on non-functions (#210) (#214)
   Thanks to @HO-COOH
 
