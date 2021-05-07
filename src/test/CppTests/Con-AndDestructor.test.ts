@@ -20,46 +20,46 @@ suite("C++ - Con- and Destructor Tests", () => {
     // Tests
     test("Normal Constructor", () => {
         const result = testSetup.SetLine("Foo(int a);").GetResult();
-        assert.strictEqual("/**\n * @brief \n * \n * @param a \n */", result);
+        assert.strictEqual(result, "/**\n * @brief \n * \n * @param a \n */");
     });
 
     test("Constructor with initializer list", () => {
         const result = testSetup.SetLine("Foo(int a) : m_a(a) {").GetResult();
-        assert.strictEqual("/**\n * @brief \n * \n * @param a \n */", result);
+        assert.strictEqual(result, "/**\n * @brief \n * \n * @param a \n */");
     });
 
     test("Explicit Constructor", () => {
         const result = testSetup.SetLine("explicit Foo(int a);").GetResult();
-        assert.strictEqual("/**\n * @brief \n * \n * @param a \n */", result);
+        assert.strictEqual(result, "/**\n * @brief \n * \n * @param a \n */");
     });
 
     test("Deleted Constructor", () => {
         const result = testSetup.SetLine("Foo(int a) = delete;").GetResult();
-        assert.strictEqual("/**\n * @brief \n * \n * @param a \n */", result);
+        assert.strictEqual(result, "/**\n * @brief \n * \n * @param a \n */");
     });
 
     test("Default Constructor", () => {
         const result = testSetup.SetLine("Foo() = default;").GetResult();
-        assert.strictEqual("/**\n * @brief \n * \n */", result);
+        assert.strictEqual(result, "/**\n * @brief \n * \n */");
     });
 
     test("Destructor", () => {
         const result = testSetup.SetLine("~Foo();").GetResult();
-        assert.strictEqual("/**\n * @brief \n * \n */", result);
+        assert.strictEqual(result, "/**\n * @brief \n * \n */");
     });
 
     test("Virtual Destructor", () => {
         const result = testSetup.SetLine("virtual ~Foo();").GetResult();
-        assert.strictEqual("/**\n * @brief \n * \n */", result);
+        assert.strictEqual(result, "/**\n * @brief \n * \n */");
     });
 
     test("Deleted Destructor", () => {
         const result = testSetup.SetLine("virtual ~Foo() = 0;").GetResult();
-        assert.strictEqual("/**\n * @brief \n * \n */", result);
+        assert.strictEqual(result, "/**\n * @brief \n * \n */");
     });
 
     test("Default Destructor", () => {
         const result = testSetup.SetLine("~Foo() = default;").GetResult();
-        assert.strictEqual("/**\n * @brief \n * \n */", result);
+        assert.strictEqual(result, "/**\n * @brief \n * \n */");
     });
 });

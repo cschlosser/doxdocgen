@@ -18,23 +18,23 @@ suite("C++ - Trailing returns tests", () => {
     // tests
     test("Trailing return", () => {
         const result = testSetup.SetLine("auto foo() -> int;").GetResult();
-        assert.strictEqual("/**\n * @brief \n * \n * @return int \n */", result);
+        assert.strictEqual(result, "/**\n * @brief \n * \n * @return int \n */");
     });
 
     test("Trailing return with decltype", () => {
         const result = testSetup.SetLine("auto foo(int a, double b) -> decltype(a + b);").GetResult();
         // tslint:disable-next-line: max-line-length
-        assert.strictEqual("/**\n * @brief \n * \n * @param a \n * @param b \n * @return decltype(a + b) \n */", result);
+        assert.strictEqual(result, "/**\n * @brief \n * \n * @param a \n * @param b \n * @return decltype(a + b) \n */");
     });
 
     test("Multiple trailing returns", () => {
         const result = testSetup.SetLine("auto foo() -> auto(*)() -> tmp<int>(*)();").GetResult();
-        assert.strictEqual("/**\n * @brief \n * \n * @return auto(*)() -> tmp<int>(*)() \n */", result);
+        assert.strictEqual(result, "/**\n * @brief \n * \n * @return auto(*)() -> tmp<int>(*)() \n */");
     });
 
     test("Trailing return with keywords", () => {
         const result = testSetup.SetLine("auto foo(const int& a, const double* b) const noexcept -> const double&;")
             .GetResult();
-        assert.strictEqual("/**\n * @brief \n * \n * @param a \n * @param b \n * @return const double& \n */", result);
+        assert.strictEqual(result, "/**\n * @brief \n * \n * @param a \n * @param b \n * @return const double& \n */");
     });
 });

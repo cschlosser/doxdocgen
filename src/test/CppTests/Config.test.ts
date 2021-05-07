@@ -21,23 +21,23 @@ suite("C++ - Configuration Tests", () => {
     test("Default config", () => {
         testSetup.cfg = new Config();
         const result = testSetup.SetLine("template<typename T> bool foo(T a);").GetResult();
-        assert.strictEqual("/**\n * @brief \n * \n * @tparam T \n * @param a \n * "
-            + "@return true \n * @return false \n */", result);
+        assert.strictEqual(result, "/**\n * @brief \n * \n * @tparam T \n * @param a \n * "
+            + "@return true \n * @return false \n */");
     });
 
     test("Comment order", () => {
         testSetup.cfg = new Config();
         testSetup.cfg.Generic.order = ["brief", "param", "tparam", "return"];
         const result = testSetup.SetLine("template<typename T> bool foo(T a);").GetResult();
-        assert.strictEqual("/**\n * @brief \n * @param a \n * @tparam T \n * "
-            + "@return true \n * @return false \n */", result);
+        assert.strictEqual(result, "/**\n * @brief \n * @param a \n * @tparam T \n * "
+            + "@return true \n * @return false \n */");
     });
 
     test("Non existing order param", () => {
         testSetup.cfg = new Config();
         testSetup.cfg.Generic.order = ["breif"];
         const result = testSetup.SetLine("template<typename T> bool foo(T a);").GetResult();
-        assert.strictEqual("/**\n */", result);
+        assert.strictEqual(result, "/**\n */");
     });
 
     test("Modified template", () => {
@@ -52,8 +52,8 @@ suite("C++ - Configuration Tests", () => {
         testSetup.cfg.Generic.returnTemplate = "\\return {type} ";
 
         const result = testSetup.SetLine("template<typename T> bool foo(T a);").GetResult();
-        assert.strictEqual("/// \\brief \n/// \n/// \\tparam T \n/// \\param a \n"
-            + "/// \\return true \n/// \\return false ", result);
+        assert.strictEqual(result, "/// \\brief \n/// \n/// \\tparam T \n/// \\param a \n"
+            + "/// \\return true \n/// \\return false ");
 
     });
 
@@ -61,8 +61,8 @@ suite("C++ - Configuration Tests", () => {
         testSetup.cfg = new Config();
         testSetup.cfg.Generic.boolReturnsTrueFalse = false;
         const result = testSetup.SetLine("template<typename T> bool foo(T a);").GetResult();
-        assert.strictEqual("/**\n * @brief \n * \n * @tparam T \n * @param a \n"
-            + " * @return bool \n */", result);
+        assert.strictEqual(result, "/**\n * @brief \n * \n * @tparam T \n * @param a \n"
+            + " * @return bool \n */");
     });
 
     test("Disable including return type on function", () => {
@@ -70,8 +70,8 @@ suite("C++ - Configuration Tests", () => {
         testSetup.cfg.Generic.includeTypeAtReturn = false;
 
         const result = testSetup.SetLine("template<typename T> bool foo(T a);").GetResult();
-        assert.strictEqual("/**\n * @brief \n * \n * @tparam T \n * @param a \n"
-            + " * @return  \n */", result);
+        assert.strictEqual(result, "/**\n * @brief \n * \n * @tparam T \n * @param a \n"
+            + " * @return  \n */");
     });
 
     test("Disable including return type on non-function", () => {
@@ -79,7 +79,7 @@ suite("C++ - Configuration Tests", () => {
         testSetup.cfg.Generic.includeTypeAtReturn = false;
 
         const result = testSetup.SetLine("bool b;").GetResult();
-        assert.strictEqual("/**\n * @brief \n * \n */", result);
+        assert.strictEqual(result, "/**\n * @brief \n * \n */");
     });
 
     test("Newlines after params and tparams but not after brief", () => {
@@ -88,32 +88,32 @@ suite("C++ - Configuration Tests", () => {
 
         const result = testSetup.SetLine("template<typename T> bool foo(T a);").GetResult();
         testSetup.cfg.Generic.order = ["brief", "empty", "tparam", "param", "return"]; // reset to default
-        assert.strictEqual("/**\n * @brief \n * @tparam T \n * \n * @param a \n * \n"
-            + " * @return true \n * @return false \n */", result);
+        assert.strictEqual(result, "/**\n * @brief \n * @tparam T \n * \n * @param a \n * \n"
+            + " * @return true \n * @return false \n */");
     });
 
     test("Indentation test", () => {
         testSetup.cfg = new Config();
         let result = testSetup.SetLine("\ttemplate<typename T> bool foo(T a);").GetResult();
-        assert.strictEqual("/**\n\t * @brief \n\t * \n\t * @tparam T \n\t * @param a \n\t * "
-            + "@return true \n\t * @return false \n\t */", result);
+        assert.strictEqual(result, "/**\n\t * @brief \n\t * \n\t * @tparam T \n\t * @param a \n\t * "
+            + "@return true \n\t * @return false \n\t */");
 
         result = testSetup.SetLine("          template<typename T> bool foo(T a);").GetResult();
-        assert.strictEqual("/**\n           * @brief \n           * \n           * @tparam T "
+        assert.strictEqual(result, "/**\n           * @brief \n           * \n           * @tparam T "
             + "\n           * @param a \n           * "
-            + "@return true \n           * @return false \n           */", result);
+            + "@return true \n           * @return false \n           */");
     });
 
     test("Lines to get test", () => {
         testSetup.cfg = new Config();
         testSetup.cfg.Generic.linesToGet = 2;
         const positiveResult = testSetup.SetLines(["template<typename T> bool \n", "foo(T a);"]).GetResult();
-        assert.strictEqual("/**\n * @brief \n * \n * @tparam T \n * @param a \n * "
-            + "@return true \n * @return false \n */", positiveResult);
+        assert.strictEqual(positiveResult, "/**\n * @brief \n * \n * @tparam T \n * @param a \n * "
+            + "@return true \n * @return false \n */");
         testSetup.cfg.Generic.linesToGet = 0;
         testSetup.firstLine = 1;
         const negativeResult = testSetup.SetLines(["template<typename T> bool \n", "foo(T a);"]).GetResult();
-        assert.strictEqual("/**\n * @brief \n * \n */", negativeResult);
+        assert.strictEqual(negativeResult, "/**\n * @brief \n * \n */");
     });
 
     test("File description order test", () => {
@@ -121,50 +121,50 @@ suite("C++ - Configuration Tests", () => {
         testSetup.firstLine = 0;
         testSetup.cfg.File.fileOrder = ["brief", "author", "date", "file"];
         const result = testSetup.SetLine("").GetResult();
-        assert.strictEqual("/**\n * @brief \n * @author your name (you@domain.com)\n" +
-            " * @date " + moment().format("YYYY-MM-DD") + "\n * @file MockDocument.h\n */", result);
+        assert.strictEqual(result, "/**\n * @brief \n * @author your name (you@domain.com)\n" +
+            " * @date " + moment().format("YYYY-MM-DD") + "\n * @file MockDocument.h\n */");
     });
 
     test("Custom smart text Ctor", () => {
         testSetup.cfg.Cpp.ctorText = "Test {name}";
         const result = testSetup.SetLine("Foo();").GetResult();
-        assert.strictEqual("/**\n * @brief Test Foo\n * \n */", result);
+        assert.strictEqual(result, "/**\n * @brief Test Foo\n * \n */");
     });
 
     test("Custom smart text Dtor", () => {
         testSetup.cfg.Cpp.dtorText = "Test {name}";
         const result = testSetup.SetLine("~Foo();").GetResult();
-        assert.strictEqual("/**\n * @brief Test Foo\n * \n */", result);
+        assert.strictEqual(result, "/**\n * @brief Test Foo\n * \n */");
     });
 
     test("Custom smart text getter", () => {
         testSetup.cfg.C.getterText = "Test {name}";
         const result = testSetup.SetLine("int getFoo();").GetResult();
-        assert.strictEqual("/**\n * @brief Test Foo\n * \n * @return int \n */", result);
+        assert.strictEqual(result, "/**\n * @brief Test Foo\n * \n * @return int \n */");
     });
 
     test("Custom smart text setter", () => {
         testSetup.cfg.C.setterText = "Test {name}";
         const result = testSetup.SetLine("void setFoo(int foo);").GetResult();
-        assert.strictEqual("/**\n * @brief Test Foo\n * \n * @param foo \n */", result);
+        assert.strictEqual(result, "/**\n * @brief Test Foo\n * \n * @param foo \n */");
     });
 
     test("Custom smart text factory method", () => {
         testSetup.cfg.C.factoryMethodText = "Test {name}";
         const result = testSetup.SetLine("int createFoo();").GetResult();
-        assert.strictEqual("/**\n * @brief Test Foo\n * \n * @return int \n */", result);
+        assert.strictEqual(result, "/**\n * @brief Test Foo\n * \n * @return int \n */");
     });
 
     test("Don't split casing for smart text", () => {
         testSetup.cfg.C.factoryMethodText = "Test {name}";
         testSetup.cfg.Generic.splitCasingSmartText = false;
         const result = testSetup.SetLine("int createFooObject();").GetResult();
-        assert.strictEqual("/**\n * @brief Test FooObject\n * \n * @return int \n */", result);
+        assert.strictEqual(result, "/**\n * @brief Test FooObject\n * \n * @return int \n */");
     });
 
     test("Remove inserted '*/' from line", () => {
         const result = testSetup.SetLines(["*/", "int foo();"]).GetResult();
-        assert.strictEqual("/**\n * @brief \n * \n * @return int \n */", result);
+        assert.strictEqual(result, "/**\n * @brief \n * \n * @return int \n */");
     });
 
     test("Single alignment", () => {
@@ -175,7 +175,7 @@ suite("C++ - Configuration Tests", () => {
 
         const result = testSetup.SetLines(["template<typename T>", "int foo(std::string bar, T foobar);"]).GetResult();
         // tslint:disable-next-line:max-line-length
-        assert.strictEqual("/**\n * @brief    Brief\n * \n * @tparam   T\n * @param    bar\n * @param    foobar\n * @return   int\n */", result);
+        assert.strictEqual(result, "/**\n * @brief    Brief\n * \n * @tparam   T\n * @param    bar\n * @param    foobar\n * @return   int\n */");
     });
 
     test("Multi alignment", () => {
@@ -186,7 +186,7 @@ suite("C++ - Configuration Tests", () => {
 
         const result = testSetup.SetLines(["template<typename T>", "int foo(std::string bar, T foobar);"]).GetResult();
         // tslint:disable-next-line:max-line-length
-        assert.equal("/**\n * @brief                        Short desc\n * \n * @tparam   T                   I'm a template\n * @param    bar                 Parameters everywhere\n * @param    foobar              Parameters everywhere\n * @return   int                 Returns stuff\n */", result);
+        assert.equal(result, "/**\n * @brief                        Short desc\n * \n * @tparam   T                   I'm a template\n * @param    bar                 Parameters everywhere\n * @param    foobar              Parameters everywhere\n * @return   int                 Returns stuff\n */");
     });
 
     test("Negative alignment tests", () => {
@@ -194,7 +194,7 @@ suite("C++ - Configuration Tests", () => {
 
         const result = testSetup.SetLines(["template<typename T>", "int foo(std::string bar, T foobar);"]).GetResult();
         // tslint:disable-next-line:max-line-length
-        assert.equal("/**\n * @brief                        Short desc\n * \n * @tparam   T                   I'm a template\n * @param    bar                 Parameters everywhere\n * @param    foobar              Parameters everywhere\n */", result);
+        assert.equal(result, "/**\n * @brief                        Short desc\n * \n * @tparam   T                   I'm a template\n * @param    bar                 Parameters everywhere\n * @param    foobar              Parameters everywhere\n */");
     });
 
     test("Multiline template", () => {
@@ -206,7 +206,7 @@ suite("C++ - Configuration Tests", () => {
         testSetup.cfg.Generic.returnTemplate = "<returns>\n</returns>";
         const result = testSetup.SetLine("    int foo(bool a);").GetResult();
         // tslint:disable:no-trailing-whitespace
-        assert.strictEqual(
+        assert.strictEqual(result, 
             result, `/// <summary>
     /// 
     /// </summary>
@@ -224,7 +224,7 @@ suite("C++ - Configuration Tests", () => {
         testSetup.cfg.Generic.filteredKeywords = ["MOCKABLE"];
         // tslint:disable-next-line:max-line-length
         const result = testSetup.SetLine("MOCKABLE void processNetworkStatusReset( const common_n::NetworkCommands_s *networkstatus );").GetResult();
-        assert.strictEqual("/**\n * @brief \n * \n * @param networkstatus \n */", result);
+        assert.strictEqual(result, "/**\n * @brief \n * \n * @param networkstatus \n */");
     });
 
     test("Custom tag", () => {
@@ -232,7 +232,7 @@ suite("C++ - Configuration Tests", () => {
         testSetup.cfg.Generic.order = ["custom"];
         testSetup.cfg.Generic.customTags = ["@note"];
         const result = testSetup.SetLine("void foo();").GetResult();
-        assert.strictEqual("/**\n * @note\n */", result);
+        assert.strictEqual(result, "/**\n * @note\n */");
     });
 
     test("Custom tag expansion in function", () => {
@@ -246,7 +246,7 @@ suite("C++ - Configuration Tests", () => {
         testSetup.cfg.Generic.useGitUserName = true;
         testSetup.cfg.Generic.useGitUserEmail = true;
         const result = testSetup.SetLine("void foo();").GetResult();
-        assert.notStrictEqual("/**\n * @author {author}\n * @date {date}\n * @note {email}\n */", result);
+        assert.notStrictEqual(result, "/**\n * @author {author}\n * @date {date}\n * @note {email}\n */");
     });
 
     test("Env variable", () => {
@@ -266,25 +266,25 @@ suite("C++ - Configuration Tests", () => {
 
         testSetup.cfg.Generic.customTags = ["@author ${env:MY_VARIABLE}"];
         const result = testSetup.SetLine("void foo();").GetResult();
-        assert.strictEqual("/**\n * @author MY_VARIABLE\n */", result);
+        assert.strictEqual(result, "/**\n * @author MY_VARIABLE\n */");
     });
 
     test("Use git user.name as author", () => {
         testSetup.cfg = new Config();
         testSetup.cfg.Generic.useGitUserName = true;
         const result = testSetup.SetLine("").GetResult();
-        assert.strictEqual("/**\n * @brief \n * \n * @file MockDocument.h\n * @author " +
+        assert.strictEqual(result, "/**\n * @brief \n * \n * @file MockDocument.h\n * @author " +
             testSetup.gitConfig.UserName +
-            " (you@domain.com)\n * @date " + moment().format("YYYY-MM-DD") + "\n */", result);
+            " (you@domain.com)\n * @date " + moment().format("YYYY-MM-DD") + "\n */");
     });
 
     test("Use git user.email as email", () => {
         testSetup.cfg = new Config();
         testSetup.cfg.Generic.useGitUserEmail = true;
         const result = testSetup.SetLine("").GetResult();
-        assert.strictEqual("/**\n * @brief \n * \n * @file MockDocument.h\n * @author your name (" +
+        assert.strictEqual(result, "/**\n * @brief \n * \n * @file MockDocument.h\n * @author your name (" +
             testSetup.gitConfig.UserEmail +
-            ")\n * @date " + moment().format("YYYY-MM-DD") + "\n */", result);
+            ")\n * @date " + moment().format("YYYY-MM-DD") + "\n */");
     });
 
     test("Substitute author and email by git config", () => {
@@ -292,9 +292,9 @@ suite("C++ - Configuration Tests", () => {
         testSetup.cfg.Generic.useGitUserName = true;
         testSetup.cfg.Generic.useGitUserEmail = true;
         const result = testSetup.SetLine("").GetResult();
-        assert.strictEqual("/**\n * @brief \n * \n * @file MockDocument.h\n * @author " +
+        assert.strictEqual(result, "/**\n * @brief \n * \n * @file MockDocument.h\n * @author " +
             testSetup.gitConfig.UserName + " (" + testSetup.gitConfig.UserEmail +
-            ")\n * @date " + moment().format("YYYY-MM-DD") + "\n */", result);
+            ")\n * @date " + moment().format("YYYY-MM-DD") + "\n */");
     });
 
 });
