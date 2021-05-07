@@ -235,6 +235,20 @@ suite("C++ - Configuration Tests", () => {
         assert.strictEqual("/**\n * @note\n */", result);
     });
 
+    test("Custom tag expansion in function", () => {
+        testSetup.cfg = new Config();
+        testSetup.cfg.Generic.order = ["custom"];
+        testSetup.cfg.Generic.customTags = [
+            "@author {author}",
+            "@date {date}",
+            "@note {email}",
+        ];
+        testSetup.cfg.Generic.useGitUserName = true;
+        testSetup.cfg.Generic.useGitUserEmail = true;
+        const result = testSetup.SetLine("void foo();").GetResult();
+        assert.notStrictEqual("/**\n * @author {author}\n * @date {date}\n * @note {email}\n */", result);
+    });
+
     test("Env variable", () => {
         testSetup.cfg = new Config();
         testSetup.cfg.Generic.order = ["custom"];

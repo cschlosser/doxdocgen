@@ -299,26 +299,14 @@ export class CppDocGen implements IDocGen {
     }
 
     protected generateAuthorTag(lines: string[]) {
-        let authorName: string = this.cfg.Generic.authorName;
-        let authorEmail: string = this.cfg.Generic.authorEmail;
-
-        // Check if set to use the git username
-        if (this.cfg.Generic.useGitUserName === true) {
-            authorName = this.gitConfig.UserName;
-        }
-
-        // Check if set to use the git email
-        if (this.cfg.Generic.useGitUserEmail === true) {
-            authorEmail = this.gitConfig.UserEmail;
-        }
-
         if (this.cfg.Generic.authorTag.trim().length !== 0) {
+            const authorInfo = this.getAuthorInfo();
             // Allow substitution of {author} and {email} only
             lines.push(
                 ...this.getMultiTemplatedString(
                     [this.cfg.authorTemplateReplace, this.cfg.emailTemplateReplace],
                     this.cfg.Generic.authorTag,
-                    [authorName, authorEmail],
+                    [authorInfo.authorName, authorInfo.authorEmail],
                 ).split("\n"),
             );
         }
@@ -353,23 +341,66 @@ export class CppDocGen implements IDocGen {
         });
     }
 
-    protected generateCustomTag(lines: string[]) {
+    /**
+     * Generate those tags shared between File comment and function comment
+     */
+    protected generateCommonTag(lines: string[], tags: string) {
+        switch (tags) {
+            case "brief": {
+                this.insertBrief(lines);
+                break;
+            }
+            case "empty": {
+                lines.push("");
+                break;
+            }
+            case "version": {
+                this.generateVersionTag(lines);
+                break;
+            }
+            case "author": {
+                this.generateAuthorTag(lines);
+                break;
+            }
+            case "date": {
+                this.generateDateFromTemplate(lines);
+                break;
+            }
+            case "copyright": {
+                this.generateCopyrightTag(lines);
+                break;
+            }
+            default: {
+                break;
+            }
+        }
+    }
+
+    protected generateCustomTag(lines: string[], target = CommentType.file) {
         let dateFormat: string = "YYYY-MM-DD"; // Default to ISO standard if not defined
         if ( this.cfg.Generic.dateFormat.trim().length !== 0) {
             dateFormat = this.cfg.Generic.dateFormat; // Overwrite with user format
         }
+
+        // Have to check this setting, otherwise {author} and {email} will get incorrect result
+        // if useGitUserName and useGitUserEmail is used
+        const authorInfo = this.getAuthorInfo();
+
+        const targetTagArray = target === CommentType.file ? this.cfg.File.customTag : this.cfg.Generic.customTags;
         // For each line of the customTag
-        this.cfg.File.customTag.forEach((element) => {
-            // Allow any of date, year, author, email to be replaced
-            lines.push(
-                ...this.getMultiTemplatedString(
-                    [this.cfg.authorTemplateReplace, this.cfg.emailTemplateReplace,
-                        this.cfg.dateTemplateReplace, this.cfg.yearTemplateReplace],
-                    element,
-                    [this.cfg.Generic.authorName, this.cfg.Generic.authorEmail,
-                        moment().format(dateFormat), moment().format("YYYY")],
-                ).split("\n"),
-            );
+        targetTagArray.forEach((element) => {
+            if (element !== "custom") { // Prevent recursive expansion
+                // Allow any of date, year, author, email to be replaced
+                lines.push(
+                    ...this.getMultiTemplatedString(
+                        [this.cfg.authorTemplateReplace, this.cfg.emailTemplateReplace,
+                            this.cfg.dateTemplateReplace, this.cfg.yearTemplateReplace],
+                        element,
+                        [authorInfo.authorName, authorInfo.authorEmail,
+                            moment().format(dateFormat), moment().format("YYYY")],
+                    ).split("\n"),
+                ); // TODO: clean up this
+            }
         });
     }
 
@@ -408,40 +439,16 @@ export class CppDocGen implements IDocGen {
 
         this.cfg.File.fileOrder.forEach((element) => {
             switch (element) {
-                case "brief": {
-                    this.insertBrief(lines);
-                    break;
-                }
-                case "empty": {
-                    lines.push("");
-                    break;
-                }
                 case "file": {
                     this.generateFilenameFromTemplate(lines);
                     break;
                 }
-                case "version": {
-                    this.generateVersionTag(lines);
-                    break;
-                }
-                case "author": {
-                    this.generateAuthorTag(lines);
-                    break;
-                }
-                case "date": {
-                    this.generateDateFromTemplate(lines);
-                    break;
-                }
-                case "copyright": {
-                    this.generateCopyrightTag(lines);
-                    break;
-                }
                 case "custom": {
-                    this.generateCustomTag(lines);
+                    this.generateCustomTag(lines, CommentType.file);
                     break;
                 }
                 default: {
-                    break;
+                    this.generateCommonTag(lines, element);
                 }
             }
         });
@@ -458,14 +465,6 @@ export class CppDocGen implements IDocGen {
 
         this.cfg.Generic.order.forEach((element) => {
             switch (element) {
-                case "brief": {
-                    this.insertBrief(lines);
-                    break;
-                }
-                case "empty": {
-                    lines.push("");
-                    break;
-                }
                 case "tparam": {
                     if (this.cfg.Cpp.tparamTemplate.trim().length !== 0 && this.templateParams.length > 0) {
                         this.generateFromTemplate(
@@ -502,13 +501,11 @@ export class CppDocGen implements IDocGen {
                     break;
                 }
                 case "custom": {
-                    this.cfg.Generic.customTags.forEach((elem) => {
-                        lines.push(this.getEnvVars(elem));
-                    });
+                    this.generateCustomTag(lines, CommentType.method);
                     break;
                 }
                 default: {
-                    break;
+                    this.generateCommonTag(lines, element);
                 }
             }
         });
@@ -573,5 +570,27 @@ export class CppDocGen implements IDocGen {
         }
 
         return vals.join(" ");
+    }
+
+    /**
+     * Get author info, possibly using info from git config
+     */
+    private getAuthorInfo() {
+        let authorName: string = this.cfg.Generic.authorName;
+        let authorEmail: string = this.cfg.Generic.authorEmail;
+
+        // Check if set to use the git username
+        if (this.cfg.Generic.useGitUserName === true) {
+            authorName = this.gitConfig.UserName;
+        }
+
+        // Check if set to use the git email
+        if (this.cfg.Generic.useGitUserEmail === true) {
+            authorEmail = this.gitConfig.UserEmail;
+        }
+        return {
+            authorEmail,
+            authorName,
+        };
     }
 }

@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.2.2]
+
+### Fix
+
+- Fix tags in generic order not expanded (#204) (#217)
+  Thanks to @HO-COOH
+
 ## [1.2.1]
 
 ### Fix
