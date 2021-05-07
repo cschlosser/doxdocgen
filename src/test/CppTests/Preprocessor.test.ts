@@ -18,7 +18,7 @@ suite("C++ - Preprocessor Tests", () => {
     // Tests
     test("Macro", () => {
         const result = testSetup.GetResult();
-        assert.strictEqual("/**\n * @brief \n * \n */", result);
+        assert.strictEqual(result, "/**\n * @brief \n * \n */");
     });
 
     // Tests
@@ -28,7 +28,7 @@ suite("C++ - Preprocessor Tests", () => {
             "/**",
             " */",
         ]).GetResult();
-        assert.strictEqual("/**\n * @brief \n * \n */", result);
+        assert.strictEqual(result, "/**\n * @brief \n * \n */");
     });
 
     // These two tests don't seem to belong here but the behavior they're testing only is reproducable
@@ -38,7 +38,7 @@ suite("C++ - Preprocessor Tests", () => {
             "*/", // simulate an auto generated closing block comment
             "void foo(int bar);",
         ]).GetResult();
-        assert.strictEqual("/**\n * @brief \n * \n * @param bar \n */", result);
+        assert.strictEqual(result, "/**\n * @brief \n * \n * @param bar \n */");
     });
 
     test("don't detect closing */", () => {
@@ -47,6 +47,6 @@ suite("C++ - Preprocessor Tests", () => {
             " */",
             "void foo(int bar);",
         ]).GetResult();
-        assert.strictEqual("/**\n * @brief \n * \n */", result);
+        assert.strictEqual(result, "/**\n * @brief \n * \n */");
     });
 });
