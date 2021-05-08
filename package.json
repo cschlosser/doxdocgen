@@ -108,7 +108,7 @@
           "default": "@version 0.1"
         },
         "doxdocgen.file.customTag": {
-          "markdownDescription": "Additional file documentation.  Array of strings will be converted to one line per element.  Can template `{year}`, `{date}`, `{author}` and `{email}`.",
+          "markdownDescription": "Additional file documentation.  Array of strings will be converted to one line per element. Can template `{year}`, `{date}`, `{author}`, `{email}` and `{file}`. You have to specify the prefix.",
           "type": [
             "array",
             "string"
@@ -214,7 +214,7 @@
           ]
         },
         "doxdocgen.generic.customTags": {
-          "description": "Custom tags to be added to the generic order. One tag per line will be added. You have to specify the prefix yourself.",
+          "description": "Custom tags to be added to the generic order. One tag per line will be added. Can template `{year}`, `{date}`, `{author}`, `{email}` and `{file}`. You have to specify the prefix.",
           "type": [
             "array",
             "string"
