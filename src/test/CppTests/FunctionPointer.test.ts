@@ -18,35 +18,35 @@ suite("C++ - Function pointer Tests", () => {
     // Tests
     test("Function pointer return", () => {
         const result = testSetup.SetLine("int (*idputs(int a, int b))(char *);").GetResult();
-        assert.strictEqual("/**\n * @brief \n * \n * @param a \n * @param b \n * @return int(*)(char*) \n */", result);
+        assert.strictEqual(result, "/**\n * @brief \n * \n * @param a \n * @param b \n * @return int(*)(char*) \n */");
     });
 
     test("Nested function pointer return", () => {
         const result = testSetup.SetLine("int (*(*(*foo(int a, int b))(int))(double))(float);").GetResult();
-        assert.strictEqual("/**\n * @brief \n * \n * @param a \n * @param b \n"
-            + " * @return int(*(*(*)(int))(double))(float) \n */", result);
+        assert.strictEqual(result, "/**\n * @brief \n * \n * @param a \n * @param b \n"
+            + " * @return int(*(*(*)(int))(double))(float) \n */");
     });
 
     test("Function pointer parameter", () => {
         const result = testSetup.SetLine("int foo(int (*puts)(const char *));").GetResult();
-        assert.strictEqual("/**\n * @brief \n * \n * @param puts \n * @return int \n */", result);
+        assert.strictEqual(result, "/**\n * @brief \n * \n * @param puts \n * @return int \n */");
     });
 
     test("Struct function pointer return with struct FP parameters and keywords", () => {
         const result = testSetup.SetLine("const struct foo (*idputs(int (*puts)(const char *), const"
             + " struct test(*str)(int *, const struct test(*str2))))(const char *);").GetResult();
 
-        assert.strictEqual("/**\n * @brief \n * \n * @param puts \n * @param str "
-            + "\n * @return const struct foo(*)(const char*) \n */", result);
+        assert.strictEqual(result, "/**\n * @brief \n * \n * @param puts \n * @param str "
+            + "\n * @return const struct foo(*)(const char*) \n */");
     });
 
     test("Memberpointer in function pointer", () => {
         const result = testSetup.SetLine("void foo(void (SomeClass::* func)());").GetResult();
-        assert.strictEqual("/**\n * @brief \n * \n * @param func \n */", result);
+        assert.strictEqual(result, "/**\n * @brief \n * \n * @param func \n */");
     });
 
     test("Arraypointer", () => {
         const result = testSetup.SetLine("void some_function(int (*table)[]);").GetResult();
-        assert.strictEqual("/**\n * @brief \n * \n * @param table \n */", result);
+        assert.strictEqual(result, "/**\n * @brief \n * \n * @param table \n */");
     });
 });
