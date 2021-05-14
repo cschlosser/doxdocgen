@@ -11,6 +11,7 @@ import * as assert from "assert";
 import * as moment from "moment";
 import * as vscode from "vscode";
 import { Config } from "../../Config";
+import GitConfig from "../../GitConfig";
 import TestSetup from "./TestSetup";
 
 // Defines a Mocha test suite to group tests of similar kind together
@@ -242,11 +243,12 @@ suite("C++ - Configuration Tests", () => {
             "@author {author}",
             "@date {date}",
             "@note {email}",
+            "@file {file}"
         ];
-        testSetup.cfg.Generic.useGitUserName = true;
-        testSetup.cfg.Generic.useGitUserEmail = true;
         const result = testSetup.SetLine("void foo();").GetResult();
-        assert.notStrictEqual(result, "/**\n * @author {author}\n * @date {date}\n * @note {email}\n */");
+        const date = moment().format("YYYY-MM-DD");
+        assert.strictEqual(result, `/**\n * @author your name\n * @date ${date}\n * @note you@domain.com\n` + 
+        ` * @file MockDocument.h\n */`);
     });
 
     test("Env variable", () => {
