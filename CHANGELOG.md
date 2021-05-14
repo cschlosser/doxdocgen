@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.3.0]
+
+### Feature
+
+- Add `{file}` template, so it can be used in custom tag of both file comments and generic comments (#191) (#221)
+  Thanks to @HO-COOH
+
 ## [1.2.2]
 
 ### Fix
