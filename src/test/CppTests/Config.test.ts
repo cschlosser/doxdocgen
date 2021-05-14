@@ -243,11 +243,11 @@ suite("C++ - Configuration Tests", () => {
             "@author {author}",
             "@date {date}",
             "@note {email}",
-            "@file {file}"
+            "@file {file}",
         ];
         const result = testSetup.SetLine("void foo();").GetResult();
         const date = moment().format("YYYY-MM-DD");
-        assert.strictEqual(result, `/**\n * @author your name\n * @date ${date}\n * @note you@domain.com\n` + 
+        assert.strictEqual(result, `/**\n * @author your name\n * @date ${date}\n * @note you@domain.com\n` +
         ` * @file MockDocument.h\n */`);
     });
 
