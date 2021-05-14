@@ -148,7 +148,7 @@ Each of them can be configured with its own custom text and you can decide if th
     "@copyright Copyright (c) {year}"
   ],
 
-  // Additional file documentation.  Array of strings will be converted to one line per element.  Can template {year}, {date}, {author}, and {email}.
+  // Additional file documentation. One tag per line will be added. Can template `{year}`, `{date}`, `{author}`, `{email}` and `{file}`. You have to specify the prefix.
   "doxdocgen.file.customTag": [],
 
   // The order to use for the file comment. Values can be used multiple times. Valid values are shown in default setting.
@@ -210,7 +210,7 @@ Each of them can be configured with its own custom text and you can decide if th
     "custom"
   ],
 
-  // Custom tags to be added to the generic order. One tag per line will be added. You have to specify the prefix yourself.
+  // Custom tags to be added to the generic order. One tag per line will be added. Can template `{year}`, `{date}`, `{author}`, `{email}` and `{file}`. You have to specify the prefix.
   "doxdocgen.generic.customTags": [],
 
   // The template of the param Doxygen line(s) that are generated. If empty it won't get generated at all.

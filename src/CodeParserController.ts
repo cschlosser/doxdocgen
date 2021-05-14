@@ -12,6 +12,7 @@ import CodeParser from "./Common/ICodeParser";
 import { Config } from "./Config";
 import GitConfig from "./GitConfig";
 import CppParser from "./Lang/Cpp/CppParser";
+import { inComment } from "./util";
 /**
  *
  * Checks if the event matches the specified guidelines and if a parser exists for this language
@@ -75,7 +76,7 @@ export default class CodeParserController {
         }
 
         // Check if currently in a comment block
-        if (this.inComment(activeEditor, activeSelection.line)) {
+        if (inComment(activeEditor, activeSelection.line)) {
             return false;
         }
 
@@ -89,20 +90,6 @@ export default class CodeParserController {
             return this.cfg.C.triggerSequence === cont;
         } else {
             return false;
-        }
-    }
-
-    private inComment(activeEditor: TextEditor, activeLine: number): boolean {
-        if (activeLine === 0) {
-            return false;
-        }
-
-        const txt: string = activeEditor.document.lineAt(activeLine - 1).text.trim();
-        if (!txt.startsWith("///") && !txt.startsWith("*") &&
-            !txt.startsWith("/**") && !txt.startsWith("/*!")) {
-            return false;
-        } else {
-            return true;
         }
     }
 
