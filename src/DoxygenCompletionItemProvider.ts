@@ -116,8 +116,10 @@ export default class DoxygenCompletionItemProvider implements vscode.CompletionI
     ];
     public static completionItems = (() => {
         const items: vscode.CompletionItem[] = [];
+        const addPrefix = vscode.workspace.getConfiguration("doxdocgen.generic").get<boolean>("commandSuggestionAddPrefix");
         for (const item of DoxygenCompletionItemProvider.commands) {
-            const newItem = new vscode.CompletionItem(item[0]);
+            // TODO: Only \ can be used, @ as label prefix causes unexpected filtering
+            const newItem = new vscode.CompletionItem(addPrefix ? `\\${item[0]}` : item[0]);
             newItem.documentation = new vscode.MarkdownString(item[2]);
             newItem.insertText = new vscode.SnippetString(`${item[0]} ${item[1]}`);
             newItem.kind = vscode.CompletionItemKind.Snippet;
