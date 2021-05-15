@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { inComment } from "./util";
 
 // tslint:disable:max-line-length
 
@@ -128,10 +129,12 @@ export default class DoxygenCompletionItemProvider implements vscode.CompletionI
     public trigger: string = "";
     public indentSpace: number;
     public provideCompletionItems(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken, context: vscode.CompletionContext) {
-        this.trigger = context.triggerCharacter;
-        this.indentSpace = position.character;
-        // TODO: check if current position is comment
-        return DoxygenCompletionItemProvider.completionItems;
+        if (inComment(vscode.window.activeTextEditor, position.line + 1)) {
+            this.trigger = context.triggerCharacter;
+            this.indentSpace = position.character;
+            return DoxygenCompletionItemProvider.completionItems;
+        }
+        return [];
     }
 
     public resolveCompletionItem(item: vscode.CompletionItem, token: vscode.CancellationToken) {
