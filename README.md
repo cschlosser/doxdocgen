@@ -207,7 +207,11 @@ Each of them can be configured with its own custom text and you can decide if th
     "tparam",
     "param",
     "return",
-    "custom"
+    "custom",
+    "version",
+    "author",
+    "date",
+    "copyright"
   ],
 
   // Custom tags to be added to the generic order. One tag per line will be added. Can template `{year}`, `{date}`, `{author}`, `{email}` and `{file}`. You have to specify the prefix.
