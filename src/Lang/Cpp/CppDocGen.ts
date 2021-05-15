@@ -1,9 +1,10 @@
-import * as env from "env-var";
 import * as moment from "moment";
 import { Position, Range, Selection, TextEditor } from "vscode";
 import { IDocGen } from "../../Common/IDocGen";
 import { Config } from "../../Config";
 import GitConfig from "../../GitConfig";
+import * as templates from "../../templatedString";
+import { getIndentation } from "../../util";
 import { CppArgument } from "./CppArgument";
 import * as CppParser from "./CppParser";
 import { CppToken, CppTokenType } from "./CppToken";
@@ -111,79 +112,16 @@ export class CppDocGen implements IDocGen {
         });
 
         // Set cursor to first DoxyGen command.
-        this.moveCursurToFirstDoxyCommand(comment,
-                                          modifiedRangeToReplace.start.line,
-                                          modifiedRangeToReplace.start.character);
+        this.moveCursurToFirstDoxyCommand(
+            comment,
+            modifiedRangeToReplace.start.line,
+            modifiedRangeToReplace.start.character,
+        );
     }
 
     /***************************************************************************
                                     Implementation
      ***************************************************************************/
-    protected getIndentation(): string {
-        return this.activeEditor.document.lineAt(this.activeEditor.selection.start.line).text.match("^\\s*")[0];
-    }
-
-    protected getIndentedTemplate(replace: string): string {
-        if (replace === undefined || replace === null || replace === "") {
-            return "";
-        }
-        const snippets = replace.split(/({indent:\d+})/);
-
-        let indentedString: string = "";
-        let indentWidth: number = 0;
-
-        // tslint:disable-next-line:prefer-for-of
-        snippets.forEach((element) => {
-            if (element.match(/{indent:\d+}/)) {
-                const indents = parseInt(element.match(/{indent:(\d+)}/)[1], 10);
-                indentWidth = indents;
-                const numSpaces = Math.max(indentWidth - indentedString.length, 0);
-                indentedString += " ".repeat(numSpaces);
-            } else {
-                // just some text
-                indentedString += element;
-            }
-        });
-
-        return indentedString;
-    }
-
-    protected getEnvVars(replace: string): string {
-        let replacement = replace;
-        const regex = /\$\{env\:([\w|\d|_]+)\}/m;
-        let match: RegExpExecArray;
-
-        // tslint:disable-next-line:no-conditional-assignment
-        while ((match = regex.exec(replacement)) !== null) {
-            if (match.index === regex.lastIndex) {
-                regex.lastIndex++;
-            }
-
-            const m = match[1];
-
-            const envVar: string = env.get(m, m).asString();
-
-            replacement = replacement.replace("${env:" + m + "}", envVar);
-        }
-
-        return replacement;
-    }
-
-    protected getTemplatedString(replace: string, template: string, param: string): string {
-        const replacedTemplate = template.replace(replace, param);
-        const replacedWithEnv = this.getEnvVars(replacedTemplate);
-        return this.getIndentedTemplate(replacedWithEnv);
-    }
-
-    protected getMultiTemplatedString(replace: string[], template: string, param: string[]): string {
-        // For each replace entry, attempt to replace it with the corresponding param in the template
-        for (let i = 0; i < replace.length; i++) {
-            if (i < param.length) {
-              template = template.replace(replace[i], param[i]);
-            }
-        }
-        return this.getEnvVars(template);
-    }
 
     protected getSmartText(): string {
         if (!this.cfg.Generic.generateSmartText) {
@@ -234,33 +172,18 @@ export class CppDocGen implements IDocGen {
                 return "";
             }
         }
-        const str = this.getTemplatedString(this.cfg.nameTemplateReplace,
-            text,
-            val);
+        const str = templates.getTemplatedString(text, { toReplace: this.cfg.nameTemplateReplace, with: val });
         this.smartTextLength = str.length;
         return str;
     }
 
     protected generateBrief(lines: string[]) {
         lines.push(
-            ...this.getTemplatedString(
-                this.cfg.textTemplateReplace,
+            ...templates.getTemplatedString(
                 this.cfg.Generic.briefTemplate,
-                this.getSmartText(),
+                { toReplace: this.cfg.textTemplateReplace, with: this.getSmartText() },
             ).split("\n"),
         );
-    }
-
-    protected generateFromTemplate(lines: string[],
-                                   replace: string,
-                                   template: string,
-                                   templateWith: string[]) {
-        templateWith.forEach((element: string) => {
-            // Ignore null values
-            if (element !== null) {
-                lines.push(...this.getTemplatedString(replace, template, element).split("\n"));
-            }
-        });
     }
 
     protected generateReturnParams(): string[] {
@@ -299,26 +222,16 @@ export class CppDocGen implements IDocGen {
     }
 
     protected generateAuthorTag(lines: string[]) {
-        let authorName: string = this.cfg.Generic.authorName;
-        let authorEmail: string = this.cfg.Generic.authorEmail;
-
-        // Check if set to use the git username
-        if (this.cfg.Generic.useGitUserName === true) {
-            authorName = this.gitConfig.UserName;
-        }
-
-        // Check if set to use the git email
-        if (this.cfg.Generic.useGitUserEmail === true) {
-            authorEmail = this.gitConfig.UserEmail;
-        }
-
         if (this.cfg.Generic.authorTag.trim().length !== 0) {
+            const authorInfo = this.getAuthorInfo();
             // Allow substitution of {author} and {email} only
             lines.push(
-                ...this.getMultiTemplatedString(
-                    [this.cfg.authorTemplateReplace, this.cfg.emailTemplateReplace],
+                ...templates.getMultiTemplatedString(
                     this.cfg.Generic.authorTag,
-                    [authorName, authorEmail],
+                    [
+                        { toReplace: this.cfg.authorTemplateReplace, with: authorInfo.authorName },
+                        { toReplace: this.cfg.emailTemplateReplace, with: authorInfo.authorEmail },
+                    ],
                 ).split("\n"),
             );
         }
@@ -326,7 +239,7 @@ export class CppDocGen implements IDocGen {
 
     protected generateFilenameFromTemplate(lines: string[]) {
         if (this.cfg.File.fileTemplate.trim().length !== 0) {
-            this.generateFromTemplate(
+            templates.generateFromTemplate(
                 lines,
                 this.cfg.nameTemplateReplace,
                 this.cfg.File.fileTemplate,
@@ -344,7 +257,7 @@ export class CppDocGen implements IDocGen {
     protected generateCopyrightTag(lines: string[]) {
         // This currently only supports year substitution
         this.cfg.File.copyrightTag.forEach((element) => {
-            this.generateFromTemplate(
+            templates.generateFromTemplate(
                 lines,
                 this.cfg.yearTemplateReplace,
                 element,
@@ -353,30 +266,76 @@ export class CppDocGen implements IDocGen {
         });
     }
 
-    protected generateCustomTag(lines: string[]) {
+    /**
+     * Generate those tags shared between File comment and function comment
+     */
+    protected generateCommonTag(lines: string[], tags: string) {
+        switch (tags) {
+            case "brief": {
+                this.insertBrief(lines);
+                break;
+            }
+            case "empty": {
+                lines.push("");
+                break;
+            }
+            case "version": {
+                this.generateVersionTag(lines);
+                break;
+            }
+            case "author": {
+                this.generateAuthorTag(lines);
+                break;
+            }
+            case "date": {
+                this.generateDateFromTemplate(lines);
+                break;
+            }
+            case "copyright": {
+                this.generateCopyrightTag(lines);
+                break;
+            }
+            default: {
+                break;
+            }
+        }
+    }
+
+    protected generateCustomTag(lines: string[], target = CommentType.file) {
         let dateFormat: string = "YYYY-MM-DD"; // Default to ISO standard if not defined
         if ( this.cfg.Generic.dateFormat.trim().length !== 0) {
             dateFormat = this.cfg.Generic.dateFormat; // Overwrite with user format
         }
+
+        // Have to check this setting, otherwise {author} and {email} will get incorrect result
+        // if useGitUserName and useGitUserEmail is used
+        const authorInfo = this.getAuthorInfo();
+
+        const targetTagArray = target === CommentType.file ? this.cfg.File.customTag : this.cfg.Generic.customTags;
         // For each line of the customTag
-        this.cfg.File.customTag.forEach((element) => {
-            // Allow any of date, year, author, email to be replaced
-            lines.push(
-                ...this.getMultiTemplatedString(
-                    [this.cfg.authorTemplateReplace, this.cfg.emailTemplateReplace,
-                        this.cfg.dateTemplateReplace, this.cfg.yearTemplateReplace],
-                    element,
-                    [this.cfg.Generic.authorName, this.cfg.Generic.authorEmail,
-                        moment().format(dateFormat), moment().format("YYYY")],
-                ).split("\n"),
-            );
+        targetTagArray.forEach((element) => {
+            if (element !== "custom") { // Prevent recursive expansion
+                // Allow any of date, year, author, email to be replaced
+                lines.push(
+                    ...templates.getMultiTemplatedString(
+                        element,
+                        [
+                            { toReplace: this.cfg.authorTemplateReplace, with: authorInfo.authorName },
+                            { toReplace: this.cfg.emailTemplateReplace, with: authorInfo.authorEmail },
+                            { toReplace: this.cfg.dateTemplateReplace, with: moment().format(dateFormat) },
+                            { toReplace: this.cfg.yearTemplateReplace, with: moment().format("YYYY") },
+                            { toReplace: "{file}", with: this.activeEditor.document.fileName.replace(/^.*[\\\/]/, "")},
+                        ],
+                    ).split("\n"),
+                );
+            }
         });
     }
 
     protected generateDateFromTemplate(lines: string[]) {
         if (this.cfg.Generic.dateTemplate.trim().length !== 0 &&
             this.cfg.Generic.dateFormat.trim().length !== 0) {
-            this.generateFromTemplate(
+            templates.generateFromTemplate(
                 lines,
                 this.cfg.dateTemplateReplace,
                 this.cfg.Generic.dateTemplate,
@@ -408,40 +367,16 @@ export class CppDocGen implements IDocGen {
 
         this.cfg.File.fileOrder.forEach((element) => {
             switch (element) {
-                case "brief": {
-                    this.insertBrief(lines);
-                    break;
-                }
-                case "empty": {
-                    lines.push("");
-                    break;
-                }
                 case "file": {
                     this.generateFilenameFromTemplate(lines);
                     break;
                 }
-                case "version": {
-                    this.generateVersionTag(lines);
-                    break;
-                }
-                case "author": {
-                    this.generateAuthorTag(lines);
-                    break;
-                }
-                case "date": {
-                    this.generateDateFromTemplate(lines);
-                    break;
-                }
-                case "copyright": {
-                    this.generateCopyrightTag(lines);
-                    break;
-                }
                 case "custom": {
-                    this.generateCustomTag(lines);
+                    this.generateCustomTag(lines, CommentType.file);
                     break;
                 }
                 default: {
-                    break;
+                    this.generateCommonTag(lines, element);
                 }
             }
         });
@@ -458,17 +393,9 @@ export class CppDocGen implements IDocGen {
 
         this.cfg.Generic.order.forEach((element) => {
             switch (element) {
-                case "brief": {
-                    this.insertBrief(lines);
-                    break;
-                }
-                case "empty": {
-                    lines.push("");
-                    break;
-                }
                 case "tparam": {
                     if (this.cfg.Cpp.tparamTemplate.trim().length !== 0 && this.templateParams.length > 0) {
-                        this.generateFromTemplate(
+                        templates.generateFromTemplate(
                             lines,
                             this.cfg.paramTemplateReplace,
                             this.cfg.Cpp.tparamTemplate,
@@ -480,7 +407,7 @@ export class CppDocGen implements IDocGen {
                 case "param": {
                     if (this.cfg.Generic.paramTemplate.trim().length !== 0 && this.params.length > 0) {
                         const paramNames: string[] = this.params.map((p) => p.name);
-                        this.generateFromTemplate(
+                        templates.generateFromTemplate(
                             lines,
                             this.cfg.paramTemplateReplace,
                             this.cfg.Generic.paramTemplate,
@@ -492,7 +419,7 @@ export class CppDocGen implements IDocGen {
                 case "return": {
                     if (this.cfg.Generic.returnTemplate.trim().length !== 0 && this.func.type !== null) {
                         const returnParams = this.generateReturnParams();
-                        this.generateFromTemplate(
+                        templates.generateFromTemplate(
                             lines,
                             this.cfg.typeTemplateReplace,
                             this.cfg.Generic.returnTemplate,
@@ -502,13 +429,11 @@ export class CppDocGen implements IDocGen {
                     break;
                 }
                 case "custom": {
-                    this.cfg.Generic.customTags.forEach((elem) => {
-                        lines.push(this.getEnvVars(elem));
-                    });
+                    this.generateCustomTag(lines, CommentType.method);
                     break;
                 }
                 default: {
-                    break;
+                    this.generateCommonTag(lines, element);
                 }
             }
         });
@@ -517,7 +442,7 @@ export class CppDocGen implements IDocGen {
         this.insertFirstLine(lines);
         this.insertLastLine(lines);
 
-        return lines.join(`\n${this.getIndentation()}`);
+        return lines.join(`\n${getIndentation(this.activeEditor)}`);
     }
 
     protected moveCursurToFirstDoxyCommand(comment: string, baseLine: number, baseCharacter) {
@@ -573,5 +498,27 @@ export class CppDocGen implements IDocGen {
         }
 
         return vals.join(" ");
+    }
+
+    /**
+     * Get author info, possibly using info from git config
+     */
+    private getAuthorInfo() {
+        let authorName: string = this.cfg.Generic.authorName;
+        let authorEmail: string = this.cfg.Generic.authorEmail;
+
+        // Check if set to use the git username
+        if (this.cfg.Generic.useGitUserName === true) {
+            authorName = this.gitConfig.UserName;
+        }
+
+        // Check if set to use the git email
+        if (this.cfg.Generic.useGitUserEmail === true) {
+            authorEmail = this.gitConfig.UserEmail;
+        }
+        return {
+            authorEmail,
+            authorName,
+        };
     }
 }
