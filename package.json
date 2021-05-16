@@ -199,7 +199,7 @@
           "default": true
         },
         "doxdocgen.generic.order": {
-          "markdownDescription": "The order to use for the comment generation. Values can be used multiple times. Valid values are `brief`, `empty`, `tparam`, `param`, `return` and `custom`.",
+          "markdownDescription": "The order to use for the comment generation. Values can be used multiple times. Valid values are `brief`, `empty`, `tparam`, `param`, `return`, `custom`, `author`, `date`, `version` and `copyright`.",
           "type": [
             "array",
             "string"
@@ -214,7 +214,7 @@
           ]
         },
         "doxdocgen.generic.customTags": {
-          "description": "Custom tags to be added to the generic order. One tag per line will be added. Can template `{year}`, `{date}`, `{author}`, `{email}` and `{file}`. You have to specify the prefix.",
+          "markdownDescription": "Custom tags to be added to the generic order. One tag per line will be added. Can template `{year}`, `{date}`, `{author}`, `{email}` and `{file}`. You have to specify the prefix.",
           "type": [
             "array",
             "string"
