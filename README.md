@@ -2,8 +2,8 @@
 
 This VS Code Extensions provides Doxygen Documentation generation on the fly by starting a Doxygen comment block and pressing enter.
 
-[![Build Status](https://travis-ci.org/cschlosser/doxdocgen.svg?branch=master)](https://travis-ci.org/cschlosser/doxdocgen)
-[![Build status](https://ci.appveyor.com/api/projects/status/sg55990fbxtsfnvk/branch/master?svg=true)](https://ci.appveyor.com/project/cschlosser/doxdocgen)
+[![Build Status](https://github.com/cschlosser/doxdocgen/actions/workflows/ci.yml/badge.svg)]()
+[![Build Status](https://github.com/cschlosser/doxdocgen/actions/workflows/cd.yml/badge.svg)]()
 [![codecov](https://codecov.io/gh/cschlosser/doxdocgen/branch/master/graph/badge.svg)](https://codecov.io/gh/cschlosser/doxdocgen)
 [![Gitter chat](https://badges.gitter.im/doxdocgen.png)](https://gitter.im/doxdocgen)
 
