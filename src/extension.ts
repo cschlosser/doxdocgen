@@ -6,8 +6,8 @@ import CodeParserController from "./CodeParserController";
 import DoxygenCompletionItemProvider from "./DoxygenCompletionItemProvider";
 
 enum Version {
-    CURRENT = "1.3.0",
-    PREVIOUS = "1.2.2",
+    CURRENT = "1.3.1",
+    PREVIOUS = "1.3.0",
     KEY = "doxdocgen_version",
 }
 
