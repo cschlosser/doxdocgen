@@ -234,6 +234,12 @@ Each of them can be configured with its own custom text and you can decide if th
 
   // Substitute {email} with git config --get user.email.
   "doxdocgen.generic.useGitUserEmail": false
+
+  // Provide intellisense and snippet for doxygen commands
+  "doxdocgen.generic.commandSuggestion": true
+
+  // Add `\\` in doxygen command suggestion for better readbility (need to enable commandSuggestion)
+  "doxdocgen.generic.commandSuggestionAddPrefix": false
 ```
 
 ## Contributors

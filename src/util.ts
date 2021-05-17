@@ -2,9 +2,10 @@ import * as env from "env-var";
 import * as vscode from "vscode";
 
 /**
- * Check if a specific line is inside a comment block
+ * Check if a specific line will be inside a comment block if comment block is inserted,
+ * that is a line before the active line
  * @param activeEditor the active editor
- * @param activeLine the line number to be checked
+ * @param activeLine the !previous! line to be checked
  */
 export function inComment(activeEditor: vscode.TextEditor, activeLine: number): boolean {
     if (activeLine === 0) {

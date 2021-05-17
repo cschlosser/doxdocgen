@@ -240,6 +240,11 @@
           "description": "Provide intellisense and snippet for doxygen commands",
           "type": "boolean",
           "default": true
+        },
+        "doxdocgen.generic.commandSuggestionAddPrefix": {
+          "markdownDescription": "Add `\\` in doxygen command suggestion for better readbility (need to enable commandSuggestion)",
+          "type": "boolean",
+          "default": false
         }
       }
     }

@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { inComment } from "./util";
 
 // tslint:disable:max-line-length
 
@@ -115,8 +116,10 @@ export default class DoxygenCompletionItemProvider implements vscode.CompletionI
     ];
     public static completionItems = (() => {
         const items: vscode.CompletionItem[] = [];
+        const addPrefix = vscode.workspace.getConfiguration("doxdocgen.generic").get<boolean>("commandSuggestionAddPrefix");
         for (const item of DoxygenCompletionItemProvider.commands) {
-            const newItem = new vscode.CompletionItem(item[0]);
+            // TODO: Only \ can be used, @ as label prefix causes unexpected filtering
+            const newItem = new vscode.CompletionItem(addPrefix ? `\\${item[0]}` : item[0]);
             newItem.documentation = new vscode.MarkdownString(item[2]);
             newItem.insertText = new vscode.SnippetString(`${item[0]} ${item[1]}`);
             newItem.kind = vscode.CompletionItemKind.Snippet;
@@ -128,10 +131,12 @@ export default class DoxygenCompletionItemProvider implements vscode.CompletionI
     public trigger: string = "";
     public indentSpace: number;
     public provideCompletionItems(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken, context: vscode.CompletionContext) {
-        this.trigger = context.triggerCharacter;
-        this.indentSpace = position.character;
-        // TODO: check if current position is comment
-        return DoxygenCompletionItemProvider.completionItems;
+        if (inComment(vscode.window.activeTextEditor, position.line + 1)) {
+            this.trigger = context.triggerCharacter;
+            this.indentSpace = position.character;
+            return DoxygenCompletionItemProvider.completionItems;
+        }
+        return [];
     }
 
     public resolveCompletionItem(item: vscode.CompletionItem, token: vscode.CancellationToken) {
