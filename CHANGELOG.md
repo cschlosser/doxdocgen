@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.3.1]
+
+### Fix
+
+- Only suggest doxygen snippet's when the cursor is in a comment section (#224) (#229)
+  Thanks to @HO-COOH
+
 ## [1.3.0]
 
 ### Feature
