@@ -1,4 +1,4 @@
-name: CD
+name: Release
 
 on:
   push:
@@ -12,7 +12,7 @@ on:
       - created
 
 jobs:
-  release:
+  pipeline:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
