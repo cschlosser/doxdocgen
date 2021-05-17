@@ -12,14 +12,14 @@
   ],
   "badges": [
     {
-      "url": "https://travis-ci.org/cschlosser/doxdocgen.svg?branch=master",
-      "href": "https://travis-ci.org/cschlosser/doxdocgen",
-      "description": "Continuous Integration (Travis)"
+      "url": "https://github.com/cschlosser/doxdocgen/actions/workflows/ci.yml/badge.svg",
+      "href": "https://github.com/cschlosser/doxdocgen/actions/workflows/ci.yml",
+      "description": "Continous integration"
     },
     {
-      "url": "https://ci.appveyor.com/api/projects/status/sg55990fbxtsfnvk/branch/master?svg=true",
-      "href": "https://ci.appveyor.com/project/cschlosser/doxdocgen",
-      "description": "Continuous Integration (AppVeyor)"
+      "url": "https://github.com/cschlosser/doxdocgen/actions/workflows/cd.yml/badge.svg",
+      "href": "https://github.com/cschlosser/doxdocgen/actions/workflows/cd.yml",
+      "description": "Release pipeline"
     },
     {
       "url": "https://codecov.io/gh/cschlosser/doxdocgen/branch/master/graph/badge.svg",
