@@ -278,8 +278,7 @@
     "env-var": "^4.1.0",
     "moment": "^2.20.1",
     "opn": "^5.2.0",
-    "simple-git": "^2.38.0",
-    "yarn": "^1.22.10"
+    "simple-git": "^2.38.0"
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "0.1.3",
