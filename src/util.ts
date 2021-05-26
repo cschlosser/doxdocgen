@@ -29,9 +29,9 @@ export function getIndentation(editor: vscode.TextEditor = vscode.window.activeT
 }
 
 /**
- * Expand enviroment variables in the string
+ * Expand environment variables in the string
  * @param replace string containing environment variables
- * @returns new string with expanded enviroment variables
+ * @returns new string with expanded environment variables
  */
 export function getEnvVars(replace: string): string {
     let replacement = replace;
