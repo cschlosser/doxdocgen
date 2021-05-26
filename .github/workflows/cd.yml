@@ -43,7 +43,7 @@ jobs:
         run: ovsx publish
         env:
           OVSX_PAT: ${{ secrets.OPEN_VSX_TOKEN }}
-        #if: contains(github.ref, 'refs/tags/')
+        if: contains(github.ref, 'refs/tags/')
 
       - name: Upload vsix to GitHub release
         uses: svenstaro/upload-release-action@v2
