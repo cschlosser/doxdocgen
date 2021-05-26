@@ -5,7 +5,7 @@ This VS Code Extensions provides Doxygen Documentation generation on the fly by 
 [![CI build status](https://img.shields.io/github/workflow/status/cschlosser/doxdocgen/CI/master)](https://github.com/cschlosser/doxdocgen/actions/workflows/ci.yml?query=branch%3Amaster)
 [![Release build status](https://img.shields.io/github/workflow/status/cschlosser/doxdocgen/CD?label=Release)](https://github.com/cschlosser/doxdocgen/actions/workflows/cd.yml?query=event%3Arelease++)
 [![codecov](https://codecov.io/gh/cschlosser/doxdocgen/branch/master/graph/badge.svg)](https://codecov.io/gh/cschlosser/doxdocgen)
-[![IRC chat](https://img.shields.io/badge/chat%20on-IRC-brightgreen)](https://webchat.oftc.net/?channels=doxdocgen)
+[![IRC chat](https://img.shields.io/badge/irc.oftc.net-%23doxdocgen-brightgreen)](https://webchat.oftc.net/?channels=doxdocgen)
 
 ## Table of Contents
 
