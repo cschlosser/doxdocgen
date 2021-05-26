@@ -25,7 +25,7 @@ jobs:
       - run: yarn
 
       - name: Install VSCE
-        run: yarn add vsce -D
+        run: yarn add vsce ovsx -D
 
       - name: Update $PATH
         run: echo "$PWD/node_modules/.bin/" >> $GITHUB_PATH
@@ -33,10 +33,16 @@ jobs:
       - name: Build vsix
         run: vsce package && ls -alh
 
-      - name: Deploy to Marketplace
+      - name: Publish to VS Code Marketplace
         run: vsce publish -p ${VSCE_TOKEN}
         env:
           VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
+        if: contains(github.ref, 'refs/tags/')
+
+      - name: Publish to Open VSX Registry
+        run: ovsx publish
+        env:
+          OVSX_PAT: ${{ secrets.OPEN_VSX_TOKEN }}
         if: contains(github.ref, 'refs/tags/')
 
       - name: Upload vsix to GitHub release
