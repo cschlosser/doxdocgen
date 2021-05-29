@@ -1,5 +1,15 @@
 # Change Log
 
+## [1.3.2]
+
+### Fix
+
+- Indent alignment not working in file comments (#206) (#236)
+  Thanks to @HO-COOH
+
+- Several typos (#233)
+  Thanks to @jogo-
+
 ## [1.3.1]
 
 ### Fix
