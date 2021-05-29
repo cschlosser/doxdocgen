@@ -250,7 +250,7 @@ export class CppDocGen implements IDocGen {
 
     protected generateVersionTag(lines: string[]) {
         if (this.cfg.File.versionTag.trim().length !== 0) {
-            lines.push(...this.cfg.File.versionTag.split("\n"));
+            lines.push(...templates.getIndentedTemplate(this.cfg.File.versionTag).split("\n"));
         }
     }
 

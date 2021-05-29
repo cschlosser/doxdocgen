@@ -80,5 +80,5 @@ export function getMultiTemplatedString(
     for (const template of templates) {
         original = original.replace(template.toReplace, template.with);
     }
-    return getEnvVars(original);
+    return getEnvVars(getIndentedTemplate(original));
 }

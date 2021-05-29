@@ -14,7 +14,7 @@ export default class DoxygenCompletionItemProvider implements vscode.CompletionI
         ["arg", "${1:item-description}", "Generate a simple, non-nested list of arguments"],
         ["b", "${1:word}", "Display `<word>` in bold"],
         ["c", "${1:word}", "Display `<word>` using a typewriter font"],
-        ["code", "${1:language-id}\n${2:code}\n@endcode", "Starts a block of code"], // TODO: match end block symbol with trigger character
+        ["code", "{.${1:language-id}}\n${2:code}\n@endcode", "Starts a block of code"], // TODO: match end block symbol with trigger character
         ["copydoc", "${1:link-object}", "Copy a documentation block from the object specified by `<link-object>` and paste it at the location of the command. The link object can point to a member (of a class, file or group), a class, a namespace, a group, a page, or a file. If the member is overloaded, you should specify the argument types explicitly"],
         ["copybrief", "${1:link-object}", "Work in a similar way as `@copydoc` but will only copy the brief description, not the detailed documentation"],
         ["copydetails", "${1:link-object}", "Work in a similar way as `@copydoc` but will only copy the detailed documentation, not the brief description"],
