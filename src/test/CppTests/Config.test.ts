@@ -93,7 +93,7 @@ suite("C++ - Configuration Tests", () => {
             + " * @return true \n * @return false \n */");
     });
 
-    test("Indentation test", () => {
+    test("Function comment indentation test", () => {
         testSetup.cfg = new Config();
         let result = testSetup.SetLine("\ttemplate<typename T> bool foo(T a);").GetResult();
         assert.strictEqual(result, "/**\n\t * @brief \n\t * \n\t * @tparam T \n\t * @param a \n\t * "
@@ -103,6 +103,32 @@ suite("C++ - Configuration Tests", () => {
         assert.strictEqual(result, "/**\n           * @brief \n           * \n           * @tparam T "
             + "\n           * @param a \n           * "
             + "@return true \n           * @return false \n           */");
+    });
+
+    test("File comment indentation test", () => {
+        testSetup.cfg.File.fileOrder = [
+            "file",
+            "author",
+            "brief",
+            "version",
+            "date",
+            "copyright",
+        ];
+        testSetup.cfg.File.fileTemplate = "@file{indent:10}{name}";
+        testSetup.cfg.Generic.authorTag = "@author{indent:10}{author}";
+        testSetup.cfg.Generic.briefTemplate = "@brief{indent:10}Thing";
+        testSetup.cfg.File.versionTag = "@version{indent:10}0.1";
+        testSetup.cfg.Generic.dateTemplate = "@date{indent:10}date";
+        testSetup.cfg.File.copyrightTag = ["@copyright{indent:10}Copyright(c)"];
+        const result = testSetup.SetLine("").GetResult();
+        assert.strictEqual(result, `/**
+ * @file     MockDocument.h
+ * @author   your name
+ * @brief    Thing
+ * @version  0.1
+ * @date     date
+ * @copyrightCopyright(c)
+ */`);
     });
 
     test("Lines to get test", () => {
