@@ -14,7 +14,7 @@
 
 ### Fix
 
-- Only suggest doxygen snippet's when the cursor is in a comment section (#224) (#229)
+- Only suggest Doxygen snippet's when the cursor is in a comment section (#224) (#229)
   Thanks to @HO-COOH
 
 ## [1.3.0]
@@ -42,7 +42,7 @@
 
 ### Feature
 
-- Doxygen command intellisense support (#211)
+- Doxygen command Intellisense support (#211)
   Thanks to @HO-COOH
 
 ### Other
@@ -154,7 +154,7 @@
 
 ### Fix
 
-- ignore "restrict" keyword in C function parameter pointer (#121)
+- Ignore `restrict` keyword in C function parameter pointer (#121)
 
 - Parameters not generated when using custom trigger (#119)
 
@@ -215,7 +215,7 @@ Alignment will be done from the start of the config string, like this:
 
 ### Fix
 
-- Invalid argument name for C enum types (#102)
+- Invalid argument name for C `enum` types (#102)
 
 ## [0.4.1]
 
@@ -233,7 +233,7 @@ Alignment will be done from the start of the config string, like this:
 
 ### Fix
 
-- Doesn't parse cpp member pointer names correctly (#78)
+- Doesn't parse CPP member pointer names correctly (#78)
 
 ## [0.3.2]
 
@@ -251,7 +251,7 @@ Alignment will be done from the start of the config string, like this:
 
 ### Features
 
-- Custom doxygen tag order for methods (#55)
+- Custom Doxygen tag order for methods (#55)
 
 - Suggest smart text (#57)
 
@@ -306,9 +306,9 @@ Alignment will be done from the start of the config string, like this:
 
 - Fix #24
 
-- Implemented support for noexcept and throw
+- Implemented support for `noexcept` and `throw`
 
-- Implemented support for constexpr and final
+- Implemented support for `constexpr` and `final`
 
 - Implemented support for unnamed parameters, this broke in version 0.0.7
 
@@ -318,7 +318,7 @@ Alignment will be done from the start of the config string, like this:
 
 - Fix #31
 
-- Fixed bug where using a different trigger sequence then "*" causes a newline to be addd between the comment and the documented entity.
+- Fixed bug where using a different trigger sequence than "*" causes a newline to be added between the comment and the documented entity.
 
 ## [0.0.6]
 
