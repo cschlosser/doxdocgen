@@ -1,10 +1,17 @@
-import simpleGit, {ConfigValues, SimpleGit} from "simple-git";
+import simpleGit, { ConfigValues, SimpleGit } from "simple-git";
+import { workspace } from "vscode";
 
 export default class GitConfig {
     private gitConfig: ConfigValues;
 
     public constructor() {
-        const git: SimpleGit = simpleGit();
+        let git: SimpleGit;
+        try {
+            git = simpleGit(workspace.workspaceFolders?.[0].uri.fsPath);
+        } catch (error) {
+            git = simpleGit();
+        }
+
         git.listConfig().then((result) => {
             this.gitConfig = result.all;
         });
