@@ -1,5 +1,17 @@
 # Change Log
 
+## [1.4.0]
+
+### Feature
+
+- Use `vscode.workspace.workspaceFolders[0]` to construct SimpleGit instance (#268)
+  Thanks to @lukester1975
+
+### Fix
+
+- Add official VS Code Language identifier for CUDA (#273)
+  Thanks to @jobtijhuis
+
 ## [1.3.2]
 
 ### Fix
