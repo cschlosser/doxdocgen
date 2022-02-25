@@ -105,6 +105,7 @@ export default class CodeParserController {
             case "c":
             case "cpp":
             case "cuda":
+            case "cuda-cpp":
                 parser = new CppParser(this.cfg);
                 break;
             default:
