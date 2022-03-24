@@ -112,7 +112,8 @@ Each of them can be configured with its own custom text and you can decide if th
 
 ## Config options
 
-```json
+```jsonc
+{
   // The prefix that is used for each comment line except for first and last.
   "doxdocgen.c.commentPrefix": " * ",
 
@@ -240,6 +241,7 @@ Each of them can be configured with its own custom text and you can decide if th
 
   // Add `\\` in doxygen command suggestion for better readbility (need to enable commandSuggestion)
   "doxdocgen.generic.commandSuggestionAddPrefix": false
+}
 ```
 
 ## Contributors
