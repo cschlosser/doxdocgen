@@ -243,7 +243,7 @@
           "default": true
         },
         "doxdocgen.generic.commandSuggestionAddPrefix": {
-          "markdownDescription": "Add `\\` in doxygen command suggestion for better readbility (need to enable commandSuggestion)",
+          "markdownDescription": "Add `\\` in doxygen command suggestion for better readability (need to enable commandSuggestion)",
           "type": "boolean",
           "default": false
         }
