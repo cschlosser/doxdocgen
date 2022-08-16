@@ -239,7 +239,7 @@ Each of them can be configured with its own custom text and you can decide if th
   // Provide intellisense and snippet for doxygen commands
   "doxdocgen.generic.commandSuggestion": true,
 
-  // Add `\\` in doxygen command suggestion for better readbility (need to enable commandSuggestion)
+  // Add `\\` in doxygen command suggestion for better readability (need to enable commandSuggestion)
   "doxdocgen.generic.commandSuggestionAddPrefix": false,
 }
 ```
