@@ -277,7 +277,7 @@
   },
   "dependencies": {
     "env-var": "^4.1.0",
-    "moment": "^2.20.1",
+    "moment": "^2.29.4",
     "opn": "^5.2.0",
     "simple-git": "^3.5.0"
   },
