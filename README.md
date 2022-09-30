@@ -219,7 +219,7 @@ Each of them can be configured with its own custom text and you can decide if th
   "doxdocgen.generic.customTags": [],
 
   // The template of the param Doxygen line(s) that are generated. If empty it won't get generated at all.
-  "doxdocgen.generic.paramTemplate": "@param {param} ",
+  "doxdocgen.generic.paramTemplate": "@param {type} {param} ",
 
   // The template of the return Doxygen line that is generated. If empty it won't get generated at all.
   "doxdocgen.generic.returnTemplate": "@return {type} ",

@@ -150,9 +150,9 @@
           "default": "@brief {text}"
         },
         "doxdocgen.generic.paramTemplate": {
-          "description": "The template of the param Doxygen line(s) that are generated. If empty it won't get generated at all.",
+          "description": "The template of the param Doxygen line(s) that are generated. If empty it won't get generated at all. Can template `{type}` and `{param}`.",
           "type": "string",
-          "default": "@param {param} "
+          "default": "@param {type} {param}"
         },
         "doxdocgen.generic.returnTemplate": {
           "description": "The template of the return Doxygen line that is generated. If empty it won't get generated at all.",
