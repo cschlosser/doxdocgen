@@ -109,7 +109,6 @@ Each of them can be configured with its own custom text and you can decide if th
 
 ![Auto complete doxygen](images/doxygen-auto-complete.gif)
 
-
 ## Config options
 
 ```jsonc
