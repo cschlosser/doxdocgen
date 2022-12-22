@@ -228,7 +228,7 @@ export class CppDocGen implements IDocGen {
         }
         if (this.cfg.Generic.authorTag.trim().length !== 0) {
             const authorInfo = this.getAuthorInfo();
-            // Allow substitution of {author} and {email} only
+            // Allow substitution of {author}, {email}, and {date} only
             lines.push(
                 ...templates.getMultiTemplatedString(
                     this.cfg.Generic.authorTag,
