@@ -222,15 +222,20 @@ export class CppDocGen implements IDocGen {
     }
 
     protected generateAuthorTag(lines: string[]) {
+        let dateFormat: string = "YYYY-MM-DD"; // Default to ISO standard if not defined
+        if ( this.cfg.Generic.dateFormat.trim().length !== 0) {
+            dateFormat = this.cfg.Generic.dateFormat; // Overwrite with user format
+        }
         if (this.cfg.Generic.authorTag.trim().length !== 0) {
             const authorInfo = this.getAuthorInfo();
-            // Allow substitution of {author} and {email} only
+            // Allow substitution of {author}, {email}, and {date} only
             lines.push(
                 ...templates.getMultiTemplatedString(
                     this.cfg.Generic.authorTag,
                     [
                         { toReplace: this.cfg.authorTemplateReplace, with: authorInfo.authorName },
                         { toReplace: this.cfg.emailTemplateReplace, with: authorInfo.authorEmail },
+                        { toReplace: this.cfg.dateTemplateReplace, with: moment().format(dateFormat) },
                     ],
                 ).split("\n"),
             );
