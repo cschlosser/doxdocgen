@@ -303,7 +303,7 @@ export class CppDocGen implements IDocGen {
 
     protected generateCustomTag(lines: string[], target = CommentType.file) {
         let dateFormat: string = "YYYY-MM-DD"; // Default to ISO standard if not defined
-        if ( this.cfg.Generic.dateFormat.trim().length !== 0) {
+        if (this.cfg.Generic.dateFormat.trim().length !== 0) {
             dateFormat = this.cfg.Generic.dateFormat; // Overwrite with user format
         }
 
@@ -324,7 +324,7 @@ export class CppDocGen implements IDocGen {
                             { toReplace: this.cfg.emailTemplateReplace, with: authorInfo.authorEmail },
                             { toReplace: this.cfg.dateTemplateReplace, with: moment().format(dateFormat) },
                             { toReplace: this.cfg.yearTemplateReplace, with: moment().format("YYYY") },
-                            { toReplace: "{file}", with: this.activeEditor.document.fileName.replace(/^.*[\\\/]/, "")},
+                            { toReplace: "{file}", with: this.activeEditor.document.fileName.replace(/^.*[\\\/]/, "") },
                         ],
                     ).split("\n"),
                 );
@@ -388,6 +388,14 @@ export class CppDocGen implements IDocGen {
         return lines.join("\n");
     }
 
+    protected isUnsedDummyArguments(): boolean {
+        const funcName: string = this.func.getNameString().replace(/s/g, "");
+
+        if (funcName === "operator++") { return true; }
+        if (funcName === "operator--") { return true; }
+        return false;
+    }
+
     protected generateComment(): string {
         let lines: string[] = [];
 
@@ -405,14 +413,17 @@ export class CppDocGen implements IDocGen {
                     break;
                 }
                 case "param": {
-                    if (this.cfg.Generic.paramTemplate.trim().length !== 0 && this.params.length > 0) {
-                        const paramNames: string[] = this.params.map((p) => p.name);
-                        templates.generateFromTemplate(
-                            lines,
-                            this.cfg.paramTemplateReplace,
-                            this.cfg.Generic.paramTemplate,
-                            paramNames,
-                        );
+                    if (
+                        this.cfg.Generic.paramTemplate.trim().length !== 0 &&
+                        this.params.length > 0 &&
+                        !this.isUnsedDummyArguments()
+                    ) {
+                        this.params.forEach((p) => {
+                            lines.push(...templates.getMultiTemplatedString(this.cfg.Generic.paramTemplate, [
+                                { toReplace: this.cfg.paramTemplateReplace, with: p.getNameString() },
+                                { toReplace: this.cfg.typeTemplateReplace, with: p.getTypeString() },
+                            ]).split("\n"));
+                        });
                     }
                     break;
                 }
