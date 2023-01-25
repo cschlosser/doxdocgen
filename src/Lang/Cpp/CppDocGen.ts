@@ -388,6 +388,14 @@ export class CppDocGen implements IDocGen {
         return lines.join("\n");
     }
 
+    protected isUnsedDummyArguments(): boolean {
+        const funcName: string = this.func.getNameString().replace(/s/g, "");
+
+        if (funcName === "operator++") { return true; }
+        if (funcName === "operator--") { return true; }
+        return false;
+    }
+
     protected generateComment(): string {
         let lines: string[] = [];
 
@@ -405,7 +413,11 @@ export class CppDocGen implements IDocGen {
                     break;
                 }
                 case "param": {
-                    if (this.cfg.Generic.paramTemplate.trim().length !== 0 && this.params.length > 0) {
+                    if (
+                        this.cfg.Generic.paramTemplate.trim().length !== 0 &&
+                        this.params.length > 0 &&
+                        !this.isUnsedDummyArguments()
+                    ) {
                         this.params.forEach((p) => {
                             lines.push(...templates.getMultiTemplatedString(this.cfg.Generic.paramTemplate, [
                                 { toReplace: this.cfg.paramTemplateReplace, with: p.getNameString() },

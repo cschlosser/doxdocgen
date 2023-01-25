@@ -51,7 +51,7 @@ export class CppParseTree {
         // Compact current level of nodes to the maximum amount.
         while (newTree.nodes.some((n) => isNotCompact(n))) {
             newTree.nodes = newTree.nodes
-                .map((n) =>  n instanceof CppParseTree && isNotCompact(n) ? n.nodes[0] : n);
+                .map((n) => n instanceof CppParseTree && isNotCompact(n) ? n.nodes[0] : n);
         }
 
         // Compact all nested CppParseTrees.
@@ -114,6 +114,9 @@ export class CppParseTree {
                     code += node.value;
                     break;
                 case CppTokenType.Attribute:
+                    code += code === "" ? node.value : " " + node.value;
+                    break;
+                case CppTokenType.MemberPointer:
                     code += code === "" ? node.value : " " + node.value;
                     break;
             }

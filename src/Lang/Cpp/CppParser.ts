@@ -426,16 +426,16 @@ export default class CppParser implements ICodeParser {
             if (nextLineTxt.startsWith("#include")) {
                 this.commentType = CommentType.file;
                 return "";
-            } else if (nextLineTxt.startsWith("#") && ! nextLineTxt.startsWith("#define")) {
+            } else if (nextLineTxt.startsWith("#") && !nextLineTxt.startsWith("#define")) {
                 return "";
             } else if (nextLine.line === 2) { // Check if there where two empty lines trailing the file
                 if (this.activeEditor.document.lineAt(0).text === this.cfg.C.firstLine
                     && (
                         this.activeEditor.document.lineAt(1).text === this.cfg.C.commentPrefix
                         || this.activeEditor.document.lineAt(1).text.trim() === ""
-                     ) && this.activeEditor.document.lineAt(2).text.trim() === "") {
-                        this.commentType = CommentType.file;
-                        return "";
+                    ) && this.activeEditor.document.lineAt(2).text.trim() === "") {
+                    this.commentType = CommentType.file;
+                    return "";
                 }
             }
 
@@ -687,6 +687,7 @@ export default class CppParser implements ICodeParser {
 
     private GetDefaultArgument(tree: CppParseTree): CppArgument {
         const argument: CppArgument = new CppArgument();
+        let notType: CppToken = null;
 
         for (const node of tree.nodes) {
             if (node instanceof CppParseTree) {
@@ -702,17 +703,16 @@ export default class CppParser implements ICodeParser {
             if (node.type === CppTokenType.Symbol
                 && this.keywords.find((k) => k === node.value) === undefined
             ) {
-                if (symbolCount === 1) {
+                if (symbolCount >= 1) {
                     argument.name = node.value;
-                    continue;
-                } else if (symbolCount > 1) {
-                    throw new Error("Too many non keyword symbols.");
+                    notType = node;
                 }
             }
 
             argument.type.nodes.push(node);
         }
 
+        argument.type.nodes = argument.type.nodes.filter((n) => n !== notType);
         this.StripNonTypeNodes(argument.type);
         return argument;
     }
@@ -756,7 +756,7 @@ export default class CppParser implements ICodeParser {
 
             if (firstToken.type === CppTokenType.Symbol && secondToken.type === CppTokenType.Pointer &&
                 firstToken.value.endsWith("::")) {
-                    firstToken.type = CppTokenType.MemberPointer;
+                firstToken.type = CppTokenType.MemberPointer;
             }
         }
 
