@@ -93,6 +93,7 @@ export class Config {
         values.Generic.briefTemplate = Generic.getConfiguration().get<string>("briefTemplate", values.Generic.briefTemplate);
         values.Generic.paramTemplate = Generic.getConfiguration().get<string>("paramTemplate", values.Generic.paramTemplate);
         values.Generic.returnTemplate = Generic.getConfiguration().get<string>("returnTemplate", values.Generic.returnTemplate);
+        values.Generic.retvalTemplate = Generic.getConfiguration().get<string>("retvalTemplate", values.Generic.retvalTemplate);
         values.Generic.linesToGet = Generic.getConfiguration().get<number>("linesToGet", values.Generic.linesToGet);
         values.Generic.authorTag = Generic.getConfiguration().get<string>("authorTag", values.Generic.authorTag);
         values.Generic.authorName = Generic.getConfiguration().get<string>("authorName", values.Generic.authorName);

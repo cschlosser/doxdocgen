@@ -164,6 +164,11 @@
           "type": "string",
           "default": "@return {type} "
         },
+        "doxdocgen.generic.retvalTemplate": {
+            "description": "The template of the retval Doxygen line that is generated. If empty it won't get generated at all.",
+            "type": "string",
+            "default": "@retval {type} "
+          },
         "doxdocgen.generic.linesToGet": {
           "description": "How many lines the plugin should look for to find the end of the declaration. Please be aware that setting this value too low could improve the speed of comment generation by a very slim margin but the plugin also may not correctly detect all declarations or definitions anymore.",
           "type": "number",

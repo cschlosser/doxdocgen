@@ -224,6 +224,9 @@ Each of them can be configured with its own custom text and you can decide if th
   // The template of the return Doxygen line that is generated. If empty it won't get generated at all.
   "doxdocgen.generic.returnTemplate": "@return {type} ",
 
+  // The template of the retval Doxygen line that is generated. If empty it won't get generated at all.
+  "doxdocgen.generic.retvalTemplate": "@retval {type} ",
+
   // Decide if the values put into {name} should be split according to their casing.
   "doxdocgen.generic.splitCasingSmartText": true,
 
