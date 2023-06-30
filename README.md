@@ -230,6 +230,9 @@ Each of them can be configured with its own custom text and you can decide if th
   // Array of keywords that should be removed from the input prior to parsing.
   "doxdocgen.generic.filteredKeywords": [],
 
+  // If enabled, the documentation for a `bool` return value will use `retval` instead of `returns` (only applies if `boolReturnsTrueFalse` is enabled).
+  "doxdocgen.generic.useBoolRetVal": false,
+
   // Substitute {author} with git config --get user.name.
   "doxdocgen.generic.useGitUserName": false,
 
