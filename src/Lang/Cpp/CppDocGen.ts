@@ -428,8 +428,16 @@ export class CppDocGen implements IDocGen {
                 case "return": {
                     if (this.cfg.Generic.returnTemplate.trim().length !== 0 && this.func.type !== null) {
                         const returnParams = this.generateReturnParams();
+                        
                         // special case to return return with retval for bool return type
-                        const returnTemplate = this.useBoolRetVal() ? this.cfg.Generic.retvalTemplate : this.cfg.Generic.returnTemplate
+                        let returnTemplate = this.cfg.Generic.returnTemplate;
+                        if (this.useBoolRetVal()) {
+                            // if template is empty, don't add anything
+                            if (this.cfg.Generic.retvalTemplate.trim().length == 0) {
+                                return;
+                            }
+                            returnTemplate = this.cfg.Generic.retvalTemplate;
+                        }
 
                         templates.generateFromTemplate(
                             lines,
