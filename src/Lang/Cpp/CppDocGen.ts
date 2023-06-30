@@ -186,6 +186,15 @@ export class CppDocGen implements IDocGen {
         );
     }
 
+    protected useBoolRetVal(): boolean {
+        if (this.cfg.Generic.boolReturnsTrueFalse === false || this.cfg.Generic.useBoolRetVal === false) {
+            return false;
+        }
+
+        return this.func.type.nodes
+            .findIndex((n) => n instanceof CppToken && n.type === CppTokenType.Symbol && n.value === "bool") !== -1;
+    }
+
     protected generateReturnParams(): string[] {
 
         const params: string[] = [];
@@ -419,10 +428,13 @@ export class CppDocGen implements IDocGen {
                 case "return": {
                     if (this.cfg.Generic.returnTemplate.trim().length !== 0 && this.func.type !== null) {
                         const returnParams = this.generateReturnParams();
+                        // special case to return return with retval for bool return type
+                        const returnTemplate = this.useBoolRetVal() ? this.cfg.Generic.retvalTemplate : this.cfg.Generic.returnTemplate
+
                         templates.generateFromTemplate(
                             lines,
                             this.cfg.typeTemplateReplace,
-                            this.cfg.Generic.returnTemplate,
+                            returnTemplate,
                             returnParams,
                         );
                     }

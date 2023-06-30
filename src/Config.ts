@@ -45,9 +45,11 @@ class Generic {
 
     public includeTypeAtReturn: boolean = true;
     public boolReturnsTrueFalse: boolean = true;
+    public useBoolRetVal: boolean = false;
     public briefTemplate: string = "@brief {text}";
     public paramTemplate: string = "@param {param} ";
     public returnTemplate: string = "@return {type} ";
+    public retvalTemplate: string = "@retval {type} ";
     public linesToGet: number = 20;
     public authorName: string = "your name";
     public authorEmail: string = "you@domain.com";
@@ -87,6 +89,7 @@ export class Config {
 
         values.Generic.includeTypeAtReturn = Generic.getConfiguration().get<boolean>("includeTypeAtReturn", values.Generic.includeTypeAtReturn);
         values.Generic.boolReturnsTrueFalse = Generic.getConfiguration().get<boolean>("boolReturnsTrueFalse", values.Generic.boolReturnsTrueFalse);
+        values.Generic.useBoolRetVal = Generic.getConfiguration().get<boolean>("useBoolRetVal", values.Generic.useBoolRetVal);
         values.Generic.briefTemplate = Generic.getConfiguration().get<string>("briefTemplate", values.Generic.briefTemplate);
         values.Generic.paramTemplate = Generic.getConfiguration().get<string>("paramTemplate", values.Generic.paramTemplate);
         values.Generic.returnTemplate = Generic.getConfiguration().get<string>("returnTemplate", values.Generic.returnTemplate);

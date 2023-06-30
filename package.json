@@ -144,6 +144,11 @@
           "type": "boolean",
           "default": true
         },
+        "doxdocgen.generic.useBoolRetVal": {
+            "markdownDescription": "If enabled, the documentation for a `bool` return value will use `retval` instead of `returns` (only applies if `#doxdocgen.generic.boolReturnsTrueFalse#` is enabled).",
+            "type": "boolean",
+            "default": false
+          },
         "doxdocgen.generic.briefTemplate": {
           "description": "The template of the brief Doxygen line that is generated. If empty it won't get generated at all.",
           "type": "string",
