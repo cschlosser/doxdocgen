@@ -37,6 +37,13 @@ suite("C++ - Return type Tests", () => {
         assert.strictEqual(result, "/**\n * @brief \n * \n * @return int \n */");
     });
 
+    test("Bool with retval", () => {
+        testSetup.cfg.Generic.useBoolRetVal = true;
+        const result = testSetup.SetLine("bool foo();").GetResult();
+        testSetup.cfg.Generic.useBoolRetVal = false;
+        assert.strictEqual(result, "/**\n * @brief \n * \n * @retval true \n * @retval false \n */");
+    });
+
     test("Bool return type", () => {
         const result = testSetup.SetLine("bool foo();").GetResult();
         assert.strictEqual(result, "/**\n * @brief \n * \n * @return true \n * @return false \n */");

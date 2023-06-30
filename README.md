@@ -224,11 +224,17 @@ Each of them can be configured with its own custom text and you can decide if th
   // The template of the return Doxygen line that is generated. If empty it won't get generated at all.
   "doxdocgen.generic.returnTemplate": "@return {type} ",
 
+  // The template of the retval Doxygen line that is generated. If empty it won't get generated at all.
+  "doxdocgen.generic.retvalTemplate": "@retval {type} ",
+
   // Decide if the values put into {name} should be split according to their casing.
   "doxdocgen.generic.splitCasingSmartText": true,
 
   // Array of keywords that should be removed from the input prior to parsing.
   "doxdocgen.generic.filteredKeywords": [],
+
+  // If enabled, the documentation for a `bool` return value will use `retval` instead of `returns` (only applies if `boolReturnsTrueFalse` is enabled).
+  "doxdocgen.generic.useBoolRetVal": false,
 
   // Substitute {author} with git config --get user.name.
   "doxdocgen.generic.useGitUserName": false,
